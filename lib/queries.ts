@@ -1,7 +1,7 @@
 import "server-only"
 import { db } from "@/lib/db"
 import { sermons, posts, gallery, popups } from "@/lib/db/schema"
-import { desc, eq, and } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 
 export async function getSermons(category?: string, limit?: number) {
   const where = category ? eq(sermons.category, category) : undefined
@@ -34,5 +34,19 @@ export async function getGallery(limit?: number) {
 }
 
 export async function getActivePopups() {
-  return db.select().from(popups).where(eq(popups.active, true)).orderBy(desc(popups.createdAt))
+  if (!db) {
+    console.warn("Skipping popups query because DATABASE_URL is not configured.")
+    return []
+  }
+
+  try {
+    return await db
+      .select()
+      .from(popups)
+      .where(eq(popups.active, true))
+      .orderBy(desc(popups.createdAt))
+  } catch (error) {
+    console.error("Failed to load active popups:", error)
+    return []
+  }
 }
