@@ -1,9 +1,11 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare/config";
 
 export default defineCloudflareConfig({
-  edge: {
-    override: {
-      externals: ["pg-cloudflare"],
+  functions: {
+    default: {
+      override: {
+        externals: ["pg-cloudflare"],
+      },
     },
   },
 });
