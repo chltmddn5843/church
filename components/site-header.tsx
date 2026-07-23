@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
 
-type SessionUser = { name: string; email: string; role?: string } | null
+type SessionUser = { name: string; email: string; role?: string | null } | null
 
 export function SiteHeader({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false)
@@ -72,17 +72,17 @@ export function SiteHeader({ user }: { user: SessionUser }) {
         <div className="flex items-center gap-2">
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2">
+              <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="gap-2" />}>
+                <>
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline">{user.name}</span>
-                </Button>
+                </>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {user.role === "admin" && (
                   <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin">관리자 페이지</Link>
+                    <DropdownMenuItem render={<Link href="/admin" />}>
+                      관리자 페이지
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
@@ -92,21 +92,21 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             </DropdownMenu>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/sign-in">로그인</Link>
+              <Button render={<Link href="/sign-in" />} variant="ghost" size="sm">
+                로그인
               </Button>
-              <Button asChild size="sm">
-                <Link href="/sign-up">회원가입</Link>
+              <Button render={<Link href="/sign-up" />} size="sm">
+                회원가입
               </Button>
             </div>
           )}
 
           {/* Mobile menu */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon" aria-label="메뉴 열기">
+            <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="메뉴 열기" />} className="lg:hidden">
+              <>
                 <Menu className="h-5 w-5" />
-              </Button>
+              </>
             </SheetTrigger>
             <SheetContent side="right" className="w-80 overflow-y-auto">
               <SheetTitle className="sr-only">주 메뉴</SheetTitle>
@@ -138,19 +138,19 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                   {user ? (
                     <>
                       {user.role === "admin" && (
-                        <Button asChild variant="outline" onClick={() => setOpen(false)}>
-                          <Link href="/admin">관리자 페이지</Link>
+                        <Button render={<Link href="/admin" />} variant="outline" onClick={() => setOpen(false)}>
+                          관리자 페이지
                         </Button>
                       )}
                       <Button onClick={handleSignOut}>로그아웃</Button>
                     </>
                   ) : (
                     <>
-                      <Button asChild variant="outline" onClick={() => setOpen(false)}>
-                        <Link href="/sign-in">로그인</Link>
+                      <Button render={<Link href="/sign-in" />} variant="outline" onClick={() => setOpen(false)}>
+                        로그인
                       </Button>
-                      <Button asChild onClick={() => setOpen(false)}>
-                        <Link href="/sign-up">회원가입</Link>
+                      <Button render={<Link href="/sign-up" />} onClick={() => setOpen(false)}>
+                        회원가입
                       </Button>
                     </>
                   )}

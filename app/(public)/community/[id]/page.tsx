@@ -29,11 +29,11 @@ export default async function PostDetailPage({
   return (
     <article className="py-12 md:py-16">
       <div className="mx-auto max-w-3xl px-4">
-        <Button asChild variant="ghost" size="sm" className="mb-6">
-          <Link href="/community">
+        <Button render={<Link href="/community" />} variant="ghost" size="sm" className="mb-6">
+          <>
             <ArrowLeft className="mr-1 h-4 w-4" />
             목록으로
-          </Link>
+          </>
         </Button>
 
         <Badge variant="secondary">{post.category}</Badge>

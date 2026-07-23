@@ -1,13 +1,14 @@
 "use server"
 
 import { requireAdmin } from "@/lib/admin"
-import { db } from "@/lib/db"
+import { getDb } from "@/lib/db"
 import { popups } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export async function createPopup(formData: FormData) {
   await requireAdmin()
+  const db = getDb()
   await db.insert(popups).values({
     title: formData.get("title") as string,
     imageUrl: (formData.get("imageUrl") as string) || null,
@@ -21,6 +22,7 @@ export async function createPopup(formData: FormData) {
 
 export async function togglePopup(id: number, active: boolean) {
   await requireAdmin()
+  const db = getDb()
   await db.update(popups).set({ active }).where(eq(popups.id, id))
   revalidatePath("/admin/popups")
   revalidatePath("/")
@@ -28,6 +30,7 @@ export async function togglePopup(id: number, active: boolean) {
 
 export async function deletePopup(id: number) {
   await requireAdmin()
+  const db = getDb()
   await db.delete(popups).where(eq(popups.id, id))
   revalidatePath("/admin/popups")
   revalidatePath("/")

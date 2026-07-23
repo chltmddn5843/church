@@ -25,16 +25,16 @@ export function Hero() {
           {church.subSlogan}
         </p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link href="/about">교회 소개</Link>
+          <Button render={<Link href="/about" />} size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            교회 소개
           </Button>
           <Button
-            asChild
+            render={<Link href="/sermons" />}
             size="lg"
             variant="outline"
             className="border-primary-foreground/40 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
           >
-            <Link href="/sermons">설교 말씀 보기</Link>
+            설교 말씀 보기
           </Button>
         </div>
       </div>

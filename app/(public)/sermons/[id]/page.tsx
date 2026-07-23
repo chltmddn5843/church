@@ -29,11 +29,11 @@ export default async function SermonDetailPage({
   return (
     <article className="py-12 md:py-16">
       <div className="mx-auto max-w-4xl px-4">
-        <Button asChild variant="ghost" size="sm" className="mb-6">
-          <Link href="/sermons">
+        <Button render={<Link href="/sermons" />} variant="ghost" size="sm" className="mb-6">
+          <>
             <ArrowLeft className="mr-1 h-4 w-4" />
             목록으로
-          </Link>
+          </>
         </Button>
 
         <Badge variant="secondary">{sermon.category}</Badge>

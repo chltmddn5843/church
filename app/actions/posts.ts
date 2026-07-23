@@ -1,13 +1,14 @@
 "use server"
 
 import { requireAdmin } from "@/lib/admin"
-import { db } from "@/lib/db"
+import { getDb } from "@/lib/db"
 import { posts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export async function createPost(formData: FormData) {
   const admin = await requireAdmin()
+  const db = getDb()
   await db.insert(posts).values({
     title: formData.get("title") as string,
     content: formData.get("content") as string,
@@ -23,6 +24,7 @@ export async function createPost(formData: FormData) {
 
 export async function updatePost(id: number, formData: FormData) {
   await requireAdmin()
+  const db = getDb()
   await db
     .update(posts)
     .set({
@@ -40,6 +42,7 @@ export async function updatePost(id: number, formData: FormData) {
 
 export async function deletePost(id: number) {
   await requireAdmin()
+  const db = getDb()
   await db.delete(posts).where(eq(posts.id, id))
   revalidatePath("/admin/posts")
   revalidatePath("/community")

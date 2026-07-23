@@ -17,11 +17,15 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
   const [visible, setVisible] = useState<Popup[]>([])
 
   useEffect(() => {
-    const dismissed = popups.filter((p) => {
-      const until = localStorage.getItem(`popup-${p.id}`)
-      return !until || Number(until) < Date.now()
+    const frame = requestAnimationFrame(() => {
+      const dismissed = popups.filter((p) => {
+        const until = localStorage.getItem(`popup-${p.id}`)
+        return !until || Number(until) < Date.now()
+      })
+      setVisible(dismissed)
     })
-    setVisible(dismissed)
+
+    return () => cancelAnimationFrame(frame)
   }, [popups])
 
   if (visible.length === 0) return null
@@ -44,7 +48,7 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
         >
           <div className="flex items-center justify-between bg-primary px-4 py-2 text-primary-foreground">
             <span className="line-clamp-1 text-sm font-semibold">{p.title}</span>
-            <button onClick={() => close(p.id)} aria-label="팝업 닫기" className="rounded p-1 hover:bg-primary-foreground/20">
+            <button type="button" onClick={() => close(p.id)} aria-label="팝업 닫기" className="rounded p-1 hover:bg-primary-foreground/20">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -62,10 +66,10 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
             ))}
           {p.content && <p className="px-4 py-3 text-sm leading-relaxed text-card-foreground">{p.content}</p>}
           <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
-            <button onClick={() => hideForDay(p.id)} className="hover:text-foreground">
+            <button type="button" onClick={() => hideForDay(p.id)} className="hover:text-foreground">
               오늘 하루 보지 않기
             </button>
-            <button onClick={() => close(p.id)} className="hover:text-foreground">
+            <button type="button" onClick={() => close(p.id)} className="hover:text-foreground">
               닫기
             </button>
           </div>

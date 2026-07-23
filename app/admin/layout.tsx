@@ -1,13 +1,9 @@
 import type React from "react"
-import { redirect } from "next/navigation"
-import { getSession } from "@/lib/session"
+import { requireAdmin } from "@/lib/admin"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession()
-  if (!session?.user) redirect("/sign-in?redirect=/admin")
-  // @ts-expect-error role is added to the user table
-  if (session.user.role !== "admin") redirect("/")
+  await requireAdmin()
 
   return (
     <div className="flex min-h-screen bg-muted/40">

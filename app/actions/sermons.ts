@@ -1,7 +1,7 @@
 "use server"
 
 import { requireAdmin } from "@/lib/admin"
-import { db } from "@/lib/db"
+import { getDb } from "@/lib/db"
 import { sermons } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
@@ -18,11 +18,12 @@ function parseYoutubeId(input: string): string | null {
     const m = trimmed.match(p)
     if (m) return m[1]
   }
-  return trimmed || null
+  return null
 }
 
 export async function createSermon(formData: FormData) {
   await requireAdmin()
+  const db = getDb()
   const preachedAt = formData.get("preachedAt") as string
   await db.insert(sermons).values({
     title: formData.get("title") as string,
@@ -40,6 +41,7 @@ export async function createSermon(formData: FormData) {
 
 export async function updateSermon(id: number, formData: FormData) {
   await requireAdmin()
+  const db = getDb()
   const preachedAt = formData.get("preachedAt") as string
   await db
     .update(sermons)
@@ -60,6 +62,7 @@ export async function updateSermon(id: number, formData: FormData) {
 
 export async function deleteSermon(id: number) {
   await requireAdmin()
+  const db = getDb()
   await db.delete(sermons).where(eq(sermons.id, id))
   revalidatePath("/admin/sermons")
   revalidatePath("/sermons")

@@ -1,5 +1,8 @@
 import "server-only"
 import { auth } from "@/lib/auth"
+import { getDb } from "@/lib/db"
+import { user } from "@/lib/db/schema"
+import { eq } from "drizzle-orm"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -11,6 +14,14 @@ import { redirect } from "next/navigation"
 export async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) redirect("/sign-in")
-  if ((session.user as { role?: string }).role !== "admin") redirect("/")
-  return session.user as { id: string; name: string; email: string; role: string }
+
+  // KV is eventually consistent. Authorization must always use the primary DB.
+  const [currentUser] = await getDb()
+    .select({ id: user.id, name: user.name, email: user.email, role: user.role })
+    .from(user)
+    .where(eq(user.id, session.user.id))
+    .limit(1)
+
+  if (currentUser?.role !== "admin") redirect("/")
+  return currentUser
 }
