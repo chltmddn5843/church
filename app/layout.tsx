@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next"
 import { Noto_Sans_KR, Noto_Serif_KR } from "next/font/google"
 import "./globals.css"
 
+export const runtime = 'edge';
+
 const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
