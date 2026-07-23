@@ -6,6 +6,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
+  // OpenNext/esbuild 번들링 에러 방지
+  serverExternalPackages: ["pg", "pg-cloudflare"],
+};
 
-export default nextConfig
+export default nextConfig;
