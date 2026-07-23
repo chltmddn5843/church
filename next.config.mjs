@@ -7,6 +7,7 @@ const nextConfig = {
     unoptimized: true,
   },
   // OpenNext/esbuild 번들링 에러 방지
+  
   serverExternalPackages: ["pg", "pg-cloudflare"],
 };
 
