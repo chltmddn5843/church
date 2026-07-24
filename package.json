@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "opennextjs-cloudflare build",
     "cf-build": "opennextjs-cloudflare build",
     "cf-preview": "opennextjs-cloudflare preview",
     "cf-deploy": "opennextjs-cloudflare deploy -- --keep-vars",
@@ -12,6 +12,7 @@
     "db:migrate": "drizzle-kit migrate",
     "start": "next start",
     "lint": "eslint ."
+    
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
