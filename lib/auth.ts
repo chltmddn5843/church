@@ -1,54 +1,54 @@
 import { betterAuth } from "better-auth"
-import { pool } from "@/lib/db"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { getDb } from "@/lib/db"
 import { authKvStorage } from "@/lib/auth-kv"
 
-export const auth = betterAuth({
-  database: pool,
-  secondaryStorage: authKvStorage,
-  baseURL:
-    process.env.BETTER_AUTH_URL ??
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : process.env.V0_RUNTIME_URL),
-  emailAndPassword: {
-    enabled: true,
-    autoSignIn: true,
-  },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "member",
-        input: false,
+export function getAuth() {
+  return betterAuth({
+    database: drizzleAdapter(getDb(), {
+      provider: "sqlite",
+    }),
+    secondaryStorage: authKvStorage,
+    baseURL:
+      process.env.BETTER_AUTH_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : process.env.V0_RUNTIME_URL),
+    emailAndPassword: {
+      enabled: true,
+      autoSignIn: true,
+    },
+    user: {
+      additionalFields: {
+        role: {
+          type: "string",
+          required: false,
+          defaultValue: "member",
+          input: false,
+        },
       },
     },
-  },
-  trustedOrigins: [
-    ...(process.env.V0_RUNTIME_URL ? [process.env.V0_RUNTIME_URL] : []),
-    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
-    ...(process.env.VERCEL_PROJECT_PRODUCTION_URL ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`] : []),
-  ],
-  session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
-    storeSessionInDatabase: true,
-  },
-  verification: {
-    storeInDatabase: true,
-  },
-  ...(process.env.NODE_ENV === "development"
-    ? {
-        advanced: {
-          // In dev (v0 preview iframe), force cross-site cookies so the
-          // session cookie is stored by the browser.
-          defaultCookieAttributes: {
-            sameSite: "none" as const,
-            secure: true,
+    trustedOrigins: [
+      ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+      ...(process.env.V0_RUNTIME_URL ? [process.env.V0_RUNTIME_URL] : []),
+      ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+      ...(process.env.VERCEL_PROJECT_PRODUCTION_URL ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`] : []),
+    ],
+    session: {
+      expiresIn: 60 * 60 * 24 * 7,
+      updateAge: 60 * 60 * 24,
+    },
+    ...(process.env.NODE_ENV === "development"
+      ? {
+          advanced: {
+            defaultCookieAttributes: {
+              sameSite: "none" as const,
+              secure: true,
+            },
           },
-        },
-      }
-    : {}),
-})
+        }
+      : {}),
+  })
+}

@@ -1,5 +1,5 @@
 import "server-only"
-import { auth } from "@/lib/auth"
+import { getAuth } from "@/lib/auth"
 import { getDb } from "@/lib/db"
 import { user } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
@@ -12,15 +12,16 @@ import { redirect } from "next/navigation"
  * Use this in every admin page and server action.
  */
 export async function requireAdmin() {
-  const session = await auth.api.getSession({ headers: await headers() })
+  const session = await getAuth().api.getSession({ headers: await headers() })
   if (!session?.user) redirect("/sign-in")
 
-  // KV is eventually consistent. Authorization must always use the primary DB.
-  const [currentUser] = await getDb()
+  // KV is eventually consistent. Authorization always comes from D1.
+  const currentUser = await getDb()
     .select({ id: user.id, name: user.name, email: user.email, role: user.role })
     .from(user)
     .where(eq(user.id, session.user.id))
     .limit(1)
+    .get()
 
   if (currentUser?.role !== "admin") redirect("/")
   return currentUser

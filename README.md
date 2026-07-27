@@ -3,13 +3,12 @@
 Next.js 16과 OpenNext를 사용하는 Cloudflare Workers 애플리케이션입니다. SSR, 인증,
 Server Actions를 사용하므로 Cloudflare Pages의 정적 출력으로 배포하지 않습니다.
 
-회원 계정, 비밀번호 해시, 관리자 역할과 게시글은 트랜잭션이 가능한 PostgreSQL을
-최종 원본으로 사용합니다. `AUTH_KV`는 Better Auth 세션과 반복 조회 캐시를 저장합니다.
-KV는 최종 일관성 방식이므로 관리자 권한 판정에는 사용하지 않습니다.
+회원 계정, 비밀번호 해시, 관리자 역할과 게시글은 Cloudflare D1을 최종 원본으로
+사용합니다. `AUTH_KV`는 Better Auth 세션과 반복 조회 캐시를 저장합니다. KV는 최종
+일관성 방식이므로 관리자 권한 판정에는 사용하지 않습니다.
 
 ## 필수 환경 변수
 
-- `DATABASE_URL`: PostgreSQL 연결 문자열(운영 환경에서는 SSL 사용 권장)
 - `BETTER_AUTH_SECRET`: 최소 32자의 무작위 비밀값
 - `BETTER_AUTH_URL`: 실제 서비스 원본 URL(예: `https://church.example.com`)
 
@@ -20,10 +19,10 @@ KV는 최종 일관성 방식이므로 관리자 권한 판정에는 사용하�
 비밀값은 저장소나 일반 텍스트 변수로 커밋하지 말고 Cloudflare Workers의
 Secrets에서 관리합니다. 미리보기 환경과 프로덕션 환경에 각각 설정해야 합니다.
 
-## 데이터베이스 준비
+## D1 데이터베이스 준비
 
 ```bash
-DATABASE_URL='postgresql://...' npm run db:migrate
+npm run db:migrate
 ```
 
 최초 배포 후 첫 관리자는 가입한 계정의 `user.role`을 데이터베이스에서 `admin`으로

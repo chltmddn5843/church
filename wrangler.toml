@@ -7,6 +7,15 @@ compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
+[vars]
+BETTER_AUTH_URL = "https://church.chltmddn5843.workers.dev"
+
 [[kv_namespaces]]
 binding = "AUTH_KV"
 id = "adc9df50f67e46e58c70b8600c486465"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "church-db"
+database_id = "9f9a1d51-75e2-4cc6-8345-1facbfef509d"
+migrations_dir = "migrations"

@@ -3,6 +3,8 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { getSessionUser } from "@/lib/session"
 
+export const dynamic = "force-dynamic"
+
 export default async function PublicLayout({ children }: { children: ReactNode }) {
   const user = await getSessionUser()
   return (

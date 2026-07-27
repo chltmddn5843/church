@@ -4,7 +4,6 @@ initOpenNextCloudflareForDev()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ["pg", "pg-cloudflare"],
   images: {
     unoptimized: true,
   },

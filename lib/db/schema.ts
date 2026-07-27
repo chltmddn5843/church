@@ -1,105 +1,94 @@
-import { pgTable, text, timestamp, boolean, serial } from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
-// --- Better Auth required tables -------------------------------------------
-// Column names are camelCase to match Better Auth's defaults. Do not rename.
+const now = sql`(unixepoch())`
 
-export const user = pgTable("user", {
+// Better Auth tables. Column names intentionally match Better Auth defaults.
+export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("emailVerified").notNull().default(false),
+  emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
-  // Custom field: "member" (default) or "admin". Managed via SQL/CMS, not the auth flow.
   role: text("role").notNull().default("member"),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
-export const session = pgTable("session", {
+export const session = sqliteTable("session", {
   id: text("id").primaryKey(),
-  expiresAt: timestamp("expiresAt").notNull(),
+  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
   ipAddress: text("ipAddress"),
   userAgent: text("userAgent"),
-  userId: text("userId")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
 })
 
-export const account = pgTable("account", {
+export const account = sqliteTable("account", {
   id: text("id").primaryKey(),
   accountId: text("accountId").notNull(),
   providerId: text("providerId").notNull(),
-  userId: text("userId")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("accessToken"),
   refreshToken: text("refreshToken"),
   idToken: text("idToken"),
-  accessTokenExpiresAt: timestamp("accessTokenExpiresAt"),
-  refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
+  accessTokenExpiresAt: integer("accessTokenExpiresAt", { mode: "timestamp" }),
+  refreshTokenExpiresAt: integer("refreshTokenExpiresAt", { mode: "timestamp" }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
-export const verification = pgTable("verification", {
+export const verification = sqliteTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt").defaultNow(),
+  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(now),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(now),
 })
 
-// --- App tables (church CMS content) ---------------------------------------
-// These are site-wide content managed by admins, not per-user data.
-
-// 설교 (sermons)
-export const sermons = pgTable("sermons", {
-  id: serial("id").primaryKey(),
+export const sermons = sqliteTable("sermons", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   preacher: text("preacher").notNull().default("양승철"),
-  scripture: text("scripture"), // 본문 말씀
-  category: text("category").notNull().default("주일예배"), // 주일예배 | 수요예배 | 새벽기도
-  youtubeId: text("youtubeId"), // YouTube video id
+  scripture: text("scripture"),
+  category: text("category").notNull().default("주일예배"),
+  youtubeId: text("youtubeId"),
   summary: text("summary"),
-  preachedAt: timestamp("preachedAt").notNull().defaultNow(),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  preachedAt: integer("preachedAt", { mode: "timestamp" }).notNull().default(now),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
 })
 
-// 교회소식 / 공지 (posts)
-export const posts = pgTable("posts", {
-  id: serial("id").primaryKey(),
+export const posts = sqliteTable("posts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   content: text("content").notNull(),
-  category: text("category").notNull().default("교회소식"), // 교회소식 | 공지사항
+  category: text("category").notNull().default("교회소식"),
   authorId: text("authorId"),
   authorName: text("authorName").notNull().default("관리자"),
-  pinned: boolean("pinned").notNull().default(false),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  pinned: integer("pinned", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
-// 갤러리 (gallery)
-export const gallery = pgTable("gallery", {
-  id: serial("id").primaryKey(),
+export const gallery = sqliteTable("gallery", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   imageUrl: text("imageUrl").notNull(),
   description: text("description"),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
 })
 
-// 팝업 배너 (popups)
-export const popups = pgTable("popups", {
-  id: serial("id").primaryKey(),
+export const popups = sqliteTable("popups", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   imageUrl: text("imageUrl"),
   linkUrl: text("linkUrl"),
   content: text("content"),
-  active: boolean("active").notNull().default(true),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
 })

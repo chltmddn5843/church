@@ -1,5 +1,5 @@
 import "server-only"
-import { db, getDb } from "@/lib/db"
+import { getDb } from "@/lib/db"
 import { sermons, posts, gallery, popups } from "@/lib/db/schema"
 import { desc, eq } from "drizzle-orm"
 
@@ -14,8 +14,7 @@ export async function getSermons(category?: string, limit?: number) {
 export async function getSermon(id: number) {
   if (!Number.isSafeInteger(id) || id < 1) return null
   const db = getDb()
-  const rows = await db.select().from(sermons).where(eq(sermons.id, id)).limit(1)
-  return rows[0] ?? null
+  return (await db.select().from(sermons).where(eq(sermons.id, id)).limit(1).get()) ?? null
 }
 
 export async function getPosts(category?: string, limit?: number) {
@@ -29,8 +28,7 @@ export async function getPosts(category?: string, limit?: number) {
 export async function getPost(id: number) {
   if (!Number.isSafeInteger(id) || id < 1) return null
   const db = getDb()
-  const rows = await db.select().from(posts).where(eq(posts.id, id)).limit(1)
-  return rows[0] ?? null
+  return (await db.select().from(posts).where(eq(posts.id, id)).limit(1).get()) ?? null
 }
 
 export async function getGallery(limit?: number) {
@@ -41,11 +39,7 @@ export async function getGallery(limit?: number) {
 }
 
 export async function getActivePopups() {
-  if (!db) {
-    console.warn("Skipping popups query because DATABASE_URL is not configured.")
-    return []
-  }
-
+  const db = getDb()
   try {
     return await db
       .select()
