@@ -12,7 +12,7 @@ BETTER_AUTH_URL = "https://church.chltmddn5843.workers.dev"
 
 [[kv_namespaces]]
 binding = "AUTH_KV"
-id = "adc9df50f67e46e58c70b8600c486465"
+id = "1761effc850d48e9a0f74197828d2da5"
 
 [[d1_databases]]
 binding = "DB"
