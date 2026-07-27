@@ -66,25 +66,32 @@ export function SiteHeader({ user }: { user: SessionUser }) {
         {/* Right side */}
         <div className="flex items-center gap-2">
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="gap-2" />}>
-                <>
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">{user.name}</span>
-                </>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {user.role === "admin" && (
+            <>
+              {user.role === "admin" && (
+                <Button render={<Link href="/admin" />} nativeButton={false} size="sm" className="hidden sm:inline-flex">
+                  관리자
+                </Button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="gap-2" />}>
                   <>
-                    <DropdownMenuItem render={<Link href="/admin" />}>
-                      관리자 페이지
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">{user.name}</span>
                   </>
-                )}
-                <DropdownMenuItem onClick={handleSignOut}>로그아웃</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {user.role === "admin" && (
+                    <>
+                      <DropdownMenuItem render={<Link href="/admin" />}>
+                        관리자 페이지
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut}>로그아웃</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
               <Button render={<Link href="/sign-in" />} nativeButton={false} variant="ghost" size="sm">

@@ -43,8 +43,7 @@ export default function AboutPage() {
             <SectionHeading eyebrow="Greeting" title="담임목사 인사말" align="left" />
             <div className="mt-6 space-y-4 leading-relaxed text-muted-foreground">
               <p>
-                원당교회 홈페이지를 찾아주신 여러분을 주님의 이름으로 진심으로 환영합니다. 우리 교회는 하나님의
-                말씀 위에 세워지는 건강한 교회를 지향합니다.
+                원당교회 홈페이지를 찾아주신 여러분을 주님의 이름으로 진심으로 환영합니다. 우리 교회는 하나님의 말씀 위에 세워지는 건강한 교회를 지향합니다.
               </p>
               <p>
                 예배를 통해 하나님께 영광을 돌리고, 말씀과 기도로 성숙한 제자를 세우며, 사랑으로 이웃과 지역

@@ -18,7 +18,7 @@ export function Hero() {
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-primary">
           {church.denomination}
         </p>
-        <h1 className="max-w-3xl text-balance font-serif text-4xl font-bold leading-tight md:text-6xl">
+        <h1 className="max-w-4xl text-balance font-serif text-5xl font-bold leading-[1.15] md:text-7xl">
           {church.slogan}
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed opacity-90 md:text-lg">

@@ -18,12 +18,12 @@ export const church = {
     lng: 126.6712,
   },
   worship: [
-    { name: "주일 1부 예배", time: "오전 09:00", place: "본당" },
-    { name: "주일 2부 예배", time: "오전 11:00", place: "본당" },
-    { name: "주일 오후 예배", time: "오후 02:00", place: "본당" },
-    { name: "수요 기도회", time: "저녁 07:30", place: "본당" },
-    { name: "금요 철야기도", time: "저녁 09:00", place: "본당" },
-    { name: "새벽 기도회", time: "새벽 05:30", place: "본당 (화~토)" },
+    { name: "주일 1부 예배", time: "오전 08:00", place: "비전홀" },
+    { name: "주일 2부 예배", time: "오전 10:00", place: "비전홀" },
+    { name: "주일 3부 예배", time: "오후 12:00", place: "비전홀" },
+    { name: "주일 청년부 예배", time: "오후 02:00", place: "비전홀" },
+    { name: "금요 예배", time: "저녁 09:00", place: "비전홀" },
+    { name: "새벽 기도회", time: "새벽 05:00", place: "비전홀 (화~금)" },
   ],
   nav: [
     {
