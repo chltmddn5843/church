@@ -92,3 +92,13 @@ export const popups = sqliteTable("popups", {
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
 })
+
+export const contentPages = sqliteTable("content_pages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  legacyId: integer("legacyId").notNull().unique(),
+  title: text("title").notNull(),
+  content: text("content").notNull().default(""),
+  imageUrl: text("imageUrl"),
+  published: integer("published", { mode: "boolean" }).notNull().default(true),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
+})

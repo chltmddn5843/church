@@ -13,9 +13,9 @@ export function Hero() {
         priority
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/60 to-primary/85" />
-      <div className="relative mx-auto flex min-h-[560px] max-w-6xl flex-col items-center justify-center px-4 py-24 text-center text-primary-foreground md:min-h-[640px]">
-        <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-accent">
+      <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-primary/25" />
+      <div className="relative mx-auto flex min-h-[560px] max-w-6xl flex-col items-start justify-center px-4 py-24 text-left text-foreground md:min-h-[640px]">
+        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-primary">
           {church.denomination}
         </p>
         <h1 className="max-w-3xl text-balance font-serif text-4xl font-bold leading-tight md:text-6xl">
@@ -25,14 +25,14 @@ export function Hero() {
           {church.subSlogan}
         </p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Button render={<Link href="/about" />} size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button render={<Link href="/about" />} size="lg">
             교회 소개
           </Button>
           <Button
             render={<Link href="/sermons" />}
             size="lg"
             variant="outline"
-            className="border-primary-foreground/40 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
+            className="border-primary/30 bg-white/70 text-primary hover:bg-white"
           >
             설교 말씀 보기
           </Button>

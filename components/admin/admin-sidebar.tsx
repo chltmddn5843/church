@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, BookOpen, Newspaper, ImageIcon, Bell, Users, Home, LogOut } from "lucide-react"
+import { LayoutDashboard, BookOpen, Newspaper, ImageIcon, Bell, Users, Home, LogOut, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
@@ -13,6 +13,7 @@ const links = [
   { href: "/admin/posts", label: "소식/공지 관리", icon: Newspaper },
   { href: "/admin/gallery", label: "갤러리 관리", icon: ImageIcon },
   { href: "/admin/popups", label: "팝업 관리", icon: Bell },
+  { href: "/admin/pages", label: "소개 페이지 관리", icon: FileText },
   { href: "/admin/members", label: "회원 조회", icon: Users },
 ]
 
