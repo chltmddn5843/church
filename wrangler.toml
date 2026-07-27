@@ -22,4 +22,4 @@ migrations_dir = "migrations"
 
 [[r2_buckets]]
 binding = "POPUP_IMAGES"
-bucket_name = "church-popup-images"
+bucket_name = "church"
