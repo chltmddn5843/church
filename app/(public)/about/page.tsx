@@ -18,7 +18,7 @@ const visions = [
 ]
 
 const staff = [
-  { name: church.pastor, role: "담임목사", image: "/images/pastor.png" },
+  { name: church.pastor, role: "담임목사", image: "/images/wd-pastor.jpg" },
   { name: "김은혜", role: "부목사", image: "/images/gallery-1.png" },
   { name: "이믿음", role: "교육목사", image: "/images/next-generation.png" },
   { name: "박소망", role: "찬양사역자", image: "/images/gallery-4.png" },
@@ -30,14 +30,14 @@ export default function AboutPage() {
       <PageBanner
         title="교회소개"
         subtitle={`${church.denomination} · ${church.name}`}
-        image="/images/church-exterior.png"
+        image="/images/wd-vision.png"
       />
 
       {/* 인사말 */}
       <section id="greeting" className="scroll-mt-24 py-16 md:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-2 md:items-center">
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-lg">
-            <Image src="/images/pastor.png" alt={`${church.pastor} 담임목사`} fill className="object-cover" />
+            <Image src="/images/wd-pastor.jpg" alt={`${church.pastor} 담임목사`} fill className="object-cover object-top" />
           </div>
           <div>
             <SectionHeading eyebrow="Greeting" title="담임목사 인사말" align="left" />
@@ -61,8 +61,9 @@ export default function AboutPage() {
       </section>
 
       {/* 비전 */}
-      <section id="vision" className="scroll-mt-24 bg-secondary py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4">
+      <section id="vision" className="relative scroll-mt-24 overflow-hidden bg-secondary py-16 md:py-24">
+        <Image src="/images/wd-vision.png" alt="원당교회 비전" fill className="object-cover opacity-10" />
+        <div className="relative mx-auto max-w-6xl px-4">
           <SectionHeading eyebrow="Vision" title="교회 비전" description="원당교회가 추구하는 네 가지 방향입니다." />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {visions.map((v) => (

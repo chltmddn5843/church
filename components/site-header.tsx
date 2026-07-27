@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 import { church } from "@/lib/church"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
-import { Menu, Cross, ChevronDown, User } from "lucide-react"
+import { Menu, ChevronDown, User } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import {
   DropdownMenu,
@@ -33,13 +34,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:h-20">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <Cross className="h-5 w-5" />
-          </span>
-          <span className="flex flex-col leading-tight">
-            <span className="font-serif text-lg font-bold text-foreground md:text-xl">{church.name}</span>
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{church.nameEn}</span>
-          </span>
+          <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-12" priority />
         </Link>
 
         {/* Desktop nav */}

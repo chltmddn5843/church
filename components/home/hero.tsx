@@ -7,8 +7,8 @@ export function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
       <Image
-        src="/images/hero-worship.png"
-        alt="원당교회 예배 모습"
+        src="/images/wd-main.jpg"
+        alt="원당교회 전경"
         fill
         priority
         className="object-cover"

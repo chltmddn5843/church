@@ -1,6 +1,7 @@
 import Link from "next/link"
+import Image from "next/image"
 import { church } from "@/lib/church"
-import { Cross, MapPin, Phone, Printer, Mail } from "lucide-react"
+import { MapPin, Phone, Printer, Mail } from "lucide-react"
 
 export function SiteFooter() {
   return (
@@ -9,15 +10,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-3">
           {/* Church identity */}
           <div>
-            <div className="flex items-center gap-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground">
-                <Cross className="h-5 w-5" />
-              </span>
-              <div className="flex flex-col leading-tight">
-                <span className="font-serif text-lg font-bold">{church.name}</span>
-                <span className="text-[10px] uppercase tracking-widest opacity-70">{church.nameEn}</span>
-              </div>
-            </div>
+            <Image src="/images/wd-footer-logo.png" alt={`${church.name} 로고`} width={310} height={40} className="h-10 w-auto brightness-0 invert" />
             <p className="mt-4 text-sm leading-relaxed opacity-80">
               {church.denomination}
               <br />
