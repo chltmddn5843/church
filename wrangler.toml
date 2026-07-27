@@ -3,10 +3,6 @@ pages_build_output_dir = ".open-next"
 compatibility_date = "2026-07-23"
 compatibility_flags = ["nodejs_compat"]
 
-[assets]
-directory = ".open-next/assets"
-binding = "ASSETS"
-
 [[kv_namespaces]]
 binding = "AUTH_KV"
 id = "adc9df50f67e46e58c70b8600c486465"
