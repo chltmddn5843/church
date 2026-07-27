@@ -9,3 +9,4 @@ binding = "ASSETS"
 
 [[kv_namespaces]]
 binding = "AUTH_KV"
+id = "adc9df50f67e46e58c70b8600c486465"
