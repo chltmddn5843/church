@@ -29,7 +29,7 @@ export default async function SermonDetailPage({
   return (
     <article className="py-12 md:py-16">
       <div className="mx-auto max-w-4xl px-4">
-        <Button render={<Link href="/sermons" />} variant="ghost" size="sm" className="mb-6">
+        <Button render={<Link href="/sermons" />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
           <>
             <ArrowLeft className="mr-1 h-4 w-4" />
             목록으로

@@ -32,7 +32,7 @@ export async function GalleryPreview() {
           ))}
         </div>
         <div className="mt-10 text-center">
-          <Button render={<Link href="/gallery" />} variant="outline">
+          <Button render={<Link href="/gallery" />} nativeButton={false} variant="outline">
             갤러리 더보기
           </Button>
         </div>

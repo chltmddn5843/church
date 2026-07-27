@@ -19,3 +19,7 @@ binding = "DB"
 database_name = "church-db"
 database_id = "9f9a1d51-75e2-4cc6-8345-1facbfef509d"
 migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "POPUP_IMAGES"
+bucket_name = "church-popup-images"

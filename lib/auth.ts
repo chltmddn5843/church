@@ -4,18 +4,22 @@ import { getDb } from "@/lib/db"
 import { authKvStorage } from "@/lib/auth-kv"
 
 export function getAuth() {
+  const baseURL =
+    process.env.BETTER_AUTH_URL ??
+    (process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : process.env.V0_RUNTIME_URL)
+
   return betterAuth({
     database: drizzleAdapter(getDb(), {
       provider: "sqlite",
     }),
     secondaryStorage: authKvStorage,
-    baseURL:
-      process.env.BETTER_AUTH_URL ??
-      (process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : process.env.V0_RUNTIME_URL),
+    baseURL,
     emailAndPassword: {
       enabled: true,
       autoSignIn: true,
@@ -31,6 +35,10 @@ export function getAuth() {
       },
     },
     trustedOrigins: [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "http://localhost:8787",
+      "http://127.0.0.1:8787",
       ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
       ...(process.env.V0_RUNTIME_URL ? [process.env.V0_RUNTIME_URL] : []),
       ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
@@ -44,8 +52,8 @@ export function getAuth() {
       ? {
           advanced: {
             defaultCookieAttributes: {
-              sameSite: "none" as const,
-              secure: true,
+              sameSite: "lax" as const,
+              secure: false,
             },
           },
         }

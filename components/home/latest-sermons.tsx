@@ -25,7 +25,7 @@ export async function LatestSermons() {
           <p className="mt-10 text-center text-muted-foreground">등록된 설교가 없습니다.</p>
         )}
         <div className="mt-10 text-center">
-          <Button render={<Link href="/sermons" />} variant="outline">
+          <Button render={<Link href="/sermons" />} nativeButton={false} variant="outline">
             전체 말씀 보기
           </Button>
         </div>

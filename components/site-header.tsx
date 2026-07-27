@@ -87,10 +87,10 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             </DropdownMenu>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Button render={<Link href="/sign-in" />} variant="ghost" size="sm">
+              <Button render={<Link href="/sign-in" />} nativeButton={false} variant="ghost" size="sm">
                 로그인
               </Button>
-              <Button render={<Link href="/sign-up" />} size="sm">
+              <Button render={<Link href="/sign-up" />} nativeButton={false} size="sm">
                 회원가입
               </Button>
             </div>
@@ -133,7 +133,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                   {user ? (
                     <>
                       {user.role === "admin" && (
-                        <Button render={<Link href="/admin" />} variant="outline" onClick={() => setOpen(false)}>
+                        <Button render={<Link href="/admin" />} nativeButton={false} variant="outline" onClick={() => setOpen(false)}>
                           관리자 페이지
                         </Button>
                       )}
@@ -141,10 +141,10 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                     </>
                   ) : (
                     <>
-                      <Button render={<Link href="/sign-in" />} variant="outline" onClick={() => setOpen(false)}>
+                      <Button render={<Link href="/sign-in" />} nativeButton={false} variant="outline" onClick={() => setOpen(false)}>
                         로그인
                       </Button>
-                      <Button render={<Link href="/sign-up" />} onClick={() => setOpen(false)}>
+                      <Button render={<Link href="/sign-up" />} nativeButton={false} onClick={() => setOpen(false)}>
                         회원가입
                       </Button>
                     </>
