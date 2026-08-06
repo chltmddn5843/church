@@ -29,7 +29,7 @@ export function getAuth() {
         role: {
           type: "string",
           required: false,
-          defaultValue: "member",
+          defaultValue: "pending",
           input: false,
         },
       },

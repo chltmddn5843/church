@@ -10,6 +10,9 @@ binding = "ASSETS"
 [vars]
 BETTER_AUTH_URL = "https://church.chltmddn5843.workers.dev"
 
+[secrets]
+required = ["BETTER_AUTH_SECRET"]
+
 [[kv_namespaces]]
 binding = "AUTH_KV"
 id = "1761effc850d48e9a0f74197828d2da5"

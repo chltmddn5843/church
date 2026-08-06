@@ -3,7 +3,7 @@ import { Clock, MapPin } from "lucide-react"
 
 export function WorshipTimes() {
   return (
-    <section className="bg-secondary py-16 md:py-20">
+    <section id="worship" className="scroll-mt-24 bg-secondary py-16 md:py-20">
       <div className="mx-auto max-w-6xl px-4">
         <div className="mb-10 text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">Worship</p>

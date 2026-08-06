@@ -57,7 +57,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             {isSignUp ? "회원가입" : "로그인"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isSignUp ? "원당교회 온라인 성도가 되어보세요." : "다시 오신 것을 환영합니다."}
+            {isSignUp ? "가입 후 관리자 승인을 거쳐 회원으로 등록됩니다." : "다시 오신 것을 환영합니다."}
           </p>
         </div>
 

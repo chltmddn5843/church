@@ -19,9 +19,14 @@ const visions = [
 
 const staff = [
   { name: church.pastor, role: "담임목사", image: "/images/wd-pastor.jpg" },
-  { name: "김은혜", role: "부목사", image: "/images/gallery-1.png" },
-  { name: "이믿음", role: "교육목사", image: "/images/next-generation.png" },
-  { name: "박소망", role: "찬양사역자", image: "/images/gallery-4.png" },
+  { name: "나정주", role: "부목사", image: "/placeholder-user.jpg" },
+  { name: "신요섭", role: "부목사", image: "/placeholder-user.jpg" },
+  { name: "허철", role: "부목사", image: "/placeholder-user.jpg" },
+  { name: "오보배", role: "전도사", image: "/placeholder-user.jpg" },
+  { name: "고강건", role: "전도사", image: "/placeholder-user.jpg" },
+  { name: "이경은", role: "전도사", image: "/placeholder-user.jpg" },
+  { name: "조은경", role: "교육간사", image: "/placeholder-user.jpg" },
+  { name: "김미경", role: "목회행정간사", image: "/placeholder-user.jpg" },
 ]
 
 export default function AboutPage() {
@@ -75,6 +80,21 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="history" className="scroll-mt-24 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4">
+          <SectionHeading eyebrow="History" title="교회발자취" description="1963년 시작된 원당교회의 주요 발자취입니다." />
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {["1963년 원당 지역에서 예배 시작", "1964년 첫 예배당 입당", "2008년 성전 준공 및 입당", "2015년 양승철 담임목사 위임", "2023년 비전센터 믿음관·소망관 봉헌", "2024년 비전센터 사랑관 봉헌"].map(item => <p key={item} className="rounded-xl border bg-card p-5 text-muted-foreground">{item}</p>)}
+          </div>
+        </div>
+      </section>
+
+      <section id="mission" className="scroll-mt-24 bg-secondary py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4">
+          <SectionHeading eyebrow="Mission" title="선교" description="해외선교와 미자립교회·농어촌교회, 지역사회를 함께 섬깁니다." />
         </div>
       </section>
 

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
-const categories = ["전체", "주일예배", "수요예배", "새벽기도"]
+const categories = ["전체", "주일예배", "금요예배", "찬양대", "특별예배"]
 
 export function SermonFilter({ active }: { active?: string }) {
   return (
