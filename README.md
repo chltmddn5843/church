@@ -11,8 +11,6 @@ Server Actions를 사용하므로 Cloudflare Pages의 정적 출력으로 배포
 
 - `BETTER_AUTH_SECRET`: 최소 32자의 무작위 비밀값
 - `BETTER_AUTH_URL`: 실제 서비스 원본 URL(예: `https://church.example.com`)
-- `BOOTSTRAP_ADMIN_EMAIL`: 최초 관리자 이메일
-- `BOOTSTRAP_ADMIN_KEY`: 최초 관리자 1회 설정 키
 
 `wrangler.toml`의 `AUTH_KV` 바인딩은 첫 배포 시 Wrangler가 자동 생성합니다. Git 연동
 배포에서는 Cloudflare 대시보드에서 생성된 KV가 Worker의 `AUTH_KV`에 연결됐는지
@@ -27,15 +25,16 @@ Secrets에서 관리합니다. 미리보기 환경과 프로덕션 환경에 각
 npm run db:migrate
 ```
 
-신규 가입자는 `pending` 상태가 되며 관리자가 회원 관리 화면에서 승인합니다. 최초
-관리자는 로그인 후 `/setup/admin`에서 설정 키를 한 번 입력합니다. 자세한 배포,
-복구, 롤백 절차는 [OPERATIONS.md](./OPERATIONS.md)를 참고하세요.
+최초 배포 후 첫 관리자는 가입한 계정의 `user.role`을 데이터베이스에서 `admin`으로
+변경해야 합니다. 일반 가입자가 역할을 직접 지정할 수는 없습니다.
 
 ## 검증 및 배포
 
 ```bash
 npm ci
-npm run check
+npm run lint
+npx tsc --noEmit
+npm run cf-build
 npm run cf-preview
 npm run cf-deploy
 ```
@@ -43,9 +42,3 @@ npm run cf-deploy
 Git 연동 배포를 구성할 때도 Pages 프로젝트가 아닌 Workers 프로젝트를 사용합니다.
 OpenNext 산출물의 Worker 진입점은 `.open-next/worker.js`, 정적 자산 디렉터리는
 `.open-next/assets`이며 자세한 값은 `wrangler.toml`에 정의되어 있습니다.
-
----
-
-## 해야할 일
-
-1. 데이터 마이그레이션

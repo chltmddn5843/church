@@ -12,13 +12,14 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Cross } from "lucide-react"
 
-export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
+export function AuthForm({ mode, emailEnabled }: { mode: "sign-in" | "sign-up", emailEnabled: boolean }) {
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const isSignUp = mode === "sign-up"
 
@@ -38,6 +39,10 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
       return
     }
 
+    if (isSignUp && emailEnabled) {
+      setSuccess("인증 메일을 보냈습니다. 이메일 인증 후 관리자 승인을 기다려 주세요.")
+      return
+    }
     router.push("/")
     router.refresh()
   }
@@ -97,11 +102,14 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
               {error}
             </p>
           )}
+          {success && <p className="text-sm text-primary" role="status">{success}</p>}
 
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "잠시만 기다려 주세요..." : isSignUp ? "회원가입" : "로그인"}
           </Button>
         </form>
+
+        {!isSignUp && emailEnabled && <p className="mt-4 text-center text-sm"><Link href="/forgot-password" className="text-primary hover:underline">비밀번호를 잊으셨나요?</Link></p>}
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           {isSignUp ? "이미 계정이 있으신가요? " : "아직 계정이 없으신가요? "}

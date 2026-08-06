@@ -9,6 +9,7 @@ binding = "ASSETS"
 
 [vars]
 BETTER_AUTH_URL = "https://church.chltmddn5843.workers.dev"
+EMAIL_FROM = "원당교회 <noreply@wdchurch.com>"
 
 [secrets]
 required = ["BETTER_AUTH_SECRET"]

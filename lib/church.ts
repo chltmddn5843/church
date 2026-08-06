@@ -45,6 +45,7 @@ export const church = {
       children: [
         { title: "주일2부예배", href: "/sermons?category=주일예배" },
         { title: "금요예배", href: "/sermons?category=금요예배" },
+        { title: "새벽예배", href: "/sermons?category=새벽예배" },
         { title: "할렐루야 찬양대", href: "/sermons?category=찬양대" },
         { title: "특별예배·행사", href: "/sermons?category=특별예배" },
       ],
@@ -80,6 +81,7 @@ export const church = {
         { title: "가정예배순서지", href: "/community?category=가정예배순서지" },
         { title: "새가족소개", href: "/community?category=새가족소개" },
         { title: "자료실", href: "/community?category=자료실" },
+        { title: "회원자료", href: "/community?category=정관" },
         { title: "갤러리", href: "/gallery" },
       ],
     },

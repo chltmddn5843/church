@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm"
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
+import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 
 const now = sql`(unixepoch())`
 
@@ -71,9 +71,26 @@ export const posts = sqliteTable("posts", {
   authorId: text("authorId"),
   authorName: text("authorName").notNull().default("관리자"),
   pinned: integer("pinned", { mode: "boolean" }).notNull().default(false),
+  visibility: text("visibility").notNull().default("public"),
+  legacyBoard: integer("legacyBoard"),
+  legacyId: integer("legacyId"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
+}, (table) => [uniqueIndex("posts_legacy_unique").on(table.legacyBoard, table.legacyId)])
+
+export const attachments = sqliteTable("attachments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  postId: integer("postId").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  contentType: text("contentType").notNull(),
+  size: integer("size").notNull(),
 })
+
+export const userGroups = sqliteTable("user_groups", {
+  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  group: text("group").notNull(),
+}, (table) => [primaryKey({ columns: [table.userId, table.group] })])
 
 export const gallery = sqliteTable("gallery", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -100,5 +117,6 @@ export const contentPages = sqliteTable("content_pages", {
   content: text("content").notNull().default(""),
   imageUrl: text("imageUrl"),
   published: integer("published", { mode: "boolean" }).notNull().default(true),
+  visibility: text("visibility").notNull().default("public"),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })

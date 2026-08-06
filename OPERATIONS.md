@@ -11,6 +11,10 @@ Cloudflare Worker Secrets에 `BOOTSTRAP_ADMIN_EMAIL`과 충분히 긴 무작위
 `BETTER_AUTH_SECRET`은 모든 배포에서 필수다. 운영 도메인을 연결할 때
 `wrangler.toml`의 `BETTER_AUTH_URL`도 같은 주소로 변경한다.
 
+이메일 인증과 비밀번호 재설정은 Resend의 `RESEND_API_KEY` Secret과 인증된
+`EMAIL_FROM` 발신 주소가 모두 있을 때만 활성화된다. 발신 도메인 인증 전에는 이
+기능만 꺼지고 회원가입 후 관리자 승인 방식은 그대로 동작한다.
+
 ## 배포
 
 운영 배포는 `main` 브랜치만 사용한다.

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { getPost } from "@/lib/queries"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Calendar, User } from "lucide-react"
+import { ArrowLeft, Calendar, Download, User } from "lucide-react"
 
 export async function generateMetadata({
   params,
@@ -53,6 +53,7 @@ export default async function PostDetailPage({
         </div>
 
         <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>
+        {post.attachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{post.attachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 rounded-lg border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
       </div>
     </article>
   )

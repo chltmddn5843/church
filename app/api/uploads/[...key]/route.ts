@@ -1,13 +1,22 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { NextResponse } from "next/server"
+import { getDb } from "@/lib/db"
+import { attachments, posts } from "@/lib/db/schema"
+import { eq } from "drizzle-orm"
+import { canAccess, getViewerAccess } from "@/lib/access"
 
 export const dynamic = "force-dynamic"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ key: string[] }> }) {
   const { key } = await params
   const objectKey = key.join("/")
-  if (!objectKey.startsWith("popups/") || key.some((part) => !part || part === "." || part === "..")) {
+  if (!/^(popups|gallery|attachments)\//.test(objectKey) || key.some((part) => !part || part === "." || part === "..")) {
     return new NextResponse("Not found", { status: 404 })
+  }
+
+  if (objectKey.startsWith("attachments/")) {
+    const file = await getDb().select({ visibility: posts.visibility }).from(attachments).innerJoin(posts, eq(attachments.postId, posts.id)).where(eq(attachments.url, `/api/uploads/${objectKey}`)).get()
+    if (!file || !canAccess(file.visibility, await getViewerAccess())) return new NextResponse("Not found", { status: 404 })
   }
 
   const { env } = getCloudflareContext()
@@ -17,7 +26,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ key
   const headers = new Headers()
   object.writeHttpMetadata(headers)
   headers.set("etag", object.httpEtag)
-  headers.set("cache-control", "public, max-age=31536000, immutable")
+  headers.set("cache-control", objectKey.startsWith("attachments/") ? "private, no-store" : "public, max-age=31536000, immutable")
   headers.set("x-content-type-options", "nosniff")
   return new NextResponse(object.body, { headers })
 }

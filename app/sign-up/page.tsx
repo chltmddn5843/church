@@ -9,5 +9,5 @@ export const metadata = { title: "회원가입" }
 export default async function SignUpPage() {
   const user = await getSessionUser()
   if (user) redirect("/")
-  return <AuthForm mode="sign-up" />
+  return <AuthForm mode="sign-up" emailEnabled={Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)} />
 }

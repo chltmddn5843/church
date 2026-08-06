@@ -9,5 +9,5 @@ export const metadata = { title: "로그인" }
 export default async function SignInPage() {
   const user = await getSessionUser()
   if (user) redirect("/")
-  return <AuthForm mode="sign-in" />
+  return <AuthForm mode="sign-in" emailEnabled={Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)} />
 }

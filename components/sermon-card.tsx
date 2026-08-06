@@ -16,10 +16,11 @@ function thumb(youtubeId: string | null) {
   return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : "/images/cross-light.png"
 }
 
-export function SermonCard({ sermon }: { sermon: Sermon }) {
+export function SermonCard({ sermon, href }: { sermon: Sermon, href?: string }) {
   return (
     <Link
-      href={`/sermons/${sermon.id}`}
+      href={href ?? `/sermons/${sermon.id}`}
+      target={href ? "_blank" : undefined}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-muted">

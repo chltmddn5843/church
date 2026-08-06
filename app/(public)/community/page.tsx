@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "원당교회의 교회소식과 공지사항을 확인하세요.",
 }
 
-const categories = ["전체", "교회소식", "공지사항", "가정예배순서지", "새가족소개", "자료실"]
+const categories = ["전체", "교회소식", "공지사항", "가정예배순서지", "새가족소개", "자료실", "정관", "헌금 내역", "제직회"]
 
 export default async function CommunityPage({
   searchParams,
