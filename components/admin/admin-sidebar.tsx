@@ -11,6 +11,8 @@ import {
   LayoutDashboard,
   LogOut,
   Newspaper,
+  Paperclip,
+  BarChart3,
   Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -22,6 +24,8 @@ const links = [
   { href: "/admin/sermons", label: "설교 관리", icon: BookOpen },
   { href: "/admin/posts", label: "소식·공지 관리", icon: Newspaper },
   { href: "/admin/gallery", label: "갤러리 관리", icon: ImageIcon },
+  { href: "/admin/attachments", label: "첨부파일 관리", icon: Paperclip },
+  { href: "/admin/statistics", label: "조회수 통계", icon: BarChart3 },
   { href: "/admin/pages", label: "소개 페이지 관리", icon: FileText },
   { href: "/admin/members", label: "회원 관리", icon: Users },
 ]

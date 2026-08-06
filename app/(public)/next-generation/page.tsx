@@ -11,40 +11,79 @@ export const metadata: Metadata = {
 
 const departments = [
   {
-    id: "kids",
-    name: "영유아·유치부",
-    age: "만 0~7세",
-    time: "주일 오전 11:00",
-    place: "교육관 1층",
-    desc: "하나님의 사랑을 처음 배우는 우리 아이들, 놀이와 찬양으로 신앙의 첫걸음을 뗍니다.",
-    image: "/images/next-generation.png",
+    id: "toddler",
+    name: "유아부",
+    age: "2~4세(12개월 이상)와 부모",
+    time: "주일 오전 10:10~10:50",
+    place: "소망관 1층 사무엘홀",
+    desc: "부모님과 함께 찬양하고 예배하며, 하나님과 말씀을 중심으로 예수님의 작은 제자로 자라가는 공동체입니다.",
+    image: "/images/next-generation/toddler.jpg",
   },
   {
-    id: "children",
-    name: "아동부",
-    age: "초등 1~6학년",
+    id: "kindergarten",
+    name: "유치부",
+    age: "5~7세",
     time: "주일 오전 11:00",
-    place: "교육관 2층",
-    desc: "말씀과 활동으로 예수님을 인격적으로 만나고 믿음의 친구를 사귀는 시간입니다.",
-    image: "/images/gallery-4.png",
+    place: "소망관 2층 다윗홀",
+    desc: "즐겁게 찬양하고 기도하며 말씀을 배우고, 바른 예배 습관과 말씀 묵상으로 세상의 빛과 소금이 되는 예수님의 꼬마 제자를 세웁니다.",
+    image: "/images/next-generation/kindergarten.jpg",
   },
   {
-    id: "youth",
-    name: "청소년부",
-    age: "중·고등학생",
-    time: "주일 오후 02:00",
-    place: "교육관 3층",
-    desc: "치열한 삶의 현장에서 믿음을 지키는 청소년, 예배와 소그룹으로 함께 성장합니다.",
-    image: "/images/gallery-1.png",
+    id: "elementary",
+    name: "초등부",
+    age: "초등학교 4~6학년",
+    time: "주일 오전 10:55~12:20",
+    place: "사랑관 2층 드림홀",
+    desc: "즐겁게 찬양하고 기도로 깊어지며 말씀과 성경적 세계관으로 성장하는, 제자 되고 제자 삼는 공동체입니다.",
+    image: "/images/next-generation/elementary.png",
+  },
+  {
+    id: "middle",
+    name: "중등부",
+    age: "중학교 1~3학년(14~16세)",
+    time: "주일 오전 11:00~12:20",
+    place: "사랑관 3층 디모데홀",
+    desc: "바른 말씀으로 건강한 자아와 하나님의 가치관을 세우고, 세상이 감당하지 못하는 믿음의 사람으로 훈련받습니다.",
+    image: "/images/next-generation/middle.jpg",
+    contain: true,
+  },
+  {
+    id: "high",
+    name: "고등부",
+    age: "고등학교 1~3학년(17~19세)",
+    time: "주일 오전 11:00~12:20",
+    place: "소망관 2층 다니엘홀",
+    desc: "말씀과 기도로 건강한 자기 이해와 하나님의 가치관을 세워, 하나님을 기쁘시게 하는 믿음의 사람으로 성장합니다.",
+    image: "/images/next-generation/high.jpg",
   },
   {
     id: "young-adult",
     name: "청년부",
-    age: "20~30대 청년",
-    time: "주일 오후 02:00",
-    place: "비전홀",
-    desc: "시대를 깨우는 청년, 예배와 공동체 안에서 하나님의 부르심을 발견합니다.",
-    image: "/images/gallery-3.png",
+    age: "20~35세",
+    time: "주일 오후 2:00~3:30",
+    place: "사랑관 3층 디모데홀",
+    desc: "한 성령 안에서 예배하며 예수 생명으로 회복되고, 믿음과 사랑으로 서로를 세워 세상을 변화시키는 예수님의 제자 공동체입니다.",
+    image: "/images/next-generation/young-adult.jpg",
+  },
+  {
+    id: "english",
+    name: "영어예배부",
+    age: "초등학교 1~6학년",
+    time: "주일 오전 9:00~10:10",
+    place: "사랑관 2층 드림홀",
+    desc: "영어 학습보다 예배의 본질에 집중하며, 영어 찬양과 말씀을 도구로 하나님께 즐겁게 나아가고 하나님을 경험하도록 돕습니다.",
+    image: "/images/next-generation/english.jpg",
+    contain: true,
+  },
+  {
+    id: "awana",
+    name: "어와나(AWANA)",
+    age: "7세~고등학생",
+    time: "주일 오후 2:00 · YM 토요일 오전 10:00",
+    place: "사랑관 2층 드림홀 · 1층 만나홀",
+    desc: "복음과 성경 암송, 재미있는 활동을 통해 어린이와 청소년이 예수 그리스도를 알고 사랑하고 섬기도록 훈련합니다. 참여 전 입단 과정이 필요합니다.",
+    image: "/images/next-generation/awana.jpg",
+    contain: true,
   },
 ]
 
@@ -71,8 +110,8 @@ export default function NextGenerationPage() {
                 id={d.id}
                 className="grid scroll-mt-24 items-center gap-8 md:grid-cols-2"
               >
-                <div className={`relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg ${i % 2 === 1 ? "md:order-2" : ""}`}>
-                  <Image src={d.image || "/placeholder.svg"} alt={d.name} fill className="object-cover" />
+                <div className={`relative aspect-[4/3] overflow-hidden rounded-2xl bg-secondary shadow-lg ${i % 2 === 1 ? "md:order-2" : ""}`}>
+                  <Image src={d.image} alt={d.name} fill className={d.contain ? "object-contain" : "object-cover"} />
                 </div>
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-widest text-primary">{d.age}</p>

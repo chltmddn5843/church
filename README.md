@@ -42,3 +42,13 @@ npm run cf-deploy
 Git 연동 배포를 구성할 때도 Pages 프로젝트가 아닌 Workers 프로젝트를 사용합니다.
 OpenNext 산출물의 Worker 진입점은 `.open-next/worker.js`, 정적 자산 디렉터리는
 `.open-next/assets`이며 자세한 값은 `wrangler.toml`에 정의되어 있습니다.
+
+
+---
+
+
+
+## To - do
+
+1. /Users/chltmddn5843/Documents/GitHub/church/public 이미지 바꾸기
+2.

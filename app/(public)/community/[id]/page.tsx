@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getPost } from "@/lib/queries"
+import { getPost, incrementPostView } from "@/lib/queries"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, Download, User } from "lucide-react"
+import { after } from "next/server"
 
 export async function generateMetadata({
   params,
@@ -25,6 +26,7 @@ export default async function PostDetailPage({
   const { id } = await params
   const post = await getPost(Number(id))
   if (!post) notFound()
+  after(() => incrementPostView(post.id))
 
   return (
     <article className="py-12 md:py-16">
@@ -50,6 +52,7 @@ export default async function PostDetailPage({
             <Calendar className="h-4 w-4" />
             {new Date(post.createdAt).toLocaleDateString("ko-KR")}
           </span>
+          <span>조회 {post.views.toLocaleString("ko-KR")}</span>
         </div>
 
         <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>

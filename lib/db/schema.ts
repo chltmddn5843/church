@@ -74,6 +74,7 @@ export const posts = sqliteTable("posts", {
   visibility: text("visibility").notNull().default("public"),
   legacyBoard: integer("legacyBoard"),
   legacyId: integer("legacyId"),
+  views: integer("views").notNull().default(0),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 }, (table) => [uniqueIndex("posts_legacy_unique").on(table.legacyBoard, table.legacyId)])
@@ -85,6 +86,7 @@ export const attachments = sqliteTable("attachments", {
   url: text("url").notNull(),
   contentType: text("contentType").notNull(),
   size: integer("size").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
 })
 
 export const userGroups = sqliteTable("user_groups", {

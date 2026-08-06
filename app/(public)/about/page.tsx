@@ -19,14 +19,20 @@ const visions = [
 
 const staff = [
   { name: church.pastor, role: "담임목사", image: "/images/wd-pastor.jpg" },
-  { name: "나정주", role: "부목사", image: "/placeholder-user.jpg" },
-  { name: "신요섭", role: "부목사", image: "/placeholder-user.jpg" },
-  { name: "허철", role: "부목사", image: "/placeholder-user.jpg" },
-  { name: "오보배", role: "전도사", image: "/placeholder-user.jpg" },
-  { name: "고강건", role: "전도사", image: "/placeholder-user.jpg" },
-  { name: "이경은", role: "전도사", image: "/placeholder-user.jpg" },
-  { name: "조은경", role: "교육간사", image: "/placeholder-user.jpg" },
-  { name: "김미경", role: "목회행정간사", image: "/placeholder-user.jpg" },
+  { name: "나정주", role: "부목사", image: "/images/staff/na-jeongju.png" },
+  { name: "신요섭", role: "부목사", image: "/images/staff/shin-yoseop.png" },
+  { name: "허철", role: "부목사", image: "/images/staff/heo-cheol.jpg" },
+  { name: "오보배", role: "전도사", image: "/images/staff/oh-bobae.jpg" },
+  { name: "고강건", role: "전도사", image: "/images/staff/go-ganggeon.png" },
+  { name: "이경은", role: "전도사", image: "/images/staff/lee-gyeongeun.jpg" },
+  { name: "조은경", role: "교육간사", image: "/images/staff/jo-eungyeong.jpg" },
+  { name: "김미경", role: "목회행정간사", image: "/images/staff/kim-migyeong.jpg" },
+]
+
+const elders = [
+  { name: "정경위", role: "장로", image: "/images/staff/jeong-gyeongwi.jpg" },
+  { name: "권태식", role: "장로", image: "/images/staff/gwon-taesik.jpg" },
+  { name: "허수행", role: "장로", image: "/images/staff/heo-suhaeng.jpg" },
 ]
 
 export default function AboutPage() {
@@ -77,6 +83,18 @@ export default function AboutPage() {
                 </span>
                 <h3 className="mt-4 font-serif text-xl font-bold text-foreground">{v.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{v.desc}</p>
+              </div>
+            ))}
+          </div>
+          <h3 className="mt-16 text-center font-serif text-2xl font-bold">장로</h3>
+          <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            {elders.map((p) => (
+              <div key={p.name} className="text-center">
+                <div className="relative mx-auto aspect-square w-40 overflow-hidden rounded-full shadow-md">
+                  <Image src={p.image} alt={p.name} fill className="object-cover object-top" />
+                </div>
+                <h4 className="mt-4 font-serif text-lg font-bold text-foreground">{p.name}</h4>
+                <p className="text-sm text-primary">{p.role}</p>
               </div>
             ))}
           </div>

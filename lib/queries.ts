@@ -1,7 +1,7 @@
 import "server-only"
 import { getDb } from "@/lib/db"
 import { sermons, posts, gallery, popups, attachments } from "@/lib/db/schema"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
 export async function getSermons(category?: string, limit?: number) {
@@ -34,6 +34,10 @@ export async function getPost(id: number) {
   const post = await db.select().from(posts).where(eq(posts.id, id)).limit(1).get()
   if (!post || !canAccess(post.visibility, await getViewerAccess())) return null
   return { ...post, attachments: await db.select().from(attachments).where(eq(attachments.postId, post.id)) }
+}
+
+export async function incrementPostView(id: number) {
+  await getDb().update(posts).set({ views: sql`${posts.views} + 1` }).where(eq(posts.id, id))
 }
 
 export async function getLegacyPost(board: number, id: number) {

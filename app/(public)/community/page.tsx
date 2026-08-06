@@ -5,13 +5,15 @@ import { PageBanner } from "@/components/page-banner"
 import { Badge } from "@/components/ui/badge"
 import { Pin } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { getSessionUser } from "@/lib/session"
 
 export const metadata: Metadata = {
   title: "커뮤니티",
   description: "원당교회의 교회소식과 공지사항을 확인하세요.",
 }
 
-const categories = ["전체", "교회소식", "공지사항", "가정예배순서지", "새가족소개", "자료실", "정관", "헌금 내역", "제직회"]
+const categories = ["전체", "공지사항", "교회소식", "새가족소개", "가정예배순서지"]
 
 export default async function CommunityPage({
   searchParams,
@@ -20,6 +22,7 @@ export default async function CommunityPage({
 }) {
   const { category } = await searchParams
   const posts = await getPosts(category)
+  const user = await getSessionUser()
 
   return (
     <>
@@ -47,7 +50,13 @@ export default async function CommunityPage({
             })}
           </div>
 
-          <div className="mt-10 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+          {user?.role === "admin" && (
+            <div className="mt-6 flex justify-end">
+              <Button render={<Link href="/admin/posts" />} nativeButton={false}>글쓰기</Button>
+            </div>
+          )}
+
+          <div className={`${user?.role === "admin" ? "mt-4" : "mt-10"} divide-y divide-border overflow-hidden rounded-xl border border-border bg-card`}>
             {posts.length > 0 ? (
               posts.map((post) => (
                 <Link
@@ -65,9 +74,7 @@ export default async function CommunityPage({
                     </div>
                     <h3 className="mt-1.5 truncate font-medium text-foreground">{post.title}</h3>
                   </div>
-                  <time className="shrink-0 text-sm text-muted-foreground" dateTime={new Date(post.createdAt).toISOString()}>
-                    {new Date(post.createdAt).toLocaleDateString("ko-KR")}
-                  </time>
+                  <div className="shrink-0 text-right text-sm text-muted-foreground"><time dateTime={new Date(post.createdAt).toISOString()}>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</time><p>조회 {post.views.toLocaleString("ko-KR")}</p></div>
                 </Link>
               ))
             ) : (
