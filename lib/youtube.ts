@@ -32,3 +32,12 @@ export async function getYoutubeSermons(category?: string) {
     return []
   }
 }
+
+export function parseYoutubeId(input: string): string | null {
+  const value = input.trim()
+  for (const pattern of [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([\w-]{11})/, /^([\w-]{11})$/]) {
+    const match = value.match(pattern)
+    if (match) return match[1]
+  }
+  return null
+}

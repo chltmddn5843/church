@@ -5,21 +5,7 @@ import { getDb } from "@/lib/db"
 import { sermons } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
-
-/** Extract a YouTube video id from a full URL or return the raw id. */
-function parseYoutubeId(input: string): string | null {
-  if (!input) return null
-  const trimmed = input.trim()
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([\w-]{11})/,
-    /^([\w-]{11})$/,
-  ]
-  for (const p of patterns) {
-    const m = trimmed.match(p)
-    if (m) return m[1]
-  }
-  return null
-}
+import { parseYoutubeId } from "@/lib/youtube"
 
 export async function createSermon(formData: FormData) {
   await requireAdmin()

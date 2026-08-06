@@ -13,6 +13,7 @@ import {
   Newspaper,
   Paperclip,
   BarChart3,
+  Radio,
   Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -20,6 +21,7 @@ import { authClient } from "@/lib/auth-client"
 
 const links = [
   { href: "/admin", label: "관리자 메인", icon: LayoutDashboard },
+  { href: "/admin/live", label: "생방송 관리", icon: Radio },
   { href: "/admin/popups", label: "팝업 관리", icon: Bell },
   { href: "/admin/sermons", label: "설교 관리", icon: BookOpen },
   { href: "/admin/posts", label: "소식·공지 관리", icon: Newspaper },

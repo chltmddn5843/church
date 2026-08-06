@@ -30,7 +30,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-[#928e8f]">
+    <header className="sticky top-0 z-50 w-full border-b border-white/15 bg-primary text-white">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:h-20">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -43,7 +43,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             <div key={item.title} className="group relative">
               <Link
                 href={item.href}
-                className="flex items-center gap-1 rounded-md px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary hover:text-primary"
+                className="flex items-center gap-1 rounded-md px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-white/15 hover:text-white"
               >
                 {item.title}
                 <ChevronDown className="h-3 w-3 opacity-50 transition-transform group-hover:rotate-180" />
@@ -53,7 +53,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                   <Link
                     key={child.title}
                     href={child.href}
-                    className="block rounded-sm px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
+                    className="block rounded-sm px-3 py-2.5 text-base text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
                   >
                     {child.title}
                   </Link>
@@ -68,12 +68,12 @@ export function SiteHeader({ user }: { user: SessionUser }) {
           {user ? (
             <>
               {user.role === "admin" && (
-                <Button render={<Link href="/admin" />} nativeButton={false} size="sm" className="hidden sm:inline-flex">
+                <Button render={<Link href="/admin" />} nativeButton={false} size="sm" className="hidden bg-white text-primary hover:bg-white/90 sm:inline-flex">
                   관리자
                 </Button>
               )}
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="gap-2" />}>
+                <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="gap-2 text-white hover:bg-white/15 hover:text-white" />}>
                   <>
                     <User className="h-4 w-4" />
                     <span className="hidden sm:inline">{user.name}</span>
@@ -94,10 +94,10 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             </>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Button render={<Link href="/sign-in" />} nativeButton={false} variant="ghost" size="sm">
+              <Button render={<Link href="/sign-in" />} nativeButton={false} variant="ghost" size="sm" className="text-white hover:bg-white/15 hover:text-white">
                 로그인
               </Button>
-              <Button render={<Link href="/sign-up" />} nativeButton={false} size="sm">
+              <Button render={<Link href="/sign-up" />} nativeButton={false} size="sm" className="bg-white text-primary hover:bg-white/90">
                 회원가입
               </Button>
             </div>
@@ -105,7 +105,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
 
           {/* Mobile menu */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="메뉴 열기" />} className="lg:hidden">
+            <SheetTrigger render={<Button variant="ghost" size="icon" aria-label="메뉴 열기" className="text-white hover:bg-white/15 hover:text-white" />} className="lg:hidden">
               <>
                 <Menu className="h-5 w-5" />
               </>
@@ -118,7 +118,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
-                      className="block px-2 py-2 font-semibold text-foreground"
+                      className="block px-2 py-2 text-lg font-semibold text-foreground"
                     >
                       {item.title}
                     </Link>
@@ -128,7 +128,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                           key={child.title}
                           href={child.href}
                           onClick={() => setOpen(false)}
-                          className="rounded-sm px-2 py-1.5 text-sm text-muted-foreground hover:text-primary"
+                          className="rounded-sm px-2 py-2 text-base text-muted-foreground hover:text-primary"
                         >
                           {child.title}
                         </Link>

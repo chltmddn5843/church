@@ -52,16 +52,25 @@ export default function AboutPage() {
           </div>
           <div>
             <SectionHeading eyebrow="Greeting" title="담임목사 인사말" align="left" />
-            <div className="mt-6 space-y-4 leading-relaxed text-muted-foreground">
-              <p>
-                원당교회 홈페이지를 찾아주신 여러분을 주님의 이름으로 진심으로 환영합니다. 우리 교회는 하나님의 말씀 위에 세워지는 건강한 교회를 지향합니다.
-              </p>
-              <p>
-                예배를 통해 하나님께 영광을 돌리고, 말씀과 기도로 성숙한 제자를 세우며, 사랑으로 이웃과 지역
-                사회를 섬기는 공동체가 되기를 소망합니다. 지치고 상한 영혼이 이곳에서 참된 안식과 회복을
-                경험하시길 기도합니다.
-              </p>
-              <p>여러분의 가정과 삶에 하나님의 은혜와 평강이 늘 함께하시기를 축원합니다.</p>
+            <div className="mt-6 space-y-6 leading-relaxed text-muted-foreground">
+              <div className="space-y-2">
+                <p>안녕하세요.<br />원당교회 홈페이지를 방문해 주셔서 감사합니다.</p>
+                <p className="font-medium text-foreground">인생의 방황은 예수님을 만나면 끝이 나고 신앙의 방황은 좋은 교회를 만나면 끝이 납니다.</p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-serif text-xl font-bold text-primary">원당교회는 제자 되고 제자 삼는 교회입니다.</h3>
+                <p>제자는 예수님의 인격을 닮아야 하고 예수님께서 하신 사역을 감당해야 합니다. 그러기 위해 우리는 끊임없이 배우고 훈련하는 일에 게을리하지 않고, 배우면서 다른 사람을 내 어깨 위에 세우도록 힘쓰고 있습니다.</p>
+                <p>바라기는 원당교회를 통해 우리 모두가 예수님의 작은 제자가 되어 하나님께 영광을 돌리며, 가정에서부터 인정받고 주변 이웃들에게 좋은 이웃이 되어 주며 대한민국의 좋은 국민이라는 소리를 듣기를 기도하고 소망합니다.</p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-serif text-xl font-bold text-primary">원당교회는 시대적 사명으로 예배의 회복에 힘쓰고 있습니다.</h3>
+                <p>하나님의 영광의 임재가 충만한 예배를 통해 하나님과의 관계가 회복되고 영과 육이 치유되며, 우리 삶의 목적과 방향을 확인하고 힘을 얻어 삶의 예배자로 살아가고자 힘쓰고 있습니다.</p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-serif text-xl font-bold text-primary">원당교회의 또 다른 시대적 사명으로 다음 세대를 세우는 일에 힘쓰고 있습니다.</h3>
+                <p>원당교회는 젊은 교회로서 앞으로가 더 소망이 있는 교회입니다. 하나님께서 다음 세대 자녀들을 많이 보내주셔서 주일학교 신앙교육에 우선적으로 힘쓰고 있습니다. 어려서부터 말씀 암송과 제자훈련을 통한 체계적인 교육과정을 만들어 하나님 나라와 열방과 민족을 이끌어 갈 리더로 세우기 위해 최선을 다하고 있습니다.</p>
+              </div>
+              <p>바라고 기도하기는 원당교회를 통해 예수님을 만나고 제자로 훈련되어, 원당교회의 비전과 사명과 역할에 함께 동역하는 기쁨과 행복을 누리시기를 바랍니다.</p>
             </div>
             <p className="mt-6 font-serif text-lg font-bold text-foreground">
               {church.pastorTitle} {church.pastor}

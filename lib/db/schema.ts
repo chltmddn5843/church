@@ -122,3 +122,9 @@ export const contentPages = sqliteTable("content_pages", {
   visibility: text("visibility").notNull().default("public"),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
+
+export const liveStream = sqliteTable("live_stream", {
+  id: integer("id").primaryKey().default(1),
+  youtubeId: text("youtubeId").notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
+})
