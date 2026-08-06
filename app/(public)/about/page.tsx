@@ -55,7 +55,7 @@ export default function AboutPage() {
             <div className="mt-6 space-y-6 leading-relaxed text-muted-foreground">
               <div className="space-y-2">
                 <p>안녕하세요.<br />원당교회 홈페이지를 방문해 주셔서 감사합니다.</p>
-                <p className="font-medium text-foreground">인생의 방황은 예수님을 만나면 끝이 나고 신앙의 방황은 좋은 교회를 만나면 끝이 납니다.</p>
+                <p className="text-foreground">인생의 방황은 예수님을 만나면 끝이 나고 신앙의 방황은 좋은 교회를 만나면 끝이 납니다.</p>
               </div>
               <div className="space-y-2">
                 <h3 className="font-serif text-xl font-bold text-primary">원당교회는 제자 되고 제자 삼는 교회입니다.</h3>

@@ -21,39 +21,44 @@ const links = [
     href: "/community",
     image: "/images/gallery-2.png",
   },
+  {
+    title: "갤러리",
+    desc: "원당교회의 예배와 공동체 이야기를 사진으로 만나보세요.",
+    href: "/gallery",
+    image: "/images/gallery-1.png",
+  },
 ]
 
 export function QuickLinks() {
   return (
-    <section className="py-16 md:py-20">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="grid gap-6 md:grid-cols-3">
+    <section>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4">
           {links.map((link) => (
             <Link
               key={link.title}
               href={link.href}
-              className="group relative overflow-hidden rounded-2xl border border-border shadow-sm transition-all hover:shadow-lg"
+              className="group relative min-h-[360px] overflow-hidden bg-black md:min-h-[480px]"
             >
-              <div className="relative h-56 w-full overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
                 <Image
                   src={link.image || "/placeholder.svg"}
                   alt={link.title}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
+                <div className="absolute inset-0 bg-black/35 transition-colors duration-300 group-hover:bg-black/65" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
-                <h3 className="font-serif text-2xl font-bold">{link.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed opacity-90">{link.desc}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-accent">
+              <div className="relative flex min-h-[360px] flex-col items-center justify-center px-8 text-center text-white md:min-h-[480px]">
+                <h3 className="font-serif text-3xl font-bold md:text-4xl">{link.title}</h3>
+                <span className="my-6 h-px w-12 bg-white/80" />
+                <p className="max-w-xs text-base leading-relaxed text-white/90">{link.desc}</p>
+                <span className="mt-6 inline-flex items-center gap-1 text-base font-medium text-white">
                   자세히 보기
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>
             </Link>
           ))}
-        </div>
       </div>
     </section>
   )

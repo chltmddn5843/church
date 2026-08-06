@@ -5,10 +5,10 @@ export const church = {
   denomination: "대한예수교장로회",
   pastor: "양승철",
   pastorTitle: "담임목사",
-  slogan: "말씀 위에 세워지는 건강한 교회",
+  slogan: "제자되고 제자삼는 교회",
   subSlogan: "예배로 하나님께 영광을, 사랑으로 이웃을 섬기는 원당교회입니다.",
-  address: "인천광역시 서구 이음1로 320 (원당동 1088)",
-  addressShort: "인천광역시 서구 이음1로 320",
+  address: "인천광역시 검단구 이음1로 320 (원당동 1088)",
+  addressShort: "인천광역시 검단구 이음1로 320",
   tel: "032-563-4943",
   fax: "032-563-1425",
   email: "wdchurch@wdchurch.com",
@@ -23,7 +23,7 @@ export const church = {
     { name: "주일 3부 예배", time: "오후 12:00", place: "비전홀" },
     { name: "주일 청년부 예배", time: "오후 02:00", place: "비전홀" },
     { name: "금요 예배", time: "저녁 09:00", place: "비전홀" },
-    { name: "새벽 기도회", time: "새벽 05:00", place: "비전홀 (화~금)" },
+    { name: "새벽 예배", time: "새벽 05:00", place: "비전홀 (화~금)" },
   ],
   nav: [
     {
