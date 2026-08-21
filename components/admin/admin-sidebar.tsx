@@ -45,7 +45,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="shrink-0 border-b border-[#dedede] bg-[#fafafa] md:w-[260px] md:border-r md:border-b-0">
+    <aside className="shrink-0 border-b border-[#cfe6f4] bg-[#f6fbff] md:w-[260px] md:border-r md:border-b-0">
       <nav aria-label="관리자 메뉴" className="flex overflow-x-auto md:block md:py-8">
         {links.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href)
@@ -55,10 +55,10 @@ export function AdminSidebar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex h-14 shrink-0 items-center gap-3 border-r border-[#e2e2e2] px-5 text-sm font-medium transition-colors md:h-[62px] md:w-full md:border-r-0 md:border-b md:px-7 md:first:border-t",
+                "flex h-14 shrink-0 items-center gap-3 border-r border-[#d7ebf6] px-5 text-sm font-medium transition-colors md:h-[62px] md:w-full md:border-r-0 md:border-b md:px-7 md:first:border-t",
                 active
-                  ? "bg-[#e8f2fa] text-[#20597d] md:shadow-[inset_4px_0_0_#2d739e]"
-                  : "text-[#444] hover:bg-[#f1f1f1] hover:text-black",
+                  ? "bg-[#dff3ff] text-[#176b9f] md:shadow-[inset_4px_0_0_#2f8fc6]"
+                  : "text-[#496879] hover:bg-[#eaf7ff] hover:text-[#183247]",
               )}
             >
               <Icon className="size-[18px]" strokeWidth={2.2} />
@@ -68,14 +68,14 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="hidden border-t border-[#dedede] md:block">
-        <Link href="/" className="flex h-14 items-center gap-3 px-7 text-sm text-[#555] hover:bg-[#f1f1f1]">
+      <div className="hidden border-t border-[#cfe6f4] md:block">
+        <Link href="/" className="flex h-14 items-center gap-3 px-7 text-sm text-[#496879] hover:bg-[#eaf7ff]">
           <Home className="size-[18px]" /> 홈페이지 보기
         </Link>
         <button
           type="button"
           onClick={handleSignOut}
-          className="flex h-14 w-full items-center gap-3 px-7 text-sm text-[#555] hover:bg-[#f1f1f1]"
+          className="flex h-14 w-full items-center gap-3 px-7 text-sm text-[#496879] hover:bg-[#eaf7ff]"
         >
           <LogOut className="size-[18px]" /> 로그아웃
         </button>

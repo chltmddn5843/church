@@ -13,7 +13,7 @@ export default async function AdminPopupsPage() {
   return (
     <>
       <div className="border-b border-[#dedede] pb-7">
-        <p className="text-sm font-medium text-[#39715d]">POPUP MANAGEMENT</p>
+        <p className="text-sm font-medium text-[#2f8fc6]">POPUP MANAGEMENT</p>
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.04em]">팝업 관리</h1>
         <p className="mt-2 text-sm text-[#777]">홈페이지에 표시할 팝업 이미지와 크기, 노출 상태를 관리합니다.</p>
       </div>
@@ -33,7 +33,7 @@ export default async function AdminPopupsPage() {
               <article key={item.id} className="overflow-hidden border border-[#dedede] bg-white">
                 <div className="relative aspect-[4/3] bg-[#f3f3f3]">
                   {item.imageUrl ? <Image src={item.imageUrl} alt={item.title} fill className="object-contain" /> : <div className="flex h-full items-center justify-center text-sm text-[#aaa]">이미지 없음</div>}
-                  <span className={`absolute left-3 top-3 px-2 py-1 text-xs font-medium ${item.active ? "bg-[#39715d] text-white" : "bg-[#555] text-white"}`}>{item.active ? "노출 중" : "숨김"}</span>
+                  <span className={`absolute left-3 top-3 px-2 py-1 text-xs font-medium ${item.active ? "bg-[#2f8fc6] text-white" : "bg-[#5b7180] text-white"}`}>{item.active ? "노출 중" : "숨김"}</span>
                 </div>
                 <div className="p-4">
                   <h3 className="truncate font-semibold">{item.title}</h3>

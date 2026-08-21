@@ -49,38 +49,38 @@
 
 :root {
   color-scheme: light;
-  --background: #fcfaf9;
-  --foreground: #2f2726;
+  --background: #f6fbff;
+  --foreground: #183247;
   --card: #ffffff;
-  --card-foreground: #2f2726;
+  --card-foreground: #183247;
   --popover: #ffffff;
-  --popover-foreground: #2f2726;
-  --primary: #7d4f4a;
+  --popover-foreground: #183247;
+  --primary: #2f8fc6;
   --primary-foreground: #ffffff;
-  --secondary: #f2e3e0;
-  --secondary-foreground: #4c302d;
-  --muted: #f5efed;
-  --muted-foreground: #6b5b58;
-  --accent: #d9b3ad;
-  --accent-foreground: #402927;
+  --secondary: #e8f6ff;
+  --secondary-foreground: #214861;
+  --muted: #eef7fc;
+  --muted-foreground: #5b7180;
+  --accent: #bfe7fb;
+  --accent-foreground: #17384f;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e3d2ce;
-  --input: #e3d2ce;
-  --ring: #7d4f4a;
-  --chart-1: oklch(0.38 0.06 160);
-  --chart-2: oklch(0.55 0.09 160);
-  --chart-3: oklch(0.76 0.11 78);
-  --chart-4: oklch(0.6 0.05 200);
-  --chart-5: oklch(0.45 0.04 155);
+  --border: #cfe6f4;
+  --input: #cfe6f4;
+  --ring: #2f8fc6;
+  --chart-1: #2f8fc6;
+  --chart-2: #77c7e8;
+  --chart-3: #9dd7f1;
+  --chart-4: #5fa7d2;
+  --chart-5: #b9e8df;
   --radius: 0.75rem;
-  --sidebar: oklch(0.42 0.07 155);
-  --sidebar-foreground: oklch(0.95 0.01 120);
-  --sidebar-primary: oklch(0.76 0.11 78);
-  --sidebar-primary-foreground: oklch(0.24 0.03 70);
-  --sidebar-accent: oklch(0.4 0.05 160);
-  --sidebar-accent-foreground: oklch(0.98 0.01 120);
-  --sidebar-border: oklch(0.4 0.04 160);
-  --sidebar-ring: oklch(0.76 0.11 78);
+  --sidebar: #e8f6ff;
+  --sidebar-foreground: #183247;
+  --sidebar-primary: #2f8fc6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #d8effb;
+  --sidebar-accent-foreground: #183247;
+  --sidebar-border: #cfe6f4;
+  --sidebar-ring: #2f8fc6;
 }
 
 .dark {
@@ -124,6 +124,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: radial-gradient(circle at 10% 0%, rgb(217 179 173 / 18%), transparent 32rem);
+    background-image:
+      radial-gradient(circle at 12% 0%, rgb(191 231 251 / 45%), transparent 34rem),
+      radial-gradient(circle at 88% 10%, rgb(185 232 223 / 28%), transparent 30rem);
   }
 }

@@ -12,8 +12,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const admin = await requireAdmin()
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] text-[#292929]">
-      <header className="flex h-[72px] items-center justify-between bg-[#202020] px-5 text-white md:px-8">
+    <div className="min-h-screen bg-[#f3f9fd] text-[#183247]">
+      <header className="flex h-[72px] items-center justify-between bg-[#1f7fb7] px-5 text-white md:px-8">
         <Link href="/admin" className="font-serif text-xl font-semibold tracking-[-0.04em] md:text-2xl">
           원당교회
         </Link>

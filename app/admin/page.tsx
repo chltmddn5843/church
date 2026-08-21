@@ -19,17 +19,17 @@ export default async function AdminPage() {
   ])
 
   const cards = [
-    { label: "등록된 설교", value: values[0], href: "/admin/sermons", icon: BookOpen, tone: "bg-[#eef6f3] text-[#39715d]" },
-    { label: "소식 및 공지", value: values[1], href: "/admin/posts", icon: Newspaper, tone: "bg-[#eef4fa] text-[#3d6688]" },
-    { label: "갤러리 사진", value: values[2], href: "/admin/gallery", icon: ImageIcon, tone: "bg-[#faf3e9] text-[#936b37]" },
-    { label: "등록된 팝업", value: values[3], href: "/admin/popups", icon: Bell, tone: "bg-[#f7eff5] text-[#865676]" },
-    { label: "전체 회원", value: values[4], href: "/admin/members", icon: Users, tone: "bg-[#f1f1f1] text-[#555]" },
+    { label: "등록된 설교", value: values[0], href: "/admin/sermons", icon: BookOpen, tone: "bg-[#e3f4ff] text-[#176b9f]" },
+    { label: "소식 및 공지", value: values[1], href: "/admin/posts", icon: Newspaper, tone: "bg-[#edf9ff] text-[#2f8fc6]" },
+    { label: "갤러리 사진", value: values[2], href: "/admin/gallery", icon: ImageIcon, tone: "bg-[#e7fbf6] text-[#267b72]" },
+    { label: "등록된 팝업", value: values[3], href: "/admin/popups", icon: Bell, tone: "bg-[#f0f8ff] text-[#5a8fc7]" },
+    { label: "전체 회원", value: values[4], href: "/admin/members", icon: Users, tone: "bg-[#f2f8fc] text-[#496879]" },
   ]
 
   return (
     <>
       <div className="border-b border-[#dedede] pb-7">
-        <p className="text-sm font-medium text-[#39715d]">ADMINISTRATION</p>
+        <p className="text-sm font-medium text-[#2f8fc6]">ADMINISTRATION</p>
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.04em]">관리자 대시보드</h1>
         <p className="mt-2 text-sm text-[#777]">원당교회 홈페이지의 콘텐츠와 회원 현황을 관리합니다.</p>
       </div>
