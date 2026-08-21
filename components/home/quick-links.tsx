@@ -26,7 +26,7 @@ const links = [
 
 export function QuickLinks() {
   return (
-    <section className="bg-[#bfe7fb] py-16 md:py-20">
+    <section className="bg-[#9CC7E6] py-16 md:py-20">
       <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4">
         {links.map((link) => (
           <Link

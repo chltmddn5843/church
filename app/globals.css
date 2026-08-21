@@ -49,38 +49,38 @@
 
 :root {
   color-scheme: light;
-  --background: #f6fbff;
-  --foreground: #183247;
+  --background: #f8fbfd;
+  --foreground: #0B1D39;
   --card: #ffffff;
-  --card-foreground: #183247;
+  --card-foreground: #0B1D39;
   --popover: #ffffff;
-  --popover-foreground: #183247;
-  --primary: #2f8fc6;
+  --popover-foreground: #0B1D39;
+  --primary: #123A63;
   --primary-foreground: #ffffff;
-  --secondary: #e8f6ff;
-  --secondary-foreground: #214861;
-  --muted: #eef7fc;
-  --muted-foreground: #5b7180;
-  --accent: #bfe7fb;
-  --accent-foreground: #17384f;
+  --secondary: #F2E9DA;
+  --secondary-foreground: #0B1D39;
+  --muted: #edf4f8;
+  --muted-foreground: #526a7d;
+  --accent: #9CC7E6;
+  --accent-foreground: #0B1D39;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #cfe6f4;
-  --input: #cfe6f4;
-  --ring: #2f8fc6;
-  --chart-1: #2f8fc6;
-  --chart-2: #77c7e8;
-  --chart-3: #9dd7f1;
-  --chart-4: #5fa7d2;
-  --chart-5: #b9e8df;
+  --border: #d7e5ee;
+  --input: #d7e5ee;
+  --ring: #2F5D8A;
+  --chart-1: #0B1D39;
+  --chart-2: #123A63;
+  --chart-3: #2F5D8A;
+  --chart-4: #9CC7E6;
+  --chart-5: #F2E9DA;
   --radius: 0.75rem;
-  --sidebar: #1f7fb7;
+  --sidebar: #0B1D39;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #dff3ff;
+  --sidebar-primary: #9CC7E6;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2f8fc6;
+  --sidebar-accent: #2F5D8A;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgb(255 255 255 / 22%);
-  --sidebar-ring: #2f8fc6;
+  --sidebar-border: rgb(156 199 230 / 26%);
+  --sidebar-ring: #9CC7E6;
 }
 
 .dark {
@@ -125,7 +125,7 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(circle at 12% 0%, rgb(191 231 251 / 45%), transparent 34rem),
-      radial-gradient(circle at 88% 10%, rgb(185 232 223 / 28%), transparent 30rem);
+      radial-gradient(circle at 12% 0%, rgb(156 199 230 / 38%), transparent 34rem),
+      radial-gradient(circle at 88% 10%, rgb(242 233 218 / 48%), transparent 30rem);
   }
 }

@@ -5,25 +5,28 @@ const categories = ["전체", "주일예배", "금요예배", "새벽예배", "�
 
 export function SermonFilter({ active }: { active?: string }) {
   return (
-    <div className="flex flex-wrap justify-center gap-2">
-      {categories.map((cat) => {
-        const isActive = (cat === "전체" && !active) || cat === active
-        const href = cat === "전체" ? "/sermons" : `/sermons?category=${encodeURIComponent(cat)}`
-        return (
-          <Link
-            key={cat}
-            href={href}
-            className={cn(
-              "rounded-full border px-5 py-2 text-sm font-medium transition-colors",
-              isActive
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-foreground hover:border-primary hover:text-primary",
-            )}
-          >
-            {cat}
-          </Link>
-        )
-      })}
-    </div>
+    <nav className="overflow-x-auto rounded-[1.5rem] border border-border bg-card p-2 shadow-sm" aria-label="말씀과 찬양 게시판">
+      <div className="flex min-w-max gap-2">
+        {categories.map((cat) => {
+          const isActive = (cat === "전체" && !active) || cat === active
+          const href = cat === "전체" ? "/sermons" : `/sermons?category=${encodeURIComponent(cat)}`
+
+          return (
+            <Link
+              key={cat}
+              href={href}
+              className={cn(
+                "flex h-12 items-center justify-center rounded-2xl px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-white/40 text-foreground hover:bg-secondary hover:text-primary",
+              )}
+            >
+              {cat}
+            </Link>
+          )
+        })}
+      </div>
+    </nav>
   )
 }

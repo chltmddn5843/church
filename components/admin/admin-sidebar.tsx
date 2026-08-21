@@ -45,7 +45,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="shrink-0 border-b border-[#cfe6f4] bg-[#f6fbff] md:w-[260px] md:border-r md:border-b-0">
+    <aside className="shrink-0 border-b border-[#d7e5ee] bg-[#f8fbfd] md:w-[260px] md:border-r md:border-b-0">
       <nav aria-label="관리자 메뉴" className="flex overflow-x-auto md:block md:py-8">
         {links.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href)
@@ -57,7 +57,7 @@ export function AdminSidebar() {
               className={cn(
                 "flex h-14 shrink-0 items-center gap-3 border-r border-[#d7ebf6] px-5 text-sm font-medium transition-colors md:h-[62px] md:w-full md:border-r-0 md:border-b md:px-7 md:first:border-t",
                 active
-                  ? "bg-[#dff3ff] text-[#176b9f] md:shadow-[inset_4px_0_0_#2f8fc6]"
+                  ? "bg-[#F2E9DA] text-[#123A63] md:shadow-[inset_4px_0_0_#2F5D8A]"
                   : "text-[#496879] hover:bg-[#eaf7ff] hover:text-[#183247]",
               )}
             >
@@ -68,7 +68,7 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="hidden border-t border-[#cfe6f4] md:block">
+      <div className="hidden border-t border-[#d7e5ee] md:block">
         <Link href="/" className="flex h-14 items-center gap-3 px-7 text-sm text-[#496879] hover:bg-[#eaf7ff]">
           <Home className="size-[18px]" /> 홈페이지 보기
         </Link>

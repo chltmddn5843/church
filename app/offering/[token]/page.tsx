@@ -37,8 +37,8 @@ export default async function OfferingReportPage({
 
   return (
     <main className="min-h-screen bg-[#f6fbff] px-4 py-8 text-[#183247] md:py-14">
-      <article className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-[#cfe6f4] bg-white shadow-sm">
-        <header className="border-b border-[#cfe6f4] bg-[#2f8fc6] px-5 py-6 text-white md:px-8">
+      <article className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-[#d7e5ee] bg-white shadow-sm">
+        <header className="border-b border-[#9CC7E6]/30 bg-[#123A63] px-5 py-6 text-white md:px-8">
           <div className="flex items-center gap-2 text-sm text-white/85">
             <Church className="size-4" />
             원당교회
@@ -53,8 +53,8 @@ export default async function OfferingReportPage({
         <div className="grid gap-5 p-5 md:p-8">
           {sections.length > 0 ? (
             sections.map((section) => (
-              <section key={section.title} className="rounded-xl border border-[#cfe6f4] bg-[#f8fcff]">
-                <h2 className="border-b border-[#cfe6f4] px-4 py-3 text-base font-bold text-[#176b9f] md:text-lg">
+              <section key={section.title} className="rounded-xl border border-[#d7e5ee] bg-[#f8fbfd]">
+                <h2 className="border-b border-[#d7e5ee] px-4 py-3 text-base font-bold text-[#123A63] md:text-lg">
                   {section.title}
                 </h2>
                 <div className="grid gap-2 px-4 py-4">

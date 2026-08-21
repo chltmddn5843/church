@@ -20,8 +20,9 @@ export function Hero() {
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.3em] text-primary">
             {church.denomination}
           </p>
-          <h1 className="text-balance font-serif text-4xl font-bold leading-[1.18] md:text-6xl">
-            {church.slogan}
+          <h1 className="font-serif text-3xl font-bold leading-[1.18] sm:text-4xl md:text-6xl">
+            <span className="block whitespace-nowrap">제자 되고 제자 삼는</span>
+            <span className="block whitespace-nowrap">원당교회</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
             {church.subSlogan}

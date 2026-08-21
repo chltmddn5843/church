@@ -15,7 +15,7 @@ export default async function AdminOfferingPage() {
   return (
     <>
       <div className="border-b border-[#dedede] pb-7">
-        <p className="text-sm font-medium text-[#2f8fc6]">OFFERING REPORT</p>
+        <p className="text-sm font-medium text-[#2F5D8A]">OFFERING REPORT</p>
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.04em]">헌금 현황 관리</h1>
         <p className="mt-2 text-sm text-[#777]">
           헌금 현황은 공개 메뉴에 노출되지 않고, 아래 전용 링크를 받은 분만 로그인 없이 볼 수 있습니다.
