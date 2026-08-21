@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next"
 import type { Metadata, Viewport } from "next"
 import { Noto_Sans_KR, Noto_Serif_KR } from "next/font/google"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const notoSansKr = Noto_Sans_KR({
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   keywords: ["원당교회", "인천교회", "검단교회", "예배", "설교", "제자훈련", "다음세대"],
   openGraph: {
     title: "원당교회",
-    description: "인천 검단구 원당교회 공식 홈페이지 : 함께 예배하고 성장하는 공동체",
+    description: "인천 검단구 원당교회 공식 홈페이지",
     type: "website",
     locale: "ko_KR",
   },
@@ -47,6 +48,7 @@ export default function RootLayout({
     <html lang="ko" className={`bg-background ${notoSansKr.variable} ${notoSerifKr.variable}`}>
       <body className="font-sans antialiased">
         {children}
+        <Toaster richColors position="top-center" />
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

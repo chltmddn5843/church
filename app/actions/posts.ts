@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db"
 import { attachments, posts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { deleteUpload, uploadFile } from "@/lib/uploads"
 
 export async function createPost(formData: FormData) {
@@ -35,6 +36,8 @@ export async function createPost(formData: FormData) {
   revalidatePath("/admin/posts")
   revalidatePath("/community")
   revalidatePath("/")
+  const returnTo = String(formData.get("returnTo") ?? "/admin/posts")
+  redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}saved=created`)
 }
 
 export async function updatePost(id: number, formData: FormData) {
@@ -54,6 +57,7 @@ export async function updatePost(id: number, formData: FormData) {
   revalidatePath("/admin/posts")
   revalidatePath("/community")
   revalidatePath(`/community/${id}`)
+  redirect("/admin/posts?saved=updated")
 }
 
 export async function deletePost(id: number) {
@@ -64,4 +68,5 @@ export async function deletePost(id: number) {
   await Promise.all(files.map(({ url }) => deleteUpload(url)))
   revalidatePath("/admin/posts")
   revalidatePath("/community")
+  redirect("/admin/posts?saved=deleted")
 }

@@ -1,8 +1,10 @@
 import type React from "react"
 import Link from "next/link"
+import { Suspense } from "react"
 import { ExternalLink } from "lucide-react"
-import { requireAdmin } from "@/lib/admin"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
+import { ToastFromQuery } from "@/components/toast-from-query"
+import { requireAdmin } from "@/lib/admin"
 
 export const dynamic = "force-dynamic"
 
@@ -18,7 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="flex items-center gap-5">
           <span className="hidden text-sm text-white/65 sm:inline">{admin.name} 관리자님</span>
           <Link href="/" className="flex items-center gap-2 text-sm text-white/85 transition hover:text-white">
-            <span className="hidden sm:inline">www.wdchurch.com</span>
+            <span className="hidden sm:inline">홈페이지 보기</span>
             <ExternalLink className="size-4" />
           </Link>
         </div>
@@ -30,6 +32,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>
+      <Suspense fallback={null}>
+        <ToastFromQuery />
+      </Suspense>
     </div>
   )
 }

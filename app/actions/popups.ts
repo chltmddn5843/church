@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db"
 import { popups } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024
@@ -38,6 +39,8 @@ export async function createPopup(formData: FormData) {
       imageUrl: `/api/uploads/${imageKey}`,
       linkUrl: String(formData.get("linkUrl") ?? "").trim() || null,
       content: String(formData.get("content") ?? "").trim() || null,
+      width: Math.min(Math.max(Number(formData.get("width") || 420), 280), 760),
+      height: Math.min(Math.max(Number(formData.get("height") || 540), 320), 900),
       active: formData.get("active") === "on",
     })
   } catch (error) {
@@ -46,6 +49,7 @@ export async function createPopup(formData: FormData) {
   }
   revalidatePath("/admin/popups")
   revalidatePath("/")
+  redirect("/admin/popups?saved=popup")
 }
 
 export async function togglePopup(id: number, active: boolean) {
@@ -54,6 +58,7 @@ export async function togglePopup(id: number, active: boolean) {
   await db.update(popups).set({ active }).where(eq(popups.id, id))
   revalidatePath("/admin/popups")
   revalidatePath("/")
+  redirect("/admin/popups?saved=popup")
 }
 
 export async function deletePopup(id: number) {
@@ -69,4 +74,5 @@ export async function deletePopup(id: number) {
   }
   revalidatePath("/admin/popups")
   revalidatePath("/")
+  redirect("/admin/popups?saved=deleted")
 }

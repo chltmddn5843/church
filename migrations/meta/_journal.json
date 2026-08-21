@@ -43,6 +43,13 @@
       "when": 1785990275556,
       "tag": "0005_dark_mephisto",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787341200000,
+      "tag": "0006_offering_popup_gallery",
+      "breakpoints": true
     }
   ]
 }

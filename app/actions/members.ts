@@ -5,12 +5,14 @@ import { getDb } from "@/lib/db"
 import { user, userGroups } from "@/lib/db/schema"
 import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 
 export async function setMemberRole(userId: string, role: "pending" | "member" | "admin") {
   const admin = await requireAdmin()
   if (admin.id === userId) throw new Error("자신의 관리자 권한은 변경할 수 없습니다.")
   await getDb().update(user).set({ role, updatedAt: new Date() }).where(eq(user.id, userId))
   revalidatePath("/admin/members")
+  redirect("/admin/members?saved=member")
 }
 
 export async function setMemberGroup(userId: string, group: "bylaws" | "offering" | "committee", enabled: boolean) {
@@ -19,4 +21,5 @@ export async function setMemberGroup(userId: string, group: "bylaws" | "offering
   if (enabled) await db.insert(userGroups).values({ userId, group }).onConflictDoNothing()
   else await db.delete(userGroups).where(and(eq(userGroups.userId, userId), eq(userGroups.group, group)))
   revalidatePath("/admin/members")
+  redirect("/admin/members?saved=group")
 }

@@ -16,8 +16,10 @@ export const accessOptions = [
 export async function getViewerAccess() {
   const session = await getAuth().api.getSession({ headers: await headers() })
   if (!session?.user) return { role: "guest", groups: [] as string[] }
+
   const current = await getDb().select({ role: user.role }).from(user).where(eq(user.id, session.user.id)).get()
   if (!current) return { role: "guest", groups: [] as string[] }
+
   const groups = await getDb().select({ group: userGroups.group }).from(userGroups).where(eq(userGroups.userId, session.user.id))
   return { role: current.role, groups: groups.map(({ group }) => group) }
 }

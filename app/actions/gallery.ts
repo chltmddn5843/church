@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db"
 import { gallery } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { deleteUpload, uploadFile } from "@/lib/uploads"
 
 export async function createGalleryItem(formData: FormData) {
@@ -18,6 +19,7 @@ export async function createGalleryItem(formData: FormData) {
       title: String(formData.get("title") ?? "").trim(),
       imageUrl: uploaded.url,
       description: String(formData.get("description") ?? "").trim() || null,
+      category: String(formData.get("category") ?? "교회").trim() || "교회",
     })
   } catch (error) {
     await deleteUpload(uploaded.url)
@@ -26,6 +28,8 @@ export async function createGalleryItem(formData: FormData) {
   revalidatePath("/admin/gallery")
   revalidatePath("/gallery")
   revalidatePath("/")
+  revalidatePath("/discipleship")
+  redirect("/admin/gallery?saved=gallery")
 }
 
 export async function deleteGalleryItem(id: number) {
@@ -36,4 +40,6 @@ export async function deleteGalleryItem(id: number) {
   if (item) await deleteUpload(item.imageUrl)
   revalidatePath("/admin/gallery")
   revalidatePath("/gallery")
+  revalidatePath("/discipleship")
+  redirect("/admin/gallery?saved=deleted")
 }

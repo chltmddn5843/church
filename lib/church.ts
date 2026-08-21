@@ -1,37 +1,27 @@
-// 원당교회 실제 정보 (참고: https://www.wdchurch.com)
 export const church = {
   name: "원당교회",
   nameEn: "Wondang Church",
   denomination: "대한예수교장로회",
-  pastor: "양승철",
+  pastor: "정승천",
   pastorTitle: "담임목사",
-  slogan: "제자되고 제자삼는 교회",
-  subSlogan: "예배로 하나님께 영광을, 사랑으로 이웃을 섬기는 원당교회입니다.",
+  slogan: "제자 삼고 제자 되는 교회",
+  subSlogan: "예배로 하나님께, 사랑으로 이웃에게 나아가는 원당교회입니다.",
   address: "인천광역시 검단구 이음1로 320 (원당동 1088)",
   addressShort: "인천광역시 검단구 이음1로 320",
   tel: "032-563-4943",
   fax: "032-563-1425",
   email: "wdchurch@wdchurch.com",
-  // 지도 좌표 (원당동 인근)
   map: {
     lat: 37.5943,
     lng: 126.6712,
   },
-  worship: [
-    { name: "주일 1부 예배", time: "오전 08:00", place: "비전홀" },
-    { name: "주일 2부 예배", time: "오전 10:00", place: "비전홀" },
-    { name: "주일 3부 예배", time: "오후 12:00", place: "비전홀" },
-    { name: "주일 청년부 예배", time: "오후 02:00", place: "비전홀" },
-    { name: "금요 예배", time: "저녁 09:00", place: "비전홀" },
-    { name: "새벽 예배", time: "새벽 05:00", place: "비전홀 (화~금)" },
-  ],
   nav: [
     {
       title: "교회소개",
       href: "/about",
       children: [
         { title: "인사말", href: "/about#greeting" },
-        { title: "섬기는 사람들", href: "/about#staff" },
+        { title: "섬기는 분들", href: "/about#staff" },
         { title: "교회발자취", href: "/about#history" },
         { title: "비전·사명", href: "/about#vision" },
         { title: "예배안내", href: "/#worship" },
@@ -47,7 +37,7 @@ export const church = {
         { title: "금요예배", href: "/sermons?category=금요예배" },
         { title: "새벽예배", href: "/sermons?category=새벽예배" },
         { title: "할렐루야 찬양대", href: "/sermons?category=찬양대" },
-        { title: "특별예배·행사", href: "/sermons?category=특별예배" },
+        { title: "특별예배 및 행사", href: "/sermons?category=특별예배" },
       ],
     },
     {
@@ -58,7 +48,7 @@ export const church = {
         { title: "양육반", href: "/discipleship#courses" },
         { title: "제자반", href: "/discipleship#courses" },
         { title: "사역반", href: "/discipleship#courses" },
-        { title: "성경 교육", href: "/discipleship#courses" },
+        { title: "전체 수료자", href: "/discipleship#graduates" },
       ],
     },
     {
@@ -67,6 +57,7 @@ export const church = {
       children: [
         { title: "유아부", href: "/next-generation#toddler" },
         { title: "유치부", href: "/next-generation#kindergarten" },
+        { title: "유년부", href: "/next-generation#elementary" },
         { title: "초등부", href: "/next-generation#elementary" },
         { title: "중등부", href: "/next-generation#middle" },
         { title: "고등부", href: "/next-generation#high" },
@@ -83,6 +74,7 @@ export const church = {
         { title: "교회소식", href: "/community?category=교회소식" },
         { title: "새가족소개", href: "/community?category=새가족소개" },
         { title: "가정예배순서지", href: "/community?category=가정예배순서지" },
+        { title: "봉사 섬김이", href: "/community?category=봉사%20섬김이" },
         { title: "갤러리", href: "/gallery" },
       ],
     },

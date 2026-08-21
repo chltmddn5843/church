@@ -3,7 +3,6 @@ import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm
 
 const now = sql`(unixepoch())`
 
-// Better Auth tables. Column names intentionally match Better Auth defaults.
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -54,7 +53,7 @@ export const verification = sqliteTable("verification", {
 export const sermons = sqliteTable("sermons", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
-  preacher: text("preacher").notNull().default("양승철"),
+  preacher: text("preacher").notNull().default("정승천"),
   scripture: text("scripture"),
   category: text("category").notNull().default("주일예배"),
   youtubeId: text("youtubeId"),
@@ -99,6 +98,7 @@ export const gallery = sqliteTable("gallery", {
   title: text("title").notNull(),
   imageUrl: text("imageUrl").notNull(),
   description: text("description"),
+  category: text("category").notNull().default("교회"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
 })
 
@@ -108,8 +108,20 @@ export const popups = sqliteTable("popups", {
   imageUrl: text("imageUrl"),
   linkUrl: text("linkUrl"),
   content: text("content"),
+  width: integer("width").notNull().default(420),
+  height: integer("height").notNull().default(540),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+})
+
+export const offeringReports = sqliteTable("offering_reports", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  accessToken: text("accessToken").notNull().unique(),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
 export const contentPages = sqliteTable("content_pages", {

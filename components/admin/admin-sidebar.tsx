@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
+  BarChart3,
   Bell,
   BookOpen,
   FileText,
@@ -12,8 +13,8 @@ import {
   LogOut,
   Newspaper,
   Paperclip,
-  BarChart3,
   Radio,
+  ReceiptText,
   Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -21,15 +22,16 @@ import { authClient } from "@/lib/auth-client"
 
 const links = [
   { href: "/admin", label: "관리자 메인", icon: LayoutDashboard },
-  { href: "/admin/live", label: "생방송 관리", icon: Radio },
+  { href: "/admin/live", label: "예배 영상 관리", icon: Radio },
   { href: "/admin/popups", label: "팝업 관리", icon: Bell },
   { href: "/admin/sermons", label: "설교 관리", icon: BookOpen },
   { href: "/admin/posts", label: "소식·공지 관리", icon: Newspaper },
+  { href: "/admin/offering", label: "헌금 현황 관리", icon: ReceiptText },
   { href: "/admin/gallery", label: "갤러리 관리", icon: ImageIcon },
   { href: "/admin/attachments", label: "첨부파일 관리", icon: Paperclip },
   { href: "/admin/statistics", label: "조회수 통계", icon: BarChart3 },
   { href: "/admin/pages", label: "소개 페이지 관리", icon: FileText },
-  { href: "/admin/members", label: "회원 관리", icon: Users },
+  { href: "/admin/members", label: "회원 승인 관리", icon: Users },
 ]
 
 export function AdminSidebar() {

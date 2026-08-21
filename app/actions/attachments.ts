@@ -2,6 +2,7 @@
 
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { requireAdmin } from "@/lib/admin"
 import { getDb } from "@/lib/db"
 import { attachments } from "@/lib/db/schema"
@@ -16,4 +17,5 @@ export async function deleteAttachment(id: number) {
   await deleteUpload(file.url)
   revalidatePath("/admin/attachments")
   revalidatePath(`/community/${file.postId}`)
+  redirect("/admin/attachments?saved=deleted")
 }

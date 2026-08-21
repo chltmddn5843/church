@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation"
+import { AuthForm } from "@/components/auth-form"
 import { getSessionUser } from "@/lib/session"
 
 export const dynamic = "force-dynamic"
-import { AuthForm } from "@/components/auth-form"
-
 export const metadata = { title: "회원가입" }
 
 export default async function SignUpPage() {

@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { getDb } from "@/lib/db"
-import { authKvStorage } from "@/lib/auth-kv"
-import { sendEmail } from "@/lib/email"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
+import { authKvStorage } from "@/lib/auth-kv"
+import { getDb } from "@/lib/db"
+import { sendEmail } from "@/lib/email"
 
 function sendLater(promise: Promise<void>) {
   getCloudflareContext().ctx.waitUntil(promise.catch((error) => console.error("Failed to send auth email:", error)))
@@ -32,18 +32,26 @@ export function getAuth() {
       autoSignIn: !emailEnabled,
       requireEmailVerification: emailEnabled,
       revokeSessionsOnPasswordReset: true,
-      ...(emailEnabled ? { sendResetPassword: async ({ user, url }: { user: { email: string }, url: string }) => {
-        sendLater(sendEmail(user.email, "원당교회 비밀번호 재설정", `아래 링크에서 비밀번호를 재설정하세요.\n\n${url}\n\n본인이 요청하지 않았다면 이 메일을 무시하세요.`))
-      }} : {}),
+      ...(emailEnabled
+        ? {
+            sendResetPassword: async ({ user, url }: { user: { email: string }; url: string }) => {
+              sendLater(sendEmail(user.email, "원당교회 비밀번호 재설정", `아래 링크에서 비밀번호를 재설정해 주세요.\n\n${url}\n\n본인이 요청하지 않았다면 이 메일을 무시해 주세요.`))
+            },
+          }
+        : {}),
     },
-    ...(emailEnabled ? { emailVerification: {
-      sendOnSignUp: true,
-      sendOnSignIn: true,
-      autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({ user, url }: { user: { email: string }, url: string }) => {
-        sendLater(sendEmail(user.email, "원당교회 이메일 인증", `아래 링크를 눌러 이메일 주소를 인증하세요.\n\n${url}`))
-      },
-    }} : {}),
+    ...(emailEnabled
+      ? {
+          emailVerification: {
+            sendOnSignUp: true,
+            sendOnSignIn: true,
+            autoSignInAfterVerification: true,
+            sendVerificationEmail: async ({ user, url }: { user: { email: string }; url: string }) => {
+              sendLater(sendEmail(user.email, "원당교회 이메일 인증", `아래 링크를 눌러 이메일 주소를 인증해 주세요.\n\n${url}`))
+            },
+          },
+        }
+      : {}),
     user: {
       additionalFields: {
         role: {

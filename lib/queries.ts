@@ -1,6 +1,6 @@
 import "server-only"
 import { getDb } from "@/lib/db"
-import { sermons, posts, gallery, popups, attachments } from "@/lib/db/schema"
+import { sermons, posts, gallery, popups, attachments, offeringReports } from "@/lib/db/schema"
 import { and, desc, eq, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
@@ -24,7 +24,7 @@ export async function getPosts(category?: string, limit?: number) {
   const q = db.select().from(posts).where(where).orderBy(desc(posts.pinned), desc(posts.createdAt))
   const items = await q
   const viewer = await getViewerAccess()
-  const visible = items.filter((post) => canAccess(post.visibility, viewer))
+  const visible = items.filter((post) => post.category !== "헌금 현황" && canAccess(post.visibility, viewer))
   return limit ? visible.slice(0, limit) : visible
 }
 
@@ -52,6 +52,13 @@ export async function getGallery(limit?: number) {
   return q
 }
 
+export async function getGalleryByCategory(category: string, limit?: number) {
+  const db = getDb()
+  const q = db.select().from(gallery).where(eq(gallery.category, category)).orderBy(desc(gallery.createdAt))
+  if (limit) return q.limit(limit)
+  return q
+}
+
 export async function getActivePopups() {
   const db = getDb()
   try {
@@ -64,4 +71,27 @@ export async function getActivePopups() {
     console.error("Failed to load active popups:", error)
     return []
   }
+}
+
+export async function getActiveOfferingReportByToken(token: string) {
+  if (!token || token.length < 16) return null
+  return (
+    (await getDb()
+      .select()
+      .from(offeringReports)
+      .where(and(eq(offeringReports.accessToken, token), eq(offeringReports.active, true)))
+      .limit(1)
+      .get()) ?? null
+  )
+}
+
+export async function getLatestOfferingReport() {
+  return (
+    (await getDb()
+      .select()
+      .from(offeringReports)
+      .orderBy(desc(offeringReports.updatedAt))
+      .limit(1)
+      .get()) ?? null
+  )
 }

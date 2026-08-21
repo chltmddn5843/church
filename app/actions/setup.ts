@@ -1,11 +1,11 @@
 "use server"
 
-import { getAuth } from "@/lib/auth"
-import { getDb } from "@/lib/db"
-import { user } from "@/lib/db/schema"
 import { count, eq } from "drizzle-orm"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { getAuth } from "@/lib/auth"
+import { getDb } from "@/lib/db"
+import { user } from "@/lib/db/schema"
 
 export async function bootstrapAdmin(formData: FormData) {
   const session = await getAuth().api.getSession({ headers: await headers() })
