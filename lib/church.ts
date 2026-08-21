@@ -4,16 +4,16 @@ export const church = {
   denomination: "대한예수교장로회",
   pastor: "정승천",
   pastorTitle: "담임목사",
-  slogan: "제자 삼고 제자 되는 교회",
+  slogan: "제자 되고 제자 삼는 원당교회",
   subSlogan: "예배로 하나님께, 사랑으로 이웃에게 나아가는 원당교회입니다.",
-  address: "인천광역시 검단구 이음1로 320 (원당동 1088)",
+  address: "(22865) 인천광역시 검단구 이음1로 320 원당교회",
   addressShort: "인천광역시 검단구 이음1로 320",
   tel: "032-563-4943",
   fax: "032-563-1425",
   email: "wdchurch@wdchurch.com",
   map: {
-    lat: 37.5943,
-    lng: 126.6712,
+    lat: 37.5961,
+    lng: 126.7002,
   },
   nav: [
     {

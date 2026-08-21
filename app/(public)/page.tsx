@@ -15,9 +15,9 @@ export default async function HomePage() {
       <PopupModal popups={popups} />
       <Hero />
       <LiveStream />
+      <LatestSermons />
       <WorshipTimes />
       <QuickLinks />
-      <LatestSermons />
       <GalleryPreview />
     </>
   )

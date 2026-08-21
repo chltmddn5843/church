@@ -53,8 +53,8 @@ export default async function CommunityPage({
       <PageBanner title="커뮤니티" subtitle="원당교회의 소식과 나눔을 확인하세요." />
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-5xl px-4">
-          <nav className="overflow-x-auto rounded-xl border border-border bg-card p-1 shadow-sm" aria-label="커뮤니티 게시판">
-            <div className="flex min-w-max">
+          <nav className="overflow-x-auto rounded-[1.5rem] border border-border bg-card p-2 shadow-sm" aria-label="커뮤니티 게시판">
+            <div className="flex min-w-max gap-2">
               {categories.map((cat) => {
                 const isActive = (cat === "전체" && !selected) || cat === selected
                 const href = cat === "전체" ? "/community" : `/community?category=${encodeURIComponent(cat)}`
@@ -63,10 +63,10 @@ export default async function CommunityPage({
                     key={cat}
                     href={href}
                     className={cn(
-                      "flex h-12 items-center justify-center border-r border-border px-6 text-base font-semibold transition-colors last:border-r-0",
+                      "flex h-12 items-center justify-center rounded-2xl px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-card text-foreground hover:bg-secondary hover:text-primary",
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-white/40 text-foreground hover:bg-secondary hover:text-primary",
                     )}
                   >
                     {cat}
