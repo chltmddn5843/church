@@ -25,7 +25,7 @@ const links = [
   { href: "/admin/live", label: "예배 영상 관리", icon: Radio },
   { href: "/admin/popups", label: "팝업 관리", icon: Bell },
   { href: "/admin/sermons", label: "설교 관리", icon: BookOpen },
-  { href: "/admin/posts", label: "소식·공지 관리", icon: Newspaper },
+  { href: "/admin/posts", label: "게시글 관리", icon: Newspaper },
   { href: "/admin/offering", label: "헌금 현황 관리", icon: ReceiptText },
   { href: "/admin/gallery", label: "갤러리 관리", icon: ImageIcon },
   { href: "/admin/attachments", label: "첨부파일 관리", icon: Paperclip },
@@ -45,8 +45,8 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="shrink-0 border-b border-[#d7e5ee] bg-[#f8fbfd] md:w-[260px] md:border-r md:border-b-0">
-      <nav aria-label="관리자 메뉴" className="flex overflow-x-auto md:block md:py-8">
+    <aside className="shrink-0 border-b border-[#d7e5ee] bg-[#f8fbfd] md:w-[264px] md:border-r md:border-b-0">
+      <nav aria-label="관리자 메뉴" className="flex overflow-x-auto p-3 md:block md:space-y-1 md:p-4">
         {links.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href)
           const Icon = link.icon
@@ -55,9 +55,9 @@ export function AdminSidebar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex h-14 shrink-0 items-center gap-3 border-r border-[#d7ebf6] px-5 text-sm font-medium transition-colors md:h-[62px] md:w-full md:border-r-0 md:border-b md:px-7 md:first:border-t",
+                "flex h-11 shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors md:w-full",
                 active
-                  ? "bg-[#F2E9DA] text-[#123A63] md:shadow-[inset_4px_0_0_#2F5D8A]"
+                  ? "bg-[#123A63] text-white shadow-sm"
                   : "text-[#496879] hover:bg-[#eaf7ff] hover:text-[#183247]",
               )}
             >
@@ -68,14 +68,14 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="hidden border-t border-[#d7e5ee] md:block">
-        <Link href="/" className="flex h-14 items-center gap-3 px-7 text-sm text-[#496879] hover:bg-[#eaf7ff]">
+      <div className="hidden border-t border-[#d7e5ee] p-4 md:block">
+        <Link href="/" className="flex h-11 items-center gap-3 rounded-md px-3 text-sm text-[#496879] hover:bg-[#eaf7ff]">
           <Home className="size-[18px]" /> 홈페이지 보기
         </Link>
         <button
           type="button"
           onClick={handleSignOut}
-          className="flex h-14 w-full items-center gap-3 px-7 text-sm text-[#496879] hover:bg-[#eaf7ff]"
+          className="mt-1 flex h-11 w-full items-center gap-3 rounded-md px-3 text-sm text-[#496879] hover:bg-[#eaf7ff]"
         >
           <LogOut className="size-[18px]" /> 로그아웃
         </button>
