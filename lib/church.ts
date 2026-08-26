@@ -78,6 +78,15 @@ export const church = {
         { title: "갤러리", href: "/gallery" },
       ],
     },
+    {
+      title: "스마트 헌금",
+      href: "/offering",
+      children: [
+        { title: "일반 헌금", href: "https://aq.gy/f/Smhf4" },
+        { title: "건축헌금", href: "https://aq.gy/f/gL9jy" },
+        { title: "식권", href: "https://aq.gy/f/B6Tx1" },
+      ],
+    },
   ],
 } as const
 

@@ -36,8 +36,8 @@ export function WorshipTimes() {
               </tr>
             </thead>
             <tbody>
-              {worshipRows.map((row, index) => (
-                <tr key={`${row.group}-${row.name}`} className="border-t border-border">
+              {worshipRows.map((row) => (
+                <tr key={row.name} className="border-t border-border">
                   <td className="px-5 py-4 font-semibold text-foreground">{row.name}</td>
                   <td className="px-5 py-4 text-muted-foreground">{row.day}</td>
                   <td className="px-5 py-4 text-foreground">{row.time}</td>

@@ -51,6 +51,8 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                   <Link
                     key={child.title}
                     href={child.href}
+                    target={child.href.startsWith("http") ? "_blank" : undefined}
+                    rel={child.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="block rounded-sm px-3 py-2.5 text-base text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
                   >
                     {child.title}
@@ -115,6 +117,8 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                         <Link
                           key={child.title}
                           href={child.href}
+                          target={child.href.startsWith("http") ? "_blank" : undefined}
+                          rel={child.href.startsWith("http") ? "noopener noreferrer" : undefined}
                           onClick={() => setOpen(false)}
                           className="rounded-sm px-2 py-2 text-base text-muted-foreground hover:text-primary"
                         >

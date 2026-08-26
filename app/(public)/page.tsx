@@ -6,12 +6,14 @@ import { GalleryPreview } from "@/components/home/gallery-preview"
 import { PopupModal } from "@/components/popup-modal"
 import { getActivePopups } from "@/lib/queries"
 import { LiveStream } from "@/components/home/live-stream"
+import { SmartOfferingFloat } from "@/components/home/smart-offering-float"
 
 export default async function HomePage() {
   const popups = await getActivePopups()
 
   return (
     <>
+      <SmartOfferingFloat />
       <PopupModal popups={popups} />
       <Hero />
       <LiveStream />
