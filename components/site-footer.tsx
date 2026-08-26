@@ -57,6 +57,11 @@ export function SiteFooter() {
                   갤러리
                 </Link>
               </li>
+              <li>
+                <Link href="/offering" className="transition-colors hover:text-sidebar-primary">
+                  스마트 헌금
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

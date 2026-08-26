@@ -1,8 +1,20 @@
 import { notFound } from "next/navigation"
-import { CalendarDays, Church } from "lucide-react"
+import type { Metadata } from "next"
+import { CalendarDays, Church, Smartphone } from "lucide-react"
 import { getActiveOfferingReportByToken } from "@/lib/queries"
 
 export const dynamic = "force-dynamic"
+
+export async function generateMetadata({ params }: { params: Promise<{ token: string }> }): Promise<Metadata> {
+  const { token } = await params
+  return {
+    title: "헌금 현황 | 원당교회",
+    description: "원당교회 주간 헌금 현황",
+    manifest: `/offering/${token}/manifest.webmanifest`,
+    robots: { index: false, follow: false, nocache: true },
+    appleWebApp: { capable: true, title: "헌금 현황", statusBarStyle: "black-translucent" },
+  }
+}
 
 function splitOfferingContent(content: string) {
   const sections: { title: string; lines: string[] }[] = []
@@ -51,6 +63,10 @@ export default async function OfferingReportPage({
         </header>
 
         <div className="grid gap-5 p-5 md:p-8">
+          <aside className="flex items-start gap-3 rounded-xl border border-[#9CC7E6]/60 bg-[#eaf7ff] p-4 text-sm leading-6 text-[#294d68]">
+            <Smartphone className="mt-0.5 size-5 shrink-0" />
+            <p><strong>휴대폰 홈 화면에 추가할 수 있습니다.</strong><br />브라우저의 공유 또는 메뉴에서 ‘홈 화면에 추가’를 선택하면 이 전용 링크로 바로 열립니다.</p>
+          </aside>
           {sections.length > 0 ? (
             sections.map((section) => (
               <section key={section.title} className="rounded-xl border border-[#d7e5ee] bg-[#f8fbfd]">

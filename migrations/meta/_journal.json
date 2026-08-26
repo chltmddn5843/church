@@ -50,6 +50,13 @@
       "when": 1787341200000,
       "tag": "0006_offering_popup_gallery",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787702400000,
+      "tag": "0007_query_indexes",
+      "breakpoints": true
     }
   ]
 }

@@ -8,17 +8,26 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { deleteUpload, uploadFile } from "@/lib/uploads"
 
+const VISIBILITIES = new Set(["public", "member", "bylaws", "offering", "committee"])
+
+function readPost(formData: FormData) {
+  const title = String(formData.get("title") ?? "").trim()
+  const content = String(formData.get("content") ?? "").trim()
+  const visibility = String(formData.get("visibility") ?? "public")
+  if (!title || !content) throw new Error("제목과 내용을 입력해 주세요.")
+  if (!VISIBILITIES.has(visibility)) throw new Error("올바른 공개 범위를 선택해 주세요.")
+  return { title, content, visibility }
+}
+
 export async function createPost(formData: FormData) {
   const admin = await requireAdmin()
   const db = getDb()
   const post = await db
     .insert(posts)
     .values({
-      title: String(formData.get("title") ?? "").trim(),
-      content: String(formData.get("content") ?? "").trim(),
+      ...readPost(formData),
       category: String(formData.get("category") || "교회소식"),
       pinned: formData.get("pinned") === "on",
-      visibility: String(formData.get("visibility") ?? "public"),
       authorId: admin.id,
       authorName: admin.name || "관리자",
     })
@@ -48,21 +57,21 @@ export async function createPost(formData: FormData) {
   revalidatePath("/admin/posts")
   revalidatePath("/community")
   revalidatePath("/")
-  const returnTo = String(formData.get("returnTo") ?? "/admin/posts")
+  const requestedReturnTo = String(formData.get("returnTo") ?? "")
+  const returnTo = requestedReturnTo === "/community?category=새가족소개" ? requestedReturnTo : "/admin/posts"
   redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}saved=created`)
 }
 
 export async function updatePost(id: number, formData: FormData) {
   await requireAdmin()
+  if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 게시글 번호가 아닙니다.")
   const db = getDb()
   await db
     .update(posts)
     .set({
-      title: String(formData.get("title") ?? "").trim(),
-      content: String(formData.get("content") ?? "").trim(),
+      ...readPost(formData),
       category: String(formData.get("category") || "교회소식"),
       pinned: formData.get("pinned") === "on",
-      visibility: String(formData.get("visibility") ?? "public"),
       updatedAt: new Date(),
     })
     .where(eq(posts.id, id))
@@ -75,6 +84,7 @@ export async function updatePost(id: number, formData: FormData) {
 
 export async function deletePost(id: number) {
   await requireAdmin()
+  if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 게시글 번호가 아닙니다.")
   const db = getDb()
   const files = await db.select({ url: attachments.url }).from(attachments).where(eq(attachments.postId, id))
 

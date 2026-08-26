@@ -10,6 +10,7 @@ import { deleteUpload } from "@/lib/uploads"
 
 export async function deleteAttachment(id: number) {
   await requireAdmin()
+  if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 첨부파일 번호가 아닙니다.")
   const db = getDb()
   const file = await db.select().from(attachments).where(eq(attachments.id, id)).get()
   if (!file) return

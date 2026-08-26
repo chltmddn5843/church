@@ -7,6 +7,19 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async headers() {
+    return [{
+      source: "/(.*)",
+      headers: [
+        { key: "Content-Security-Policy", value: "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob: https://img.youtube.com; font-src 'self' data:; frame-src https://www.youtube.com https://www.openstreetmap.org; connect-src 'self' https://vitals.vercel-insights.com" },
+        { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+        { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        { key: "X-Content-Type-Options", value: "nosniff" },
+        { key: "X-Frame-Options", value: "DENY" },
+      ],
+    }]
+  },
   async redirects() {
     return [
       ["/Board/Index/21", "/sermons?category=주일예배"],
@@ -19,7 +32,6 @@ const nextConfig = {
       ["/Board/Index/62", "/gallery"],
       ["/Board/Index/332", "/community?category=가정예배순서지"],
       ["/Board/Index/976", "/community?category=자료실"],
-      ["/Board/Index/4820", "/community?category=헌금 내역"],
     ].map(([source, destination]) => ({ source, destination, permanent: true }))
   },
 };

@@ -10,7 +10,8 @@ export const dynamic = "force-dynamic"
 export default async function AdminOfferingPage() {
   const report = await getLatestOfferingReport()
   const token = report?.accessToken
-  const link = token ? `/offering/${token}` : "저장 후 전용 링크가 생성됩니다."
+  const path = token ? `/offering/${token}` : null
+  const link = path && process.env.BETTER_AUTH_URL ? new URL(path, process.env.BETTER_AUTH_URL).toString() : path ?? "저장 후 전용 링크가 생성됩니다."
 
   return (
     <>
@@ -26,8 +27,8 @@ export default async function AdminOfferingPage() {
         <p className="text-sm font-semibold text-[#333]">배포용 링크</p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
           <Input readOnly value={link} className="bg-white" />
-          {token && (
-            <Button render={<Link href={link} target="_blank" />} nativeButton={false} variant="outline">
+          {path && (
+            <Button render={<Link href={path} target="_blank" />} nativeButton={false} variant="outline">
               <ExternalLink className="size-4" />
               열기
             </Button>
@@ -35,7 +36,7 @@ export default async function AdminOfferingPage() {
         </div>
         <p className="mt-2 flex items-center gap-1 text-xs text-[#777]">
           <Copy className="size-3" />
-          상대 경로로 표시됩니다. 배포 도메인 뒤에 붙여 전달해 주세요.
+          이 주소를 받은 분은 회원가입이나 로그인 없이 현황을 확인할 수 있습니다.
         </p>
       </section>
 

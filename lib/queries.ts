@@ -1,7 +1,7 @@
 import "server-only"
 import { getDb } from "@/lib/db"
 import { sermons, posts, gallery, popups, attachments, offeringReports } from "@/lib/db/schema"
-import { and, desc, eq, sql } from "drizzle-orm"
+import { and, desc, eq, inArray, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
 export async function getSermons(category?: string, limit?: number) {
@@ -20,12 +20,13 @@ export async function getSermon(id: number) {
 
 export async function getPosts(category?: string, limit?: number) {
   const db = getDb()
-  const where = category ? eq(posts.category, category) : undefined
-  const q = db.select().from(posts).where(where).orderBy(desc(posts.pinned), desc(posts.createdAt))
-  const items = await q
   const viewer = await getViewerAccess()
-  const visible = items.filter((post) => post.category !== "헌금 현황" && canAccess(post.visibility, viewer))
-  return limit ? visible.slice(0, limit) : visible
+  const visibility = viewer.role === "admin"
+    ? undefined
+    : inArray(posts.visibility, ["public", ...(viewer.role === "member" ? ["member"] : []), ...viewer.groups])
+  const where = and(category ? eq(posts.category, category) : undefined, ne(posts.category, "헌금 현황"), visibility)
+  const q = db.select().from(posts).where(where).orderBy(desc(posts.pinned), desc(posts.createdAt))
+  return limit ? q.limit(limit) : q
 }
 
 export async function getPost(id: number) {

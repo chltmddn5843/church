@@ -17,12 +17,19 @@ const ALLOWED_IMAGE_TYPES = new Map([
 ])
 
 function readPopupValues(formData: FormData) {
+  const title = String(formData.get("title") ?? "").trim()
+  const linkUrl = String(formData.get("linkUrl") ?? "").trim()
+  const width = Number(formData.get("width") || 420)
+  const height = Number(formData.get("height") || 540)
+  if (!title) throw new Error("팝업 제목을 입력해 주세요.")
+  if (linkUrl && !linkUrl.startsWith("/") && !/^https?:\/\//i.test(linkUrl)) throw new Error("팝업 링크는 내부 경로 또는 HTTP(S) 주소만 사용할 수 있습니다.")
+  if (![width, height].every(Number.isFinite)) throw new Error("올바른 팝업 크기를 입력해 주세요.")
   return {
-    title: String(formData.get("title") ?? "").trim(),
-    linkUrl: String(formData.get("linkUrl") ?? "").trim() || null,
+    title,
+    linkUrl: linkUrl || null,
     content: String(formData.get("content") ?? "").trim() || null,
-    width: Math.min(Math.max(Number(formData.get("width") || 420), 280), 760),
-    height: Math.min(Math.max(Number(formData.get("height") || 540), 320), 900),
+    width: Math.min(Math.max(width, 280), 760),
+    height: Math.min(Math.max(height, 320), 900),
     active: formData.get("active") === "on",
   }
 }
@@ -80,6 +87,7 @@ export async function createPopup(formData: FormData) {
 
 export async function updatePopup(id: number, formData: FormData) {
   await requireAdmin()
+  if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 팝업 번호가 아닙니다.")
 
   const db = getDb()
   const current = await db.select({ imageUrl: popups.imageUrl }).from(popups).where(eq(popups.id, id)).get()
@@ -108,6 +116,7 @@ export async function updatePopup(id: number, formData: FormData) {
 
 export async function togglePopup(id: number, active: boolean) {
   await requireAdmin()
+  if (!Number.isSafeInteger(id) || id < 1 || typeof active !== "boolean") throw new Error("올바른 팝업 정보가 아닙니다.")
   const db = getDb()
   await db.update(popups).set({ active }).where(eq(popups.id, id))
   revalidatePath("/admin/popups")
@@ -117,6 +126,7 @@ export async function togglePopup(id: number, active: boolean) {
 
 export async function deletePopup(id: number) {
   await requireAdmin()
+  if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 팝업 번호가 아닙니다.")
   const db = getDb()
   const item = await db.select({ imageUrl: popups.imageUrl }).from(popups).where(eq(popups.id, id)).get()
 

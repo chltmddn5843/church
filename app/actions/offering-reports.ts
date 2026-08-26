@@ -15,6 +15,7 @@ export async function saveOfferingReport(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim()
   const content = String(formData.get("content") ?? "").trim()
 
+  if (!Number.isSafeInteger(id) || id < 0) throw new Error("올바른 헌금 보고서 번호가 아닙니다.")
   if (!title || !content) {
     throw new Error("제목과 헌금 현황 내용을 입력해 주세요.")
   }

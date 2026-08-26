@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm"
-import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
+import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 
 const now = sql`(unixepoch())`
 
@@ -53,14 +53,14 @@ export const verification = sqliteTable("verification", {
 export const sermons = sqliteTable("sermons", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
-  preacher: text("preacher").notNull().default("정승천"),
+  preacher: text("preacher").notNull().default("양승철"),
   scripture: text("scripture"),
   category: text("category").notNull().default("주일예배"),
   youtubeId: text("youtubeId"),
   summary: text("summary"),
   preachedAt: integer("preachedAt", { mode: "timestamp" }).notNull().default(now),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
-})
+}, (table) => [index("sermons_category_preached_idx").on(table.category, table.preachedAt)])
 
 export const posts = sqliteTable("posts", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -76,7 +76,10 @@ export const posts = sqliteTable("posts", {
   views: integer("views").notNull().default(0),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
-}, (table) => [uniqueIndex("posts_legacy_unique").on(table.legacyBoard, table.legacyId)])
+}, (table) => [
+  uniqueIndex("posts_legacy_unique").on(table.legacyBoard, table.legacyId),
+  index("posts_category_pinned_created_idx").on(table.category, table.pinned, table.createdAt),
+])
 
 export const attachments = sqliteTable("attachments", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -86,7 +89,7 @@ export const attachments = sqliteTable("attachments", {
   contentType: text("contentType").notNull(),
   size: integer("size").notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
-})
+}, (table) => [index("attachments_post_idx").on(table.postId)])
 
 export const userGroups = sqliteTable("user_groups", {
   userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
@@ -100,7 +103,7 @@ export const gallery = sqliteTable("gallery", {
   description: text("description"),
   category: text("category").notNull().default("교회"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
-})
+}, (table) => [index("gallery_category_created_idx").on(table.category, table.createdAt)])
 
 export const popups = sqliteTable("popups", {
   id: integer("id").primaryKey({ autoIncrement: true }),
