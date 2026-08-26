@@ -2,7 +2,7 @@ export const church = {
   name: "원당교회",
   nameEn: "Wondang Church",
   denomination: "대한예수교장로회",
-  pastor: "정승천",
+  pastor: "양승철",
   pastorTitle: "담임목사",
   slogan: "제자 되고 제자 삼는 원당교회",
   subSlogan: "예배로 하나님께, 사랑으로 이웃에게 나아가는 원당교회입니다.",
@@ -48,7 +48,7 @@ export const church = {
         { title: "양육반", href: "/discipleship#courses" },
         { title: "제자반", href: "/discipleship#courses" },
         { title: "사역반", href: "/discipleship#courses" },
-        { title: "전체 수료자", href: "/discipleship#graduates" },
+        { title: "수료자 명단", href: "/discipleship#graduates" },
       ],
     },
     {
