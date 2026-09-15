@@ -23,8 +23,8 @@ export async function LatestSermons() {
               <iframe src={`https://www.youtube.com/embed/${latest.youtubeId}`} title={latest.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen className="h-full w-full" />
             </div>
             <div className="p-6 text-center md:p-8">
-              <p className="text-sm font-semibold text-primary">{latest.category}</p>
-              <h3 className="mt-2 font-serif text-2xl font-bold md:text-3xl">{latest.title}</h3>
+              <h3 className="font-serif text-2xl font-bold md:text-3xl">{latest.title}</h3>
+              {latest.scripture && <p className="mt-2 text-sm text-primary">{latest.scripture}</p>}
             </div>
           </div>
         ) : sermons.length > 0 ? (

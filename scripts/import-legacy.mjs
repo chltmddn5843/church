@@ -55,7 +55,7 @@ async function importBoard([boardId, [category, visibility]]) {
         const title = decode(match[2])
         const date = title.match(/\b(20\d{2}|\d{2})\.\s*(\d{1,2})\.\s*(\d{1,2})\b/)
         const createdAt = date ? `unixepoch('${date[1].length === 2 ? `20${date[1]}` : date[1]}-${date[2].padStart(2, "0")}-${date[3].padStart(2, "0")}')` : "unixepoch()"
-        statements.push(`INSERT OR IGNORE INTO posts (title,content,category,authorName,pinned,visibility,legacyBoard,legacyId,createdAt,updatedAt) VALUES (${quote(title)},'원당교회 새가족으로 등록하셨습니다. 환영하고 축복합니다.','새가족소개','관리자',0,'member',61,${id},${createdAt},${createdAt});`)
+        statements.push(`INSERT OR IGNORE INTO posts (title,content,category,authorName,pinned,visibility,legacyBoard,legacyId,createdAt,updatedAt) VALUES (${quote(title)},${quote(title)},'새가족소개','관리자',0,'member',61,${id},${createdAt},${createdAt});`)
       }
       continue
     }

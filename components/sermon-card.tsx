@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { Play } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 
 type Sermon = {
   id: number
@@ -37,10 +36,7 @@ export function SermonCard({ sermon, href }: { sermon: Sermon, href?: string }) 
         </div>
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <Badge variant="secondary" className="w-fit">
-          {sermon.category}
-        </Badge>
-        <h3 className="mt-3 line-clamp-2 font-serif text-lg font-bold text-foreground transition-colors group-hover:text-primary">
+        <h3 className="line-clamp-2 font-serif text-lg font-bold text-foreground transition-colors group-hover:text-primary">
           {sermon.title}
         </h3>
         {sermon.scripture && <p className="mt-1 text-sm text-primary">{sermon.scripture}</p>}

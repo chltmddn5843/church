@@ -18,6 +18,13 @@ function categoryOf(title: string) {
   return null
 }
 
+export function parseSermonTitle(rawTitle: string) {
+  const parts = rawTitle.split(/\s*[|ㅣ]\s*|\s+l\s+/i).map(part => part.trim()).filter(Boolean)
+  if (!/^\d{4}\.\d{1,2}\.\d{1,2}$/.test(parts[0]) || parts.length < 3) return { title: rawTitle, scripture: null }
+  const hasPreacher = /목사|전도사/.test(parts.at(-1) ?? "")
+  return { title: parts.slice(2, hasPreacher ? -1 : undefined).join(" | "), scripture: parts[1] }
+}
+
 async function loadFeed(category: string) {
   const playlist = PLAYLISTS[category]
   const feed = playlist ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlist}` : FEED
@@ -32,9 +39,9 @@ async function loadFeed(category: string) {
       const rawTitle = entry.match(/<title>([\s\S]*?)<\/title>/)?.[1]
       const published = entry.match(/<published>([^<]+)<\/published>/)?.[1]
       if (!youtubeId || !rawTitle || !published) return []
-      const title = decode(rawTitle)
-      if (!playlist && categoryOf(title) !== category) return []
-      return [{ youtubeId, title, category, preachedAt: new Date(published) }]
+      const raw = decode(rawTitle)
+      if (!playlist && categoryOf(raw) !== category) return []
+      return [{ youtubeId, ...parseSermonTitle(raw), category, preachedAt: new Date(published) }]
     })
   } catch (error) {
     console.error("Failed to load YouTube feed:", error)
