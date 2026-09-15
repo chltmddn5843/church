@@ -2,7 +2,7 @@ import { createSermon, deleteSermon, updateSermon } from "@/app/actions/sermons"
 import { getSermons } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
 
-const categories = ["주일예배", "금요예배", "새벽예배", "찬양대", "특별예배"]
+const categories = ["주일예배", "금요예배", "새벽예배", "쉐키나찬양단", "할렐루야찬양대"]
 
 export default async function AdminSermonsPage() {
   const items = await getSermons()

@@ -1,4 +1,11 @@
 const FEED = "https://www.youtube.com/feeds/videos.xml?channel_id=UC0KYIf-En7v5Ee91PL1IchQ"
+const PLAYLISTS: Record<string, string | null> = {
+  "주일예배": "PL61Tjrp-GLP7vWfc5urYAh0ZJEY_XF6bK",
+  "금요예배": "PL61Tjrp-GLP6Ub5td2fFjsd0LVHIpAj7A",
+  "새벽예배": null,
+  "쉐키나찬양단": "PL61Tjrp-GLP4HMfRHBvXU2jOMXVuF3O3I",
+  "할렐루야찬양대": "PL61Tjrp-GLP7khZV0uZfKGNjoE_UTn-rT",
+}
 
 function decode(value: string) {
   return value.replaceAll("&amp;", "&").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#39;", "'").replaceAll("&quot;", '"')
@@ -11,9 +18,12 @@ function categoryOf(title: string) {
   return null
 }
 
-export async function getYoutubeSermons(category?: string) {
+async function loadFeed(category: string) {
+  const playlist = PLAYLISTS[category]
+  const feed = playlist ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlist}` : FEED
+
   try {
-    const xml = await fetch(FEED, { next: { revalidate: 300 } }).then(response => {
+    const xml = await fetch(feed, { next: { revalidate: 300 } }).then(response => {
       if (!response.ok) throw new Error(`YouTube feed ${response.status}`)
       return response.text()
     })
@@ -23,14 +33,21 @@ export async function getYoutubeSermons(category?: string) {
       const published = entry.match(/<published>([^<]+)<\/published>/)?.[1]
       if (!youtubeId || !rawTitle || !published) return []
       const title = decode(rawTitle)
-      const itemCategory = categoryOf(title)
-      if (!itemCategory || (category && category !== itemCategory)) return []
-      return [{ youtubeId, title, category: itemCategory, preachedAt: new Date(published) }]
+      if (!playlist && categoryOf(title) !== category) return []
+      return [{ youtubeId, title, category, preachedAt: new Date(published) }]
     })
   } catch (error) {
     console.error("Failed to load YouTube feed:", error)
     return []
   }
+}
+
+export async function getYoutubeSermons(category?: string) {
+  if (category && !(category in PLAYLISTS)) return []
+  const categories = category ? [category] : Object.keys(PLAYLISTS)
+  const videos = (await Promise.all(categories.map(loadFeed))).flat()
+  return [...new Map(videos.map(video => [video.youtubeId, video])).values()]
+    .sort((a, b) => b.preachedAt.getTime() - a.preachedAt.getTime())
 }
 
 export function parseYoutubeId(input: string): string | null {

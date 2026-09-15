@@ -16,11 +16,11 @@ export default async function HomePage() {
       <SmartOfferingFloat />
       <PopupModal popups={popups} />
       <Hero />
-      <LiveStream />
-      <LatestSermons />
-      <WorshipTimes />
-      <QuickLinks />
-      <GalleryPreview />
+      <div className="scroll-reveal"><LiveStream /></div>
+      <div className="scroll-reveal"><LatestSermons /></div>
+      <div className="scroll-reveal"><WorshipTimes /></div>
+      <div className="scroll-reveal"><QuickLinks /></div>
+      <div className="scroll-reveal"><GalleryPreview /></div>
     </>
   )
 }

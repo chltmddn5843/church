@@ -6,14 +6,14 @@ export const church = {
   pastorTitle: "담임목사",
   slogan: "제자 되고 제자 삼는 원당교회",
   subSlogan: "예배로 하나님께, 사랑으로 이웃에게 나아가는 원당교회입니다.",
-  address: "(22865) 인천광역시 검단구 이음1로 320 원당교회",
+  address: "인천광역시 검단구 이음1로 320 원당교회",
   addressShort: "인천광역시 검단구 이음1로 320",
   tel: "032-563-4943",
   fax: "032-563-1425",
   email: "wdchurch@wdchurch.com",
   map: {
-    lat: 37.5961,
-    lng: 126.7002,
+    lat: 37.5890672,
+    lng: 126.7192687,
   },
   nav: [
     {
@@ -33,11 +33,11 @@ export const church = {
       title: "말씀과 찬양",
       href: "/sermons",
       children: [
-        { title: "주일2부예배", href: "/sermons?category=주일예배" },
+        { title: "주일예배", href: "/sermons?category=주일예배" },
         { title: "금요예배", href: "/sermons?category=금요예배" },
         { title: "새벽예배", href: "/sermons?category=새벽예배" },
-        { title: "할렐루야 찬양대", href: "/sermons?category=찬양대" },
-        { title: "특별예배 및 행사", href: "/sermons?category=특별예배" },
+        { title: "쉐키나찬양단 (1·2·3부 통합)", href: "/sermons?category=쉐키나찬양단" },
+        { title: "할렐루야찬양대", href: "/sermons?category=할렐루야찬양대" },
       ],
     },
     {

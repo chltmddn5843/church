@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { getYoutubeSermons } from "@/lib/youtube"
 
 export async function LatestSermons() {
-  const [youtube, sermons] = await Promise.all([getYoutubeSermons(), getSermons(undefined, 1)])
+  const [youtube, sermons] = await Promise.all([getYoutubeSermons("주일예배"), getSermons(undefined, 1)])
   const latest = youtube[0]
 
   return (
@@ -25,7 +25,6 @@ export async function LatestSermons() {
             <div className="p-6 text-center md:p-8">
               <p className="text-sm font-semibold text-primary">{latest.category}</p>
               <h3 className="mt-2 font-serif text-2xl font-bold md:text-3xl">{latest.title}</h3>
-              <time className="mt-3 block text-sm text-muted-foreground" dateTime={latest.preachedAt.toISOString()}>{latest.preachedAt.toLocaleDateString("ko-KR")}</time>
             </div>
           </div>
         ) : sermons.length > 0 ? (

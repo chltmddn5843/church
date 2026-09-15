@@ -31,12 +31,12 @@ export function SiteHeader({ user }: { user: SessionUser }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#9CC7E6]/25 bg-[#123A63] text-white">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:h-20">
+      <div className="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-4 md:h-24 xl:px-10">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-12" priority />
+          <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-[53px]" priority />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="주 메뉴">
+        <nav className="hidden items-center gap-1 lg:flex xl:gap-5" aria-label="주 메뉴">
           {church.nav.map((item) => (
             <div key={item.title} className="group relative">
               <Link

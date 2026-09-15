@@ -11,7 +11,7 @@ export function Hero() {
         alt="원당교회 전경"
         fill
         priority
-        className="object-cover opacity-85"
+        className="hero-motion object-cover opacity-85"
       />
       <div className="absolute inset-0 bg-primary/20" />
       <div className="absolute inset-0 bg-white/25" />

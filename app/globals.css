@@ -129,3 +129,32 @@
       radial-gradient(circle at 88% 10%, rgb(242 233 218 / 48%), transparent 30rem);
   }
 }
+
+@keyframes hero-motion {
+  from { transform: scale(1.03); }
+  to { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+
+@keyframes scroll-reveal {
+  from { opacity: 0; transform: translateY(3rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-motion {
+  animation: hero-motion 16s ease-in-out infinite alternate;
+}
+
+@supports (animation-timeline: view()) {
+  .scroll-reveal {
+    animation: scroll-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 35%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-motion,
+  .scroll-reveal {
+    animation: none;
+  }
+}

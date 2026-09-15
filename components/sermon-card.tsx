@@ -44,12 +44,6 @@ export function SermonCard({ sermon, href }: { sermon: Sermon, href?: string }) 
           {sermon.title}
         </h3>
         {sermon.scripture && <p className="mt-1 text-sm text-primary">{sermon.scripture}</p>}
-        <div className="mt-auto flex items-center justify-between pt-4 text-sm text-muted-foreground">
-          <span>{sermon.preacher} 목사</span>
-          <time dateTime={new Date(sermon.preachedAt).toISOString()}>
-            {new Date(sermon.preachedAt).toLocaleDateString("ko-KR")}
-          </time>
-        </div>
       </div>
     </Link>
   )
