@@ -1,4 +1,5 @@
 import { Clock, MapPin } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const mainWorship = [
   { name: "주일예배 1부", day: "주일 오전", time: "09:00 ~ 10:00", place: "믿음관/비전홀(1층)" },
@@ -20,19 +21,24 @@ const nextGenWorship = [
   { name: "청년부", time: "01:50 ~ 03:00", place: "사랑관/디모데홀(3층)" },
 ]
 
-export function WorshipSchedule() {
+export function WorshipSchedule({ variant = "dialog" }: { variant?: "dialog" | "home" }) {
+  const large = variant === "home"
+
   return (
     <div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {mainWorship.map((row) => (
-          <div key={row.name} className="rounded-2xl border border-border bg-card p-6 shadow-sm transition hover:shadow-md">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{row.day}</p>
-            <p className="mt-1 font-serif text-lg font-bold text-foreground">{row.name}</p>
-            <p className="mt-3 flex items-center gap-2 text-xl font-bold tabular-nums text-primary">
-              <Clock aria-hidden className="size-5" />
+          <div
+            key={row.name}
+            className={cn("rounded-2xl border border-border bg-card shadow-sm transition hover:shadow-md", large ? "p-7" : "p-6")}
+          >
+            <p className={cn("font-semibold uppercase tracking-wide text-muted-foreground", large ? "text-sm" : "text-xs")}>{row.day}</p>
+            <p className={cn("mt-1 font-serif font-bold text-foreground", large ? "text-xl md:text-2xl" : "text-lg")}>{row.name}</p>
+            <p className={cn("mt-3 flex items-center gap-2 font-bold tabular-nums text-primary", large ? "text-2xl md:text-3xl" : "text-xl")}>
+              <Clock aria-hidden className={large ? "size-6" : "size-5"} />
               {row.time}
             </p>
-            <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <p className={cn("mt-2 flex items-center gap-1.5 text-muted-foreground", large ? "text-base" : "text-sm")}>
               <MapPin aria-hidden className="size-4 shrink-0" />
               {row.place}
             </p>
@@ -40,17 +46,17 @@ export function WorshipSchedule() {
         ))}
       </div>
 
-      <p className="mt-10 mb-4 text-sm font-semibold text-muted-foreground">교육부 · 다음세대</p>
+      <p className={cn("mt-10 mb-4 font-semibold text-muted-foreground", large ? "text-base" : "text-sm")}>교육부 · 다음세대</p>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
         {nextGenWorship.map((row) => (
-          <div key={row.name} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-            <p className="text-sm font-semibold text-foreground">{row.name}</p>
-            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock aria-hidden className="size-3.5 shrink-0" />
+          <div key={row.name} className={cn("rounded-xl border border-border bg-card shadow-sm", large ? "p-5" : "p-4")}>
+            <p className={cn("font-semibold text-foreground", large ? "text-base" : "text-sm")}>{row.name}</p>
+            <p className={cn("mt-1.5 flex items-center gap-1.5 text-muted-foreground", large ? "text-sm" : "text-xs")}>
+              <Clock aria-hidden className={cn("shrink-0", large ? "size-4" : "size-3.5")} />
               {row.time}
             </p>
-            <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPin aria-hidden className="size-3.5 shrink-0" />
+            <p className={cn("mt-1 flex items-center gap-1.5 text-muted-foreground", large ? "text-sm" : "text-xs")}>
+              <MapPin aria-hidden className={cn("shrink-0", large ? "size-4" : "size-3.5")} />
               {row.place}
             </p>
           </div>

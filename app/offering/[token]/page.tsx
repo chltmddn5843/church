@@ -49,8 +49,8 @@ export default async function OfferingReportPage({
 
   return (
     <main className="min-h-screen bg-[#f6fbff] px-4 py-8 text-[#183247] md:py-14">
-      <article className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-[#d7e5ee] bg-white shadow-sm">
-        <header className="border-b border-[#9CC7E6]/30 bg-[#123A63] px-5 py-6 text-white md:px-8">
+      <article className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+        <header className="border-b border-accent/30 bg-primary px-5 py-6 text-white md:px-8">
           <div className="flex items-center gap-2 text-sm text-white/85">
             <Church className="size-4" />
             원당교회
@@ -63,14 +63,14 @@ export default async function OfferingReportPage({
         </header>
 
         <div className="grid gap-5 p-5 md:p-8">
-          <aside className="flex items-start gap-3 rounded-xl border border-[#9CC7E6]/60 bg-[#eaf7ff] p-4 text-sm leading-6 text-[#294d68]">
+          <aside className="flex items-start gap-3 rounded-xl border border-accent/60 bg-[#eaf7ff] p-4 text-sm leading-6 text-[#294d68]">
             <Smartphone className="mt-0.5 size-5 shrink-0" />
             <p><strong>휴대폰 홈 화면에 추가할 수 있습니다.</strong><br />브라우저의 공유 또는 메뉴에서 ‘홈 화면에 추가’를 선택하면 이 전용 링크로 바로 열립니다.</p>
           </aside>
           {sections.length > 0 ? (
             sections.map((section) => (
-              <section key={section.title} className="rounded-xl border border-[#d7e5ee] bg-[#f8fbfd]">
-                <h2 className="border-b border-[#d7e5ee] px-4 py-3 text-base font-bold text-[#123A63] md:text-lg">
+              <section key={section.title} className="rounded-xl border border-border bg-background">
+                <h2 className="border-b border-border px-4 py-3 text-base font-bold text-primary md:text-lg">
                   {section.title}
                 </h2>
                 <div className="grid gap-2 px-4 py-4">

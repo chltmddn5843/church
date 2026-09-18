@@ -13,7 +13,7 @@ export async function createSermon(formData: FormData) {
   const preachedAt = String(formData.get("preachedAt") ?? "")
   await getDb().insert(sermons).values({
     title: String(formData.get("title") ?? ""),
-    preacher: String(formData.get("preacher") ?? "") || "정승천",
+    preacher: String(formData.get("preacher") ?? "") || "양승철",
     scripture: String(formData.get("scripture") ?? "") || null,
     category: String(formData.get("category") ?? "") || "주일예배",
     youtubeId: parseYoutubeId(String(formData.get("youtubeId") ?? "")),
@@ -33,7 +33,7 @@ export async function updateSermon(id: number, formData: FormData) {
     .update(sermons)
     .set({
       title: String(formData.get("title") ?? ""),
-      preacher: String(formData.get("preacher") ?? "") || "정승천",
+      preacher: String(formData.get("preacher") ?? "") || "양승철",
       scripture: String(formData.get("scripture") ?? "") || null,
       category: String(formData.get("category") ?? "") || "주일예배",
       youtubeId: parseYoutubeId(String(formData.get("youtubeId") ?? "")),

@@ -32,13 +32,12 @@ export async function getPosts(category?: string, limit?: number) {
 export async function getLatestBulletin() {
   const [post] = await getPosts("주보", 1)
   if (!post) return null
-  const pdf = await getDb()
-    .select({ url: attachments.url, name: attachments.name })
+  const files = await getDb()
+    .select({ url: attachments.url, name: attachments.name, contentType: attachments.contentType })
     .from(attachments)
-    .where(and(eq(attachments.postId, post.id), eq(attachments.contentType, "application/pdf")))
-    .limit(1)
-    .get()
-  return { id: post.id, title: post.title, createdAt: post.createdAt, pdf: pdf ?? null }
+    .where(eq(attachments.postId, post.id))
+  const file = files.find((f) => f.contentType === "application/pdf") ?? files.find((f) => f.contentType.startsWith("image/")) ?? null
+  return { id: post.id, title: post.title, createdAt: post.createdAt, file }
 }
 
 export async function getPost(id: number) {

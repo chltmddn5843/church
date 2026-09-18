@@ -1,5 +1,6 @@
 "use server"
 
+import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { requireAdmin } from "@/lib/admin"
@@ -15,4 +16,12 @@ export async function saveLiveStream(formData: FormData) {
   revalidatePath("/admin/live")
   revalidatePath("/")
   redirect("/admin/live?saved=updated")
+}
+
+export async function clearLiveStream() {
+  await requireAdmin()
+  await getDb().delete(liveStream).where(eq(liveStream.id, 1))
+  revalidatePath("/admin/live")
+  revalidatePath("/")
+  redirect("/admin/live?saved=cleared")
 }

@@ -3,10 +3,21 @@
 import { useEffect, useRef, useState } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 import { Download, ExternalLink } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
 
-export function BulletinPdfViewer({ url, title }: { url: string; title: string }) {
+export function BulletinPdfViewer({
+  url,
+  title,
+  className = "mt-8",
+  heightClassName = "max-h-[80vh] md:max-h-[85vh]",
+}: {
+  url: string
+  title: string
+  className?: string
+  heightClassName?: string
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [pageWidth, setPageWidth] = useState<number>()
   const [numPages, setNumPages] = useState<number>()
@@ -21,8 +32,8 @@ export function BulletinPdfViewer({ url, title }: { url: string; title: string }
   }, [])
 
   return (
-    <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <div className="flex items-center justify-between gap-3 border-b border-border bg-secondary/60 px-4 py-3">
+    <div className={cn("flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm", className)}>
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-secondary/60 px-4 py-3">
         <p className="truncate text-sm font-semibold text-foreground">{title}</p>
         <div className="flex shrink-0 gap-2">
           <a
@@ -43,7 +54,7 @@ export function BulletinPdfViewer({ url, title }: { url: string; title: string }
         </div>
       </div>
 
-      <div ref={containerRef} className="max-h-[80vh] overflow-y-auto bg-muted/30 p-2 md:max-h-[85vh] md:p-4">
+      <div ref={containerRef} className={cn("overflow-y-auto bg-muted/30 p-2 md:p-4", heightClassName)}>
         {failed ? (
           <p className="py-16 text-center text-sm text-muted-foreground">
             미리보기를 불러오지 못했어요. 위의 &apos;새 창&apos; 버튼으로 열어주세요.

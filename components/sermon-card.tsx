@@ -20,6 +20,7 @@ export function SermonCard({ sermon, href }: { sermon: Sermon, href?: string }) 
     <Link
       href={href ?? `/sermons/${sermon.id}`}
       target={href ? "_blank" : undefined}
+      rel={href ? "noopener noreferrer" : undefined}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-muted">

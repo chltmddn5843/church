@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { church } from "@/lib/church"
 import { PageBanner } from "@/components/page-banner"
 import { SectionHeading } from "@/components/section-heading"
-import { Cross, Heart, Users, BookOpen, MapPin, Phone, Printer } from "lucide-react"
+import { Cross, Heart, Users, BookOpen, MapPin, Phone, Printer, Globe } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "교회소개",
@@ -27,6 +27,16 @@ const staff = [
   { name: "이경은", role: "전도사", image: "/images/staff/lee-gyeongeun.jpg" },
   { name: "조은경", role: "교육간사", image: "/images/staff/jo-eungyeong.jpg" },
   { name: "김미경", role: "목회행정간사", image: "/images/staff/kim-migyeong.jpg" },
+]
+
+const missionaries = [
+  { name: "김진곤 · 김미경", field: "중인도 마하라스트라주 뿌네지역" },
+  { name: "차용조 · 안기영", field: "브라질 아찌바이아" },
+  { name: "정남현 · 이은경", field: "아프리카 마다가스카르" },
+  { name: "강성춘 · 박성화", field: "태국 쁘라뚜 치앙마이" },
+  { name: "안중식 · 손인자", field: "일본" },
+  { name: "김정현 · 이효은", field: "기아대책 캄보디아" },
+  { name: "이윤주 · 강성현", field: "GP선교회 · 일본" },
 ]
 
 const elders = [
@@ -119,8 +129,22 @@ export default function AboutPage() {
       </section>
 
       <section id="mission" className="scroll-mt-24 bg-secondary py-16 md:py-24">
-        <div className="mx-auto max-w-4xl px-4">
-          <SectionHeading eyebrow="Mission" title="선교" description="해외선교와 미자립교회·농어촌교회, 지역사회를 함께 섬깁니다." />
+        <div className="mx-auto max-w-6xl px-4">
+          <SectionHeading eyebrow="Mission" title="선교" description="원당교회가 파송하고 후원하는 해외 선교사님을 소개합니다." />
+          <h3 className="mt-12 text-center font-serif text-2xl font-bold">후원하는 해외 선교사님</h3>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {missionaries.map((m) => (
+              <div key={m.name} className="flex items-center gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <Globe className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-semibold text-foreground">{m.name} 선교사</p>
+                  <p className="text-sm text-muted-foreground">{m.field}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

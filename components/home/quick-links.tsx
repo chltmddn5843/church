@@ -32,7 +32,7 @@ export function QuickLinks() {
           ))}
           <Link
             href="/offering"
-            className="group relative flex h-56 flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B1D39] via-[#123A63] to-[#2F5D8A] text-center text-white shadow-md transition-shadow hover:shadow-xl focus-visible:shadow-xl"
+            className="group relative flex h-56 flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-br from-foreground via-primary to-ring text-center text-white shadow-md transition-shadow hover:shadow-xl focus-visible:shadow-xl"
           >
             <span className="flex size-14 items-center justify-center rounded-2xl bg-[#C9A15A]/20 text-[#e8c988] transition-colors group-hover:bg-[#C9A15A]/30">
               <HandCoins className="size-7" />

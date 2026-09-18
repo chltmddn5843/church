@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, Download, User } from "lucide-react"
 import { after } from "next/server"
 import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
+import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
+import { cn } from "@/lib/utils"
 
 export async function generateMetadata({
   params,
@@ -29,12 +31,15 @@ export default async function PostDetailPage({
   if (!post) notFound()
   after(() => incrementPostView(post.id))
 
-  const bulletinPdf = post.attachments.find((file) => file.contentType === "application/pdf")
-  const otherAttachments = post.attachments.filter((file) => file.id !== bulletinPdf?.id)
+  const isBulletin = post.category === "주보"
+  const bulletinFile = isBulletin
+    ? post.attachments.find((file) => file.contentType === "application/pdf") ?? post.attachments.find((file) => file.contentType.startsWith("image/"))
+    : post.attachments.find((file) => file.contentType === "application/pdf")
+  const otherAttachments = post.attachments.filter((file) => file.id !== bulletinFile?.id)
 
   return (
     <article className="py-12 md:py-16">
-      <div className="mx-auto max-w-3xl px-4">
+      <div className={cn("mx-auto px-4", isBulletin ? "max-w-4xl" : "max-w-3xl")}>
         <Button render={<Link href="/community" />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
           <>
             <ArrowLeft className="mr-1 h-4 w-4" />
@@ -60,7 +65,13 @@ export default async function PostDetailPage({
         </div>
 
         <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>
-        {bulletinPdf && <BulletinPdfViewer url={bulletinPdf.url} title={bulletinPdf.name} />}
+        {bulletinFile && (
+          bulletinFile.contentType === "application/pdf" ? (
+            <BulletinPdfViewer url={bulletinFile.url} title={bulletinFile.name} />
+          ) : (
+            <BulletinImageViewer url={bulletinFile.url} title={bulletinFile.name} />
+          )
+        )}
         {otherAttachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{otherAttachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 rounded-lg border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
       </div>
     </article>

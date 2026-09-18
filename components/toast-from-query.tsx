@@ -13,6 +13,7 @@ const messages: Record<string, string> = {
   popup: "팝업 설정이 저장되었습니다.",
   offering: "헌금 현황이 저장되었습니다.",
   gallery: "사진이 등록되었습니다.",
+  cleared: "생방송 섹션이 메인 페이지에서 내려갔습니다.",
 }
 
 export function ToastFromQuery() {

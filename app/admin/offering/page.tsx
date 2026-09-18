@@ -28,7 +28,7 @@ export default async function AdminOfferingPage() {
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
           <Input readOnly value={link} className="bg-white" />
           {path && (
-            <Button render={<Link href={path} target="_blank" />} nativeButton={false} variant="outline">
+            <Button render={<Link href={path} target="_blank" rel="noopener noreferrer" />} nativeButton={false} variant="outline">
               <ExternalLink className="size-4" />
               열기
             </Button>

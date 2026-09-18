@@ -41,7 +41,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
       </div>
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-3xl overflow-hidden p-0">
+        <DialogContent className="w-[calc(100%-1.5rem)] max-w-[calc(100%-1.5rem)] overflow-hidden p-0 sm:max-w-2xl md:max-w-3xl">
           {selected && (
             <>
               <DialogTitle className="sr-only">{selected.title}</DialogTitle>

@@ -30,6 +30,15 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
     return () => cancelAnimationFrame(frame)
   }, [popups])
 
+  useEffect(() => {
+    if (visible.length === 0) return
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setVisible([])
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [visible.length])
+
   if (visible.length === 0) return null
 
   function close(id: number) {
@@ -46,6 +55,8 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
       {visible.map((p) => (
         <div
           key={p.id}
+          role="dialog"
+          aria-label={p.title}
           className="pointer-events-auto max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
           style={{ width: p.width ?? 420 }}
         >

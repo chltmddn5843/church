@@ -40,7 +40,7 @@ export function Hero() {
           className={`object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1D39]/60 via-transparent to-[#0B1D39]/25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-foreground/25" />
 
       <div className="absolute left-6 top-6 max-w-[75%] md:left-10 md:top-10 md:max-w-sm">
         <div className="relative">

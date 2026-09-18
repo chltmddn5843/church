@@ -62,6 +62,7 @@ export default async function CommunityPage({
                   <Link
                     key={cat}
                     href={href}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "flex h-12 items-center justify-center rounded-2xl px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
                       isActive

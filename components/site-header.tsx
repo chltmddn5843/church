@@ -38,7 +38,7 @@ export function SiteHeader({
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#9CC7E6]/25 bg-[#123A63] text-white">
+    <header className="sticky top-0 z-50 w-full border-b border-accent/25 bg-primary text-white">
       <div className="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-4 md:h-24 xl:px-10">
         <Link href="/" className="flex items-center gap-2">
           <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-[53px]" priority />
@@ -49,12 +49,12 @@ export function SiteHeader({
             <div key={item.title} className="group relative">
               <Link
                 href={item.href}
-                className="flex items-center gap-1 rounded-md px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-[#2F5D8A] hover:text-white"
+                className="flex items-center gap-1 rounded-md px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-ring hover:text-white"
               >
                 {item.title}
                 <ChevronDown className="h-3 w-3 opacity-50 transition-transform group-hover:rotate-180" />
               </Link>
-              <div className="invisible absolute left-0 top-full min-w-44 rounded-md border border-[#9CC7E6]/40 bg-popover p-1 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100">
+              <div className="invisible absolute left-0 top-full min-w-44 rounded-md border border-accent/40 bg-popover p-1 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                 {item.children.map((child) => (
                   <Link
                     key={child.title}
