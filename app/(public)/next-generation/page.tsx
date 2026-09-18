@@ -93,7 +93,7 @@ export default function NextGenerationPage() {
       <PageBanner
         title="다음세대"
         subtitle="믿음의 다음세대를 함께 세워갑니다"
-        image="/images/next-generation.png"
+        image="/images/next-generation.jpg"
       />
 
       <section className="py-16 md:py-24">

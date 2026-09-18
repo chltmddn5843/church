@@ -17,7 +17,7 @@ export default async function GalleryPage() {
 
   return (
     <>
-      <PageBanner title="갤러리" subtitle="원당교회의 소중한 순간들" image="/images/gallery-1.png" />
+      <PageBanner title="갤러리" subtitle="원당교회의 소중한 순간들" image="/images/gallery-1.jpg" />
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-4">
           {user?.role === "admin" && <div className="mb-6 flex justify-end"><Button render={<Link href="/admin/gallery" />} nativeButton={false}>사진 등록</Button></div>}

@@ -4,9 +4,9 @@ import { HandCoins } from "lucide-react"
 
 const tiles = [
   { title: "제자훈련", href: "/discipleship", image: "/images/discipleship.png" },
-  { title: "다음세대", href: "/next-generation", image: "/images/next-generation.png" },
-  { title: "교회소식", href: "/community", image: "/images/hero-worship.png" },
-  { title: "갤러리", href: "/gallery", image: "/images/gallery-1.png" },
+  { title: "다음세대", href: "/next-generation", image: "/images/next-generation.jpg" },
+  { title: "교회소식", href: "/community", image: "/images/hero-worship.jpg" },
+  { title: "갤러리", href: "/gallery", image: "/images/gallery-1.jpg" },
 ] as const
 
 export function QuickLinks() {

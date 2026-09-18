@@ -6,9 +6,9 @@ import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
 
 const slides = [
   { src: "/images/wd-main.jpg", alt: "원당교회 전경" },
-  { src: "/images/hero-worship.png", alt: "원당교회 예배 모습" },
-  { src: "/images/gallery-1.png", alt: "원당교회 찬양대" },
-  { src: "/images/next-generation.png", alt: "원당교회 다음세대" },
+  { src: "/images/hero-worship.jpg", alt: "원당교회 예배 모습" },
+  { src: "/images/gallery-1.jpg", alt: "원당교회 찬양대" },
+  { src: "/images/next-generation.jpg", alt: "원당교회 다음세대" },
 ] as const
 
 const AUTOPLAY_MS = 5000

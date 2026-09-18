@@ -24,3 +24,8 @@ node_modules
 
 # Claude Code local tooling (not app source)
 .claude/
+
+# Raw local assets (originals live outside the repo; optimized copies go in public/images)
+/2608 예배촬영/
+/주보테스트/
+/중등부.jpeg

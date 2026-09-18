@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, Download, User } from "lucide-react"
 import { after } from "next/server"
-import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer"
+import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
 
 export async function generateMetadata({
   params,

@@ -1,6 +1,25 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import { Document, Page, pdfjs } from "react-pdf"
 import { Download, ExternalLink } from "lucide-react"
 
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
+
 export function BulletinPdfViewer({ url, title }: { url: string; title: string }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [pageWidth, setPageWidth] = useState<number>()
+  const [numPages, setNumPages] = useState<number>()
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new ResizeObserver(([entry]) => setPageWidth(entry.contentRect.width))
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
       <div className="flex items-center justify-between gap-3 border-b border-border bg-secondary/60 px-4 py-3">
@@ -23,15 +42,33 @@ export function BulletinPdfViewer({ url, title }: { url: string; title: string }
           </a>
         </div>
       </div>
-      <iframe
-        src={`${url}#toolbar=0&view=FitH`}
-        title={title}
-        className="h-[80vh] w-full bg-muted/30 md:h-[85vh]"
-        loading="lazy"
-      />
-      <p className="border-t border-border px-4 py-2 text-center text-xs text-muted-foreground">
-        카카오톡 등 인앱 브라우저에서는 미리보기가 보이지 않을 수 있어요. 그럴 땐 위의 &apos;새 창&apos; 버튼을 눌러주세요.
-      </p>
+
+      <div ref={containerRef} className="max-h-[80vh] overflow-y-auto bg-muted/30 p-2 md:max-h-[85vh] md:p-4">
+        {failed ? (
+          <p className="py-16 text-center text-sm text-muted-foreground">
+            미리보기를 불러오지 못했어요. 위의 &apos;새 창&apos; 버튼으로 열어주세요.
+          </p>
+        ) : (
+          <Document
+            file={url}
+            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+            onLoadError={() => setFailed(true)}
+            loading={<p className="py-16 text-center text-sm text-muted-foreground">주보를 불러오는 중이에요...</p>}
+            className="flex flex-col items-center gap-3"
+          >
+            {Array.from({ length: numPages ?? 0 }, (_, i) => (
+              <Page
+                key={i}
+                pageNumber={i + 1}
+                width={pageWidth}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                className="overflow-hidden rounded-lg shadow-sm"
+              />
+            ))}
+          </Document>
+        )}
+      </div>
     </div>
   )
 }
