@@ -7,6 +7,13 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    serverActions: {
+      // Post attachments allow multiple files up to 20MB each (see lib/uploads.ts);
+      // Next's default 1MB Server Action body limit rejects those before that check runs.
+      bodySizeLimit: "100mb",
+    },
+  },
   async headers() {
     return [{
       source: "/(.*)",
