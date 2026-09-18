@@ -13,13 +13,15 @@ export function Hero() {
         priority
         className="hero-motion object-cover opacity-85"
       />
-      <div className="absolute inset-0 bg-primary/20" />
-      <div className="absolute inset-0 bg-white/25" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1D39]/50 via-[#0B1D39]/20 to-[#0B1D39]/55" />
       <div className="relative mx-auto flex min-h-[580px] max-w-6xl items-center justify-center px-4 py-24 text-center text-foreground md:min-h-[700px]">
-        <div className="w-full max-w-3xl rounded-[2rem] border border-white/70 bg-white/55 px-6 py-10 shadow-2xl shadow-primary/15 backdrop-blur-sm md:px-12 md:py-14">
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.3em] text-primary">
-            {church.denomination}
-          </p>
+        <div className="w-full max-w-3xl rounded-[2rem] border border-white/70 bg-white/75 px-6 py-10 shadow-2xl shadow-black/20 backdrop-blur-lg md:px-12 md:py-14">
+          <div className="mb-6 flex flex-col items-center gap-3">
+            <span className="h-[3px] w-14 rounded-full bg-[#C9A15A]" />
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">
+              {church.denomination}
+            </p>
+          </div>
           <h1 className="font-serif text-3xl font-bold leading-[1.18] sm:text-4xl md:text-6xl">
             <span className="block whitespace-nowrap">제자 되고 제자 삼는</span>
             <span className="block whitespace-nowrap">원당교회</span>

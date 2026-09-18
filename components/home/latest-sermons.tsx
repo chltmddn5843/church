@@ -10,7 +10,7 @@ export async function LatestSermons() {
   const latest = youtube[0]
 
   return (
-    <section className="bg-secondary py-16 md:py-24">
+    <section className="bg-background py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-4">
         <SectionHeading
           eyebrow="Message"

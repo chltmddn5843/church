@@ -1,3 +1,5 @@
+import { SectionHeading } from "@/components/section-heading"
+
 const worshipRows = [
   { name: "주일예배 1부", day: "주일 오전", time: "09:00 ~ 10:00", place: "믿음관/비전홀(1층)" },
   { name: "주일예배 2부", day: "주일 오전", time: "11:00 ~ 12:20", place: "믿음관/비전홀(1층)" },
@@ -19,10 +21,8 @@ export function WorshipTimes() {
   return (
     <section id="worship" className="scroll-mt-24 bg-secondary py-16 md:py-20">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="mb-10 text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">Worship</p>
-          <h2 className="mt-2 font-serif text-3xl font-bold text-foreground md:text-4xl">예배 안내</h2>
-          <p className="mt-3 text-muted-foreground">원당교회 예배시간 안내입니다.</p>
+        <div className="mb-10">
+          <SectionHeading eyebrow="Worship" title="예배 안내" description="원당교회 예배시간 안내입니다." />
         </div>
 
         <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
@@ -36,8 +36,8 @@ export function WorshipTimes() {
               </tr>
             </thead>
             <tbody>
-              {worshipRows.map((row) => (
-                <tr key={row.name} className="border-t border-border">
+              {worshipRows.map((row, i) => (
+                <tr key={row.name} className={`border-t border-border ${i % 2 === 1 ? "bg-muted/40" : ""}`}>
                   <td className="px-5 py-4 font-semibold text-foreground">{row.name}</td>
                   <td className="px-5 py-4 text-muted-foreground">{row.day}</td>
                   <td className="px-5 py-4 text-foreground">{row.time}</td>
