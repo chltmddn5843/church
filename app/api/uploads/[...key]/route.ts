@@ -24,7 +24,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ key
   if (!object) return new NextResponse("Not found", { status: 404 })
 
   const headers = new Headers()
-  object.writeHttpMetadata(headers)
+  // Not object.writeHttpMetadata(headers): that RPCs across the Node/workerd
+  // boundary in local dev and throws (DevalueError: Cannot stringify Headers).
+  if (object.httpMetadata?.contentType) headers.set("content-type", object.httpMetadata.contentType)
+  headers.set("content-length", String(object.size))
   headers.set("etag", object.httpEtag)
   headers.set("cache-control", objectKey.startsWith("attachments/") ? "private, no-store" : "public, max-age=31536000, immutable")
   headers.set("x-content-type-options", "nosniff")
