@@ -21,3 +21,6 @@ node_modules
 .wrangler/
 *.tsbuildinfo
 .DS_Store
+
+# Claude Code local tooling (not app source)
+.claude/
