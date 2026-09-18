@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Play } from "lucide-react"
 import { getSermons } from "@/lib/queries"
 import { SermonCard } from "@/components/sermon-card"
 import { SectionHeading } from "@/components/section-heading"
@@ -7,7 +8,8 @@ import { getYoutubeSermons } from "@/lib/youtube"
 
 export async function LatestSermons() {
   const [youtube, sermons] = await Promise.all([getYoutubeSermons("주일예배"), getSermons(undefined, 1)])
-  const latest = youtube[0]
+  const [latest, ...rest] = youtube
+  const recent = rest.slice(0, 3)
 
   return (
     <section className="bg-background py-16 md:py-24">
@@ -32,6 +34,38 @@ export async function LatestSermons() {
         ) : (
           <p className="mt-10 text-center text-muted-foreground">최근 말씀을 불러오지 못했습니다.</p>
         )}
+
+        {recent.length > 0 && (
+          <div className="mx-auto mt-6 grid max-w-5xl gap-4 sm:grid-cols-3">
+            {recent.map((video) => (
+              <a
+                key={video.youtubeId}
+                href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm transition hover:shadow-md"
+              >
+                <div className="relative aspect-video overflow-hidden bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- external thumbnail, unoptimized images */}
+                  <img
+                    src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition group-hover:opacity-100">
+                    <Play aria-hidden className="size-8 fill-white text-white" />
+                  </span>
+                </div>
+                <div className="p-3">
+                  <p className="line-clamp-2 text-sm font-semibold text-foreground">{video.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{video.preachedAt.toLocaleDateString("ko-KR")}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
         <div className="mx-auto mt-10 max-w-5xl text-center">
           <Button
             render={<Link href="/sermons" />}

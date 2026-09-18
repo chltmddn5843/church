@@ -5,10 +5,10 @@ import { useCallback, useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
 
 const slides = [
-  { src: "/images/wd-main.jpg", alt: "원당교회 전경" },
-  { src: "/images/hero-worship.jpg", alt: "원당교회 예배 모습" },
-  { src: "/images/gallery-1.jpg", alt: "원당교회 찬양대" },
-  { src: "/images/next-generation.jpg", alt: "원당교회 다음세대" },
+  { src: "/images/wd-main.jpg", title: "원당교회", subtitle: "함께 예배하는 기쁨" },
+  { src: "/images/hero-worship.jpg", title: "주일예배", subtitle: "은혜 안에서 하나 되는 예배" },
+  { src: "/images/gallery-1.jpg", title: "찬양대", subtitle: "마음을 다해 드리는 찬양" },
+  { src: "/images/next-generation.jpg", title: "다음세대", subtitle: "믿음의 다음세대를 함께 세워갑니다" },
 ] as const
 
 const AUTOPLAY_MS = 5000
@@ -33,7 +33,7 @@ export function Hero() {
         <Image
           key={slide.src}
           src={slide.src}
-          alt={slide.alt}
+          alt=""
           fill
           priority={i === 0}
           aria-hidden={i !== index}
@@ -41,6 +41,23 @@ export function Hero() {
         />
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0B1D39]/60 via-transparent to-[#0B1D39]/25" />
+
+      <div className="absolute left-6 top-6 max-w-[75%] md:left-10 md:top-10 md:max-w-sm">
+        <div className="relative">
+          {slides.map((slide, i) => (
+            <div
+              key={slide.src}
+              aria-hidden={i !== index}
+              className={`transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "absolute inset-0 opacity-0"}`}
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80 md:text-sm">{slide.title}</p>
+              <p className="mt-2 text-balance font-serif text-xl font-bold leading-snug text-white md:text-3xl">
+                {slide.subtitle}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-sm md:bottom-8 md:left-8 md:translate-x-0">
         <button
@@ -71,7 +88,7 @@ export function Hero() {
           {String(index + 1).padStart(2, "0")} — {String(slides.length).padStart(2, "0")}
         </span>
         <span className="sr-only" aria-live="polite">
-          {slides.length}장 중 {index + 1}번째 이미지: {slides[index].alt}
+          {slides.length}장 중 {index + 1}번째 이미지: {slides[index].title} — {slides[index].subtitle}
         </span>
       </div>
     </section>

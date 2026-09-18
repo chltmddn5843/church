@@ -1,20 +1,24 @@
+import { Clock, MapPin } from "lucide-react"
 import { SectionHeading } from "@/components/section-heading"
 
-const worshipRows = [
+const mainWorship = [
   { name: "주일예배 1부", day: "주일 오전", time: "09:00 ~ 10:00", place: "믿음관/비전홀(1층)" },
   { name: "주일예배 2부", day: "주일 오전", time: "11:00 ~ 12:20", place: "믿음관/비전홀(1층)" },
   { name: "주일셀모임", day: "주일 오후", time: "01:30 ~ 03:30", place: "각 홀에서 진행" },
   { name: "금요예배", day: "금요일 저녁", time: "09:00 ~ 11:00", place: "믿음관/비전홀(1층)" },
   { name: "새벽예배", day: "월~금 오전", time: "05:00 ~ 05:30", place: "믿음관/비전홀(1층)" },
-  { name: "유아부", day: "주일 오전", time: "09:50 ~ 10:50", place: "소망관/사무엘홀(1층)" },
-  { name: "유치부", day: "주일 오전", time: "11:00 ~ 12:20", place: "소망관/다윗홀(2층)" },
-  { name: "유년부", day: "주일 오전", time: "10:50 ~ 12:20", place: "소망관/요셉홀(2층)" },
-  { name: "초등부", day: "주일 오전", time: "10:55 ~ 12:20", place: "사랑관/드림홀(2층)" },
-  { name: "중등부", day: "주일 오전", time: "11:00 ~ 12:20", place: "사랑관/디모데홀(3층)" },
-  { name: "고등부", day: "주일 오전", time: "11:00 ~ 12:20", place: "소망관/다니엘홀(2층)" },
-  { name: "어와나(AWANA)", day: "주일/토요일", time: "주일 13:30 ~ 15:00, 토요 10:00 ~ 12:00", place: "사랑관 드림홀(2층)/만나홀(1층)" },
-  { name: "영어예배부", day: "주일 오전", time: "09:00 ~ 10:10", place: "사랑관/드림홀(2층)" },
-  { name: "청년부", day: "주일 오후", time: "01:50 ~ 03:00", place: "사랑관/디모데홀(3층)" },
+]
+
+const nextGenWorship = [
+  { name: "유아부", time: "09:50 ~ 10:50", place: "소망관/사무엘홀(1층)" },
+  { name: "유치부", time: "11:00 ~ 12:20", place: "소망관/다윗홀(2층)" },
+  { name: "유년부", time: "10:50 ~ 12:20", place: "소망관/요셉홀(2층)" },
+  { name: "초등부", time: "10:55 ~ 12:20", place: "사랑관/드림홀(2층)" },
+  { name: "중등부", time: "11:00 ~ 12:20", place: "사랑관/디모데홀(3층)" },
+  { name: "고등부", time: "11:00 ~ 12:20", place: "소망관/다니엘홀(2층)" },
+  { name: "어와나(AWANA)", time: "주일 13:30~15:00 · 토요 10:00~12:00", place: "사랑관 드림홀(2층)/만나홀(1층)" },
+  { name: "영어예배부", time: "09:00 ~ 10:10", place: "사랑관/드림홀(2층)" },
+  { name: "청년부", time: "01:50 ~ 03:00", place: "사랑관/디모데홀(3층)" },
 ]
 
 export function WorshipTimes() {
@@ -25,40 +29,38 @@ export function WorshipTimes() {
           <SectionHeading eyebrow="Worship" title="예배 안내" description="원당교회 예배시간 안내입니다." />
         </div>
 
-        <ul className="grid gap-3 sm:hidden">
-          {worshipRows.map((row) => (
-            <li key={row.name} className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
-              <p className="font-semibold text-foreground">{row.name}</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {row.day} · {row.time}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {mainWorship.map((row) => (
+            <div key={row.name} className="rounded-2xl border border-border bg-card p-6 shadow-sm transition hover:shadow-md">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{row.day}</p>
+              <p className="mt-1 font-serif text-lg font-bold text-foreground">{row.name}</p>
+              <p className="mt-3 flex items-center gap-2 text-xl font-bold tabular-nums text-primary">
+                <Clock aria-hidden className="size-5" />
+                {row.time}
               </p>
-              <p className="text-sm text-muted-foreground">{row.place}</p>
-            </li>
+              <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <MapPin aria-hidden className="size-4 shrink-0" />
+                {row.place}
+              </p>
+            </div>
           ))}
-        </ul>
+        </div>
 
-        <div className="hidden overflow-x-auto rounded-xl border border-border bg-card shadow-sm sm:block">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <caption className="sr-only">원당교회 예배 시간 안내</caption>
-            <thead className="bg-primary text-primary-foreground">
-              <tr>
-                <th scope="col" className="px-5 py-4 font-semibold">예배</th>
-                <th scope="col" className="px-5 py-4 font-semibold">요일</th>
-                <th scope="col" className="px-5 py-4 font-semibold">시간</th>
-                <th scope="col" className="px-5 py-4 font-semibold">장소</th>
-              </tr>
-            </thead>
-            <tbody>
-              {worshipRows.map((row, i) => (
-                <tr key={row.name} className={`border-t border-border ${i % 2 === 1 ? "bg-muted/40" : ""}`}>
-                  <td className="px-5 py-4 font-semibold text-foreground">{row.name}</td>
-                  <td className="px-5 py-4 text-muted-foreground">{row.day}</td>
-                  <td className="px-5 py-4 text-foreground">{row.time}</td>
-                  <td className="px-5 py-4 text-muted-foreground">{row.place}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <p className="mt-10 mb-4 text-sm font-semibold text-muted-foreground">교육부 · 다음세대</p>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          {nextGenWorship.map((row) => (
+            <div key={row.name} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+              <p className="text-sm font-semibold text-foreground">{row.name}</p>
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Clock aria-hidden className="size-3.5 shrink-0" />
+                {row.time}
+              </p>
+              <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <MapPin aria-hidden className="size-3.5 shrink-0" />
+                {row.place}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

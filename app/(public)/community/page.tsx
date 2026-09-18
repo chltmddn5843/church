@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "원당교회의 공지사항, 교회소식, 새가족소개와 봉사 섬김이 신청을 확인하세요.",
 }
 
-const categories = ["전체", "공지사항", "교회소식", "주보", "새가족소개", "가정예배순서지", "봉사 섬김이"]
+const categories = ["전체", "공지사항", "교회소식", "주보", "새가족소개", "가정예배순서지", "봉사 섬김이", "자료실", "정관", "조직표"]
 const serviceFormUrl = "https://forms.gle/AmDQV5ukLCm3x5gV6"
 
 function externalUrl(content: string) {

@@ -1,11 +1,11 @@
 import { FileText, Pin, Save } from "lucide-react"
 import { createPost, deletePost, updatePost } from "@/app/actions/posts"
 import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button"
-import { Button } from "@/components/ui/button"
+import { SubmitButton } from "@/components/admin/submit-button"
 import { accessOptions } from "@/lib/access"
 import { getPosts } from "@/lib/queries"
 
-const categories = ["교회소식", "공지사항", "새가족소개", "주보", "가정예배순서지", "봉사 신청", "자료실", "정관", "조직표"]
+const categories = ["교회소식", "공지사항", "새가족소개", "주보", "가정예배순서지", "봉사 섬김이", "자료실", "정관", "조직표"]
 
 const fieldClass =
   "h-11 rounded-md border border-[#cbd9e3] bg-white px-3 outline-none transition focus:border-[#2F5D8A] focus:ring-2 focus:ring-[#9CC7E6]/40"
@@ -49,10 +49,10 @@ export default async function AdminPostsPage() {
           <label className="flex h-10 items-center gap-2 rounded-md border border-[#cbd9e3] px-3 text-sm">
             <input type="checkbox" name="pinned" className="size-4" /> 상단 고정
           </label>
-          <Button type="submit" className="h-10 px-4">
+          <SubmitButton className="h-10 px-4" pendingLabel="등록 중...">
             <FileText className="size-4" />
             게시글 등록
-          </Button>
+          </SubmitButton>
         </div>
       </form>
 
@@ -89,10 +89,10 @@ export default async function AdminPostsPage() {
                     <input type="checkbox" name="pinned" defaultChecked={item.pinned} className="size-4" /> 상단 고정
                   </label>
                   <div className="flex items-center justify-end">
-                    <Button type="submit" size="sm">
+                    <SubmitButton size="sm" pendingLabel="저장 중...">
                       <Save className="size-4" />
                       수정 저장
-                    </Button>
+                    </SubmitButton>
                   </div>
                 </form>
                 <form action={deletePost.bind(null, item.id)} className="flex justify-end border-t border-[#e5eef4] pt-4">
