@@ -25,14 +25,27 @@ export function WorshipTimes() {
           <SectionHeading eyebrow="Worship" title="예배 안내" description="원당교회 예배시간 안내입니다." />
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+        <ul className="grid gap-3 sm:hidden">
+          {worshipRows.map((row) => (
+            <li key={row.name} className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
+              <p className="font-semibold text-foreground">{row.name}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {row.day} · {row.time}
+              </p>
+              <p className="text-sm text-muted-foreground">{row.place}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-card shadow-sm sm:block">
           <table className="w-full min-w-[760px] text-left text-sm">
+            <caption className="sr-only">원당교회 예배 시간 안내</caption>
             <thead className="bg-primary text-primary-foreground">
               <tr>
-                <th className="px-5 py-4 font-semibold">예배</th>
-                <th className="px-5 py-4 font-semibold">요일</th>
-                <th className="px-5 py-4 font-semibold">시간</th>
-                <th className="px-5 py-4 font-semibold">장소</th>
+                <th scope="col" className="px-5 py-4 font-semibold">예배</th>
+                <th scope="col" className="px-5 py-4 font-semibold">요일</th>
+                <th scope="col" className="px-5 py-4 font-semibold">시간</th>
+                <th scope="col" className="px-5 py-4 font-semibold">장소</th>
               </tr>
             </thead>
             <tbody>

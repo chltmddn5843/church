@@ -1,49 +1,78 @@
+"use client"
+
 import Image from "next/image"
-import Link from "next/link"
-import { church } from "@/lib/church"
-import { Button } from "@/components/ui/button"
+import { useCallback, useEffect, useState } from "react"
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
+
+const slides = [
+  { src: "/images/wd-main.jpg", alt: "원당교회 전경" },
+  { src: "/images/hero-worship.png", alt: "원당교회 예배 모습" },
+  { src: "/images/gallery-1.png", alt: "원당교회 찬양대" },
+  { src: "/images/next-generation.png", alt: "원당교회 다음세대" },
+] as const
+
+const AUTOPLAY_MS = 5000
 
 export function Hero() {
+  const [index, setIndex] = useState(0)
+  const [playing, setPlaying] = useState(true)
+
+  const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), [])
+  const prev = useCallback(() => setIndex((i) => (i - 1 + slides.length) % slides.length), [])
+
+  useEffect(() => {
+    if (!playing) return
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const id = setInterval(next, AUTOPLAY_MS)
+    return () => clearInterval(id)
+  }, [playing, next])
+
   return (
-    <section className="relative isolate overflow-hidden">
-      <Image
-        src="/images/wd-main.jpg"
-        alt="원당교회 전경"
-        fill
-        priority
-        className="hero-motion object-cover opacity-85"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1D39]/50 via-[#0B1D39]/20 to-[#0B1D39]/55" />
-      <div className="relative mx-auto flex min-h-[580px] max-w-6xl items-center justify-center px-4 py-24 text-center text-foreground md:min-h-[700px]">
-        <div className="w-full max-w-3xl rounded-[2rem] border border-white/70 bg-white/75 px-6 py-10 shadow-2xl shadow-black/20 backdrop-blur-lg md:px-12 md:py-14">
-          <div className="mb-6 flex flex-col items-center gap-3">
-            <span className="h-[3px] w-14 rounded-full bg-[#C9A15A]" />
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">
-              {church.denomination}
-            </p>
-          </div>
-          <h1 className="font-serif text-3xl font-bold leading-[1.18] sm:text-4xl md:text-6xl">
-            <span className="block whitespace-nowrap">제자 되고 제자 삼는</span>
-            <span className="block whitespace-nowrap">원당교회</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-            {church.subSlogan}
-          </p>
-          <div className="mx-auto mt-10 grid max-w-xl gap-3 sm:grid-cols-2">
-            <Button render={<Link href="/about" />} nativeButton={false} size="lg" className="h-14 rounded-2xl text-base">
-              교회 소개
-            </Button>
-            <Button
-              render={<Link href="/sermons" />}
-              nativeButton={false}
-              size="lg"
-              variant="outline"
-              className="h-14 rounded-2xl border-primary/30 bg-white/70 text-base text-primary hover:bg-white"
-            >
-              설교 말씀 보기
-            </Button>
-          </div>
-        </div>
+    <section className="relative isolate h-[70dvh] min-h-[420px] w-full overflow-hidden md:h-[85dvh] md:min-h-[600px]">
+      {slides.map((slide, i) => (
+        <Image
+          key={slide.src}
+          src={slide.src}
+          alt={slide.alt}
+          fill
+          priority={i === 0}
+          aria-hidden={i !== index}
+          className={`object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
+        />
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0B1D39]/60 via-transparent to-[#0B1D39]/25" />
+
+      <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-sm md:bottom-8 md:left-8 md:translate-x-0">
+        <button
+          type="button"
+          onClick={prev}
+          aria-label="이전 이미지"
+          className="rounded-full p-2.5 text-white/90 transition hover:text-white focus-visible:outline-white"
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setPlaying((p) => !p)}
+          aria-label={playing ? "슬라이드 정지" : "슬라이드 재생"}
+          className="rounded-full p-2.5 text-white/90 transition hover:text-white focus-visible:outline-white"
+        >
+          {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
+        </button>
+        <button
+          type="button"
+          onClick={next}
+          aria-label="다음 이미지"
+          className="rounded-full p-2.5 text-white/90 transition hover:text-white focus-visible:outline-white"
+        >
+          <ChevronRight className="size-5" />
+        </button>
+        <span className="ml-1 text-xs font-semibold tabular-nums text-white/90" aria-hidden="true">
+          {String(index + 1).padStart(2, "0")} — {String(slides.length).padStart(2, "0")}
+        </span>
+        <span className="sr-only" aria-live="polite">
+          {slides.length}장 중 {index + 1}번째 이미지: {slides[index].alt}
+        </span>
       </div>
     </section>
   )
