@@ -72,6 +72,7 @@ export const church = {
       children: [
         { title: "공지사항", href: "/community?category=공지사항" },
         { title: "교회소식", href: "/community?category=교회소식" },
+        { title: "주보", href: "/community?category=주보" },
         { title: "새가족소개", href: "/community?category=새가족소개" },
         { title: "가정예배순서지", href: "/community?category=가정예배순서지" },
         { title: "봉사 섬김이", href: "/community?category=봉사%20섬김이" },

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { accessOptions } from "@/lib/access"
 import { getPosts } from "@/lib/queries"
 
-const categories = ["교회소식", "공지사항", "새가족소개", "가정예배순서지", "봉사 신청", "자료실", "정관", "조직표"]
+const categories = ["교회소식", "공지사항", "새가족소개", "주보", "가정예배순서지", "봉사 신청", "자료실", "정관", "조직표"]
 
 const fieldClass =
   "h-11 rounded-md border border-[#cbd9e3] bg-white px-3 outline-none transition focus:border-[#2F5D8A] focus:ring-2 focus:ring-[#9CC7E6]/40"
