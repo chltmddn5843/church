@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
 
 const slides = [
-  { src: "/images/wd-main.jpg", title: "원당교회", subtitle: "함께 예배하는 기쁨" },
-  { src: "/images/hero-worship.jpg", title: "주일예배", subtitle: "은혜 안에서 하나 되는 예배" },
-  { src: "/images/gallery-1.jpg", title: "찬양대", subtitle: "마음을 다해 드리는 찬양" },
+  { src: "/images/worship-sanctuary-wide.jpg", title: "원당교회", subtitle: "함께 예배하는 기쁨" },
+  { src: "/images/worship-praise.jpg", title: "주일예배", subtitle: "은혜 안에서 하나 되는 예배" },
+  { src: "/images/worship-choir.jpg", title: "찬양대", subtitle: "마음을 다해 드리는 찬양" },
   { src: "/images/next-generation.jpg", title: "다음세대", subtitle: "믿음의 다음세대를 함께 세워갑니다" },
 ] as const
 
@@ -40,9 +40,9 @@ export function Hero() {
           className={`object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-foreground/25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
 
-      <div className="absolute left-6 top-6 max-w-[75%] md:left-10 md:top-10 md:max-w-sm">
+      <div className="absolute inset-x-6 bottom-20 md:inset-x-12 md:bottom-24 lg:max-w-3xl">
         <div className="relative">
           {slides.map((slide, i) => (
             <div
@@ -50,8 +50,8 @@ export function Hero() {
               aria-hidden={i !== index}
               className={`transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "absolute inset-0 opacity-0"}`}
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80 md:text-sm">{slide.title}</p>
-              <p className="mt-2 text-balance font-serif text-xl font-bold leading-snug text-white md:text-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-white md:text-base">{slide.title}</p>
+              <p className="mt-3 break-keep text-balance font-serif text-4xl font-bold leading-[1.15] text-white md:text-6xl lg:text-7xl">
                 {slide.subtitle}
               </p>
             </div>
@@ -59,20 +59,20 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-sm md:bottom-8 md:left-8 md:translate-x-0">
+      <div className="absolute bottom-6 left-6 flex items-center gap-3 md:bottom-8 md:left-12">
         <button
           type="button"
           onClick={prev}
           aria-label="이전 이미지"
-          className="rounded-full p-2.5 text-white/90 transition hover:text-white focus-visible:outline-white"
+          className="flex size-10 items-center justify-center text-white/90 drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.5)] transition hover:text-white focus-visible:outline-white"
         >
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="size-6" />
         </button>
         <button
           type="button"
           onClick={() => setPlaying((p) => !p)}
           aria-label={playing ? "슬라이드 정지" : "슬라이드 재생"}
-          className="rounded-full p-2.5 text-white/90 transition hover:text-white focus-visible:outline-white"
+          className="flex size-10 items-center justify-center text-white/90 drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.5)] transition hover:text-white focus-visible:outline-white"
         >
           {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
         </button>
@@ -80,12 +80,12 @@ export function Hero() {
           type="button"
           onClick={next}
           aria-label="다음 이미지"
-          className="rounded-full p-2.5 text-white/90 transition hover:text-white focus-visible:outline-white"
+          className="flex size-10 items-center justify-center text-white/90 drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.5)] transition hover:text-white focus-visible:outline-white"
         >
-          <ChevronRight className="size-5" />
+          <ChevronRight className="size-6" />
         </button>
-        <span className="ml-1 text-xs font-semibold tabular-nums text-white/90" aria-hidden="true">
-          {String(index + 1).padStart(2, "0")} — {String(slides.length).padStart(2, "0")}
+        <span className="text-sm font-semibold tabular-nums text-white drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.5)]" aria-hidden="true">
+          {String(index + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
         </span>
         <span className="sr-only" aria-live="polite">
           {slides.length}장 중 {index + 1}번째 이미지: {slides[index].title} — {slides[index].subtitle}

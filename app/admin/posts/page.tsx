@@ -2,18 +2,30 @@ import { FileText, Pin, Save } from "lucide-react"
 import { createPost, deletePost, updatePost } from "@/app/actions/posts"
 import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button"
 import { SubmitButton } from "@/components/admin/submit-button"
+import { Pagination } from "@/components/pagination"
 import { accessOptions } from "@/lib/access"
-import { getPosts } from "@/lib/queries"
+import { getPosts, getPostsCount } from "@/lib/queries"
 
 const categories = ["교회소식", "공지사항", "새가족소개", "주보", "가정예배순서지", "봉사 섬김이", "자료실", "정관", "조직표"]
+const PAGE_SIZE = 20
 
 const fieldClass =
   "h-11 rounded-md border border-[#cbd9e3] bg-white px-3 outline-none transition focus:border-[#2F5D8A] focus:ring-2 focus:ring-[#9CC7E6]/40"
 const textareaClass =
   "rounded-md border border-[#cbd9e3] bg-white p-3 outline-none transition focus:border-[#2F5D8A] focus:ring-2 focus:ring-[#9CC7E6]/40"
 
-export default async function AdminPostsPage() {
-  const items = await getPosts()
+export default async function AdminPostsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { page: pageParam } = await searchParams
+  const page = Math.max(1, Number(pageParam) || 1)
+  const [items, total] = await Promise.all([
+    getPosts(undefined, PAGE_SIZE, (page - 1) * PAGE_SIZE),
+    getPostsCount(),
+  ])
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
     <>
@@ -59,7 +71,7 @@ export default async function AdminPostsPage() {
       <section className="mt-10">
         <div className="mb-4 flex items-end justify-between">
           <h2 className="text-lg font-bold text-[#183247]">등록된 게시글</h2>
-          <span className="text-xs text-[#6d7f8c]">총 {items.length}개</span>
+          <span className="text-xs text-[#6d7f8c]">총 {total}개</span>
         </div>
         <div className="space-y-4">
           {items.map((item) => (
@@ -102,6 +114,7 @@ export default async function AdminPostsPage() {
             </details>
           ))}
         </div>
+        <Pagination page={page} totalPages={totalPages} hrefFor={(p) => (p > 1 ? `/admin/posts?page=${p}` : "/admin/posts")} />
       </section>
     </>
   )

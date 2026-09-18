@@ -1,11 +1,23 @@
 import { createGalleryItem, deleteGalleryItem } from "@/app/actions/gallery"
 import { Button } from "@/components/ui/button"
-import { getGallery } from "@/lib/queries"
+import { Pagination } from "@/components/pagination"
+import { getGallery, getGalleryCount } from "@/lib/queries"
 
 const categories = ["교회", "전체 수료자", "새가족반", "양육반", "제자반", "사역반"]
+const PAGE_SIZE = 24
 
-export default async function AdminGalleryPage() {
-  const items = await getGallery()
+export default async function AdminGalleryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { page: pageParam } = await searchParams
+  const page = Math.max(1, Number(pageParam) || 1)
+  const [items, total] = await Promise.all([
+    getGallery(PAGE_SIZE, (page - 1) * PAGE_SIZE),
+    getGalleryCount(),
+  ])
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
     <>
@@ -33,6 +45,7 @@ export default async function AdminGalleryPage() {
           </div>
         ))}
       </div>
+      <Pagination page={page} totalPages={totalPages} hrefFor={(p) => (p > 1 ? `/admin/gallery?page=${p}` : "/admin/gallery")} />
     </>
   )
 }

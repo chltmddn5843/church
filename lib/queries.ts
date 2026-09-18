@@ -1,15 +1,23 @@
 import "server-only"
 import { getDb } from "@/lib/db"
 import { sermons, posts, gallery, popups, attachments, offeringReports } from "@/lib/db/schema"
-import { and, desc, eq, inArray, ne, sql } from "drizzle-orm"
+import { and, asc, count, desc, eq, gt, inArray, lt, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
-export async function getSermons(category?: string, limit?: number) {
+export async function getSermons(category?: string, limit?: number, offset?: number) {
   const db = getDb()
   const where = category ? eq(sermons.category, category) : undefined
   const q = db.select().from(sermons).where(where).orderBy(desc(sermons.preachedAt))
-  if (limit) return q.limit(limit)
+  if (limit) q.limit(limit)
+  if (offset) q.offset(offset)
   return q
+}
+
+export async function getSermonsCount(category?: string) {
+  const db = getDb()
+  const where = category ? eq(sermons.category, category) : undefined
+  const result = await db.select({ value: count() }).from(sermons).where(where).get()
+  return result?.value ?? 0
 }
 
 export async function getSermon(id: number) {
@@ -18,7 +26,7 @@ export async function getSermon(id: number) {
   return (await db.select().from(sermons).where(eq(sermons.id, id)).limit(1).get()) ?? null
 }
 
-export async function getPosts(category?: string, limit?: number) {
+export async function getPosts(category?: string, limit?: number, offset?: number) {
   const db = getDb()
   const viewer = await getViewerAccess()
   const visibility = viewer.role === "admin"
@@ -26,7 +34,20 @@ export async function getPosts(category?: string, limit?: number) {
     : inArray(posts.visibility, ["public", ...(viewer.role === "member" ? ["member"] : []), ...viewer.groups])
   const where = and(category ? eq(posts.category, category) : undefined, ne(posts.category, "헌금 현황"), visibility)
   const q = db.select().from(posts).where(where).orderBy(desc(posts.pinned), desc(posts.createdAt))
-  return limit ? q.limit(limit) : q
+  if (limit) q.limit(limit)
+  if (offset) q.offset(offset)
+  return q
+}
+
+export async function getPostsCount(category?: string) {
+  const db = getDb()
+  const viewer = await getViewerAccess()
+  const visibility = viewer.role === "admin"
+    ? undefined
+    : inArray(posts.visibility, ["public", ...(viewer.role === "member" ? ["member"] : []), ...viewer.groups])
+  const where = and(category ? eq(posts.category, category) : undefined, ne(posts.category, "헌금 현황"), visibility)
+  const result = await db.select({ value: count() }).from(posts).where(where).get()
+  return result?.value ?? 0
 }
 
 export async function getLatestBulletin() {
@@ -36,8 +57,9 @@ export async function getLatestBulletin() {
     .select({ url: attachments.url, name: attachments.name, contentType: attachments.contentType })
     .from(attachments)
     .where(eq(attachments.postId, post.id))
-  const file = files.find((f) => f.contentType === "application/pdf") ?? files.find((f) => f.contentType.startsWith("image/")) ?? null
-  return { id: post.id, title: post.title, createdAt: post.createdAt, file }
+  const pdf = files.find((f) => f.contentType === "application/pdf") ?? null
+  const images = pdf ? [] : files.filter((f) => f.contentType.startsWith("image/"))
+  return { id: post.id, title: post.title, createdAt: post.createdAt, pdf, images }
 }
 
 export async function getPost(id: number) {
@@ -52,16 +74,40 @@ export async function incrementPostView(id: number) {
   await getDb().update(posts).set({ views: sql`${posts.views} + 1` }).where(eq(posts.id, id))
 }
 
+export async function getAdjacentPosts(id: number, category: string, createdAt: Date) {
+  const db = getDb()
+  const viewer = await getViewerAccess()
+  const visibility = viewer.role === "admin"
+    ? undefined
+    : inArray(posts.visibility, ["public", ...(viewer.role === "member" ? ["member"] : []), ...viewer.groups])
+  const base = and(eq(posts.category, category), visibility)
+  const [prev, next] = await Promise.all([
+    db.select({ id: posts.id, title: posts.title }).from(posts)
+      .where(and(base, lt(posts.createdAt, createdAt)))
+      .orderBy(desc(posts.createdAt)).limit(1).get(),
+    db.select({ id: posts.id, title: posts.title }).from(posts)
+      .where(and(base, gt(posts.createdAt, createdAt)))
+      .orderBy(asc(posts.createdAt)).limit(1).get(),
+  ])
+  return { prev: prev ?? null, next: next ?? null }
+}
+
 export async function getLegacyPost(board: number, id: number) {
   if (![board, id].every(Number.isSafeInteger)) return null
   return getDb().select({ id: posts.id }).from(posts).where(and(eq(posts.legacyBoard, board), eq(posts.legacyId, id))).get()
 }
 
-export async function getGallery(limit?: number) {
+export async function getGallery(limit?: number, offset?: number) {
   const db = getDb()
   const q = db.select().from(gallery).orderBy(desc(gallery.createdAt))
-  if (limit) return q.limit(limit)
+  if (limit) q.limit(limit)
+  if (offset) q.offset(offset)
   return q
+}
+
+export async function getGalleryCount() {
+  const result = await getDb().select({ value: count() }).from(gallery).get()
+  return result?.value ?? 0
 }
 
 export async function getGalleryByCategory(category: string, limit?: number) {

@@ -55,7 +55,7 @@
   --card-foreground: #0B1D39;
   --popover: #ffffff;
   --popover-foreground: #0B1D39;
-  --primary: #123A63;
+  --primary: #1B4E80;
   --primary-foreground: #ffffff;
   --secondary: #F2E9DA;
   --secondary-foreground: #0B1D39;
@@ -72,7 +72,7 @@
   --chart-3: #2F5D8A;
   --chart-4: #9CC7E6;
   --chart-5: #F2E9DA;
-  --radius: 0.75rem;
+  --radius: 0.5rem;
   --sidebar: #0B1D39;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #9CC7E6;

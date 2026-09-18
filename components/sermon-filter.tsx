@@ -5,7 +5,7 @@ const categories = ["전체", "주일예배", "금요예배", "새벽예배", "�
 
 export function SermonFilter({ active }: { active?: string }) {
   return (
-    <nav className="overflow-x-auto rounded-[1.5rem] border border-border bg-card p-2 shadow-sm" aria-label="말씀과 찬양 게시판">
+    <nav className="overflow-x-auto rounded-2xl border border-border bg-card p-2 shadow-sm" aria-label="말씀과 찬양 게시판">
       <div className="flex min-w-max gap-2">
         {categories.map((cat) => {
           const isActive = (cat === "전체" && !active) || cat === active

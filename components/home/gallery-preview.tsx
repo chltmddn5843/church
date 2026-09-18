@@ -10,7 +10,7 @@ export async function GalleryPreview() {
 
   return (
     <section className="py-16 md:py-20">
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="scroll-reveal mx-auto max-w-6xl px-4">
         <SectionHeading eyebrow="Gallery" title="교회 앨범" description="원당교회의 소중한 순간들을 함께 나눕니다." />
         <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
           {items.map((item) => (
@@ -25,7 +25,7 @@ export async function GalleryPreview() {
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-foreground/70 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-foreground/70 to-transparent p-3">
                 <span className="text-sm font-medium text-primary-foreground">{item.title}</span>
               </div>
             </Link>

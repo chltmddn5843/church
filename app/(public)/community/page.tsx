@@ -1,13 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ExternalLink, Pin } from "lucide-react"
+import { Eye, ExternalLink, User } from "lucide-react"
 import { createPost } from "@/app/actions/posts"
 import { PageBanner } from "@/components/page-banner"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Pagination } from "@/components/pagination"
 import { cn } from "@/lib/utils"
-import { getPosts } from "@/lib/queries"
+import { getPosts, getPostsCount } from "@/lib/queries"
 import { getSessionUser } from "@/lib/session"
+
+const PAGE_SIZE = 15
 
 export const metadata: Metadata = {
   title: "커뮤니티",
@@ -23,23 +25,39 @@ function externalUrl(content: string) {
   return match[0].startsWith("http") ? match[0] : `https://${match[0]}`
 }
 
+function excerpt(content: string, max = 70) {
+  const clean = content.replace(/\s+/g, " ").trim()
+  return clean.length > max ? `${clean.slice(0, max)}…` : clean
+}
+
+const NEW_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
+function isNewPost(createdAt: Date) {
+  return Date.now() - new Date(createdAt).getTime() < NEW_WINDOW_MS
+}
+
 export default async function CommunityPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; page?: string }>
 }) {
-  const { category } = await searchParams
+  const { category, page: pageParam } = await searchParams
   const selected = category && categories.includes(category) ? category : undefined
-  const posts = await getPosts(selected)
+  const page = Math.max(1, Number(pageParam) || 1)
+  const [posts, total] = await Promise.all([
+    getPosts(selected, PAGE_SIZE, (page - 1) * PAGE_SIZE),
+    getPostsCount(selected),
+  ])
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const user = await getSessionUser()
   const visiblePosts =
-    selected === "봉사 섬김이"
+    selected === "봉사 섬김이" && page === 1
       ? [
           {
             id: -1,
             title: "봉사 섬김이 신청서",
             content: serviceFormUrl,
             category: "봉사 섬김이",
+            authorName: "관리자",
             pinned: true,
             views: 0,
             createdAt: new Date(),
@@ -48,12 +66,20 @@ export default async function CommunityPage({
         ]
       : posts
 
+  function pageHref(p: number) {
+    const params = new URLSearchParams()
+    if (selected) params.set("category", selected)
+    if (p > 1) params.set("page", String(p))
+    const qs = params.toString()
+    return qs ? `/community?${qs}` : "/community"
+  }
+
   return (
     <>
       <PageBanner title="커뮤니티" subtitle="원당교회의 소식과 나눔을 확인하세요." />
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-5xl px-4">
-          <nav className="overflow-x-auto rounded-[1.5rem] border border-border bg-card p-2 shadow-sm" aria-label="커뮤니티 게시판">
+          <nav className="overflow-x-auto rounded-2xl border border-border bg-card p-2 shadow-sm" aria-label="커뮤니티 게시판">
             <div className="flex min-w-max gap-2">
               {categories.map((cat) => {
                 const isActive = (cat === "전체" && !selected) || cat === selected
@@ -97,34 +123,56 @@ export default async function CommunityPage({
             </div>
           )}
 
-          <div className={`${user?.role === "admin" ? "mt-4" : "mt-10"} divide-y divide-border overflow-hidden rounded-xl border border-border bg-card`}>
+          <div className={`${user?.role === "admin" ? "mt-4" : "mt-10"} divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-sm`}>
             {visiblePosts.length > 0 ? (
               visiblePosts.map((post) => {
                 const href = post.category === "봉사 섬김이" ? externalUrl(post.content) : null
                 const row = (
                   <>
-                    {post.pinned && <Pin className="h-4 w-4 shrink-0 text-accent-foreground" />}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="text-xs">{post.category}</Badge>
-                        {post.pinned && <span className="text-xs font-medium text-primary">고정</span>}
-                        {href && <ExternalLink className="size-3 text-muted-foreground" />}
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex min-w-0 flex-wrap items-baseline gap-2 text-xs font-medium text-muted-foreground">
+                        <span>[{post.category}]</span>
+                        {post.pinned && <span className="font-bold text-primary">공지</span>}
+                        {isNewPost(post.createdAt) && <span className="font-bold text-primary">N</span>}
+                        {href && <ExternalLink className="size-3.5 shrink-0" />}
                       </div>
-                      <h3 className="mt-1.5 truncate font-medium text-foreground">{post.title}</h3>
+                      <div className="hidden shrink-0 items-center gap-3 text-xs text-muted-foreground sm:flex">
+                        <time dateTime={new Date(post.createdAt).toISOString()}>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</time>
+                        {post.id > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Eye className="size-3.5" /> {post.views.toLocaleString("ko-KR")}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="shrink-0 text-right text-sm text-muted-foreground">
+
+                    <h3 className="mt-1.5 truncate text-lg font-semibold text-foreground">{post.title}</h3>
+                    {!href && (
+                      <p className="mt-1 truncate text-sm text-muted-foreground">{excerpt(post.content)}</p>
+                    )}
+
+                    <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground sm:hidden">
+                      <span className="flex items-center gap-1">
+                        <User className="size-3.5" /> {post.authorName}
+                      </span>
                       <time dateTime={new Date(post.createdAt).toISOString()}>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</time>
-                      {post.id > 0 && <p>조회 {post.views.toLocaleString("ko-KR")}</p>}
+                      {post.id > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Eye className="size-3.5" /> {post.views.toLocaleString("ko-KR")}
+                        </span>
+                      )}
                     </div>
                   </>
                 )
 
+                const rowClass = "block px-5 py-5 transition-colors hover:bg-secondary/60 md:px-6"
+
                 return href ? (
-                  <a key={post.id} href={href} target="_blank" rel="noreferrer" className="flex items-center gap-4 px-6 py-5 transition-colors hover:bg-secondary">
+                  <a key={post.id} href={href} target="_blank" rel="noreferrer" className={rowClass}>
                     {row}
                   </a>
                 ) : (
-                  <Link key={post.id} href={`/community/${post.id}`} className="flex items-center gap-4 px-6 py-5 transition-colors hover:bg-secondary">
+                  <Link key={post.id} href={`/community/${post.id}`} className={rowClass}>
                     {row}
                   </Link>
                 )
@@ -133,6 +181,8 @@ export default async function CommunityPage({
               <p className="px-6 py-16 text-center text-muted-foreground">등록된 게시글이 없습니다.</p>
             )}
           </div>
+
+          <Pagination page={page} totalPages={totalPages} hrefFor={pageHref} />
         </div>
       </section>
     </>

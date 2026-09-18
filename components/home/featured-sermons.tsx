@@ -6,21 +6,27 @@ import { SectionHeading } from "@/components/section-heading"
 import { Button } from "@/components/ui/button"
 import { getYoutubeSermons } from "@/lib/youtube"
 
-export async function LatestSermons() {
-  const [youtube, sermons] = await Promise.all([getYoutubeSermons("주일예배"), getSermons(undefined, 1)])
-  const [latest, ...rest] = youtube
-  const recent = rest.slice(0, 3)
+const OTHER_CATEGORIES = ["금요예배", "새벽예배", "쉐키나찬양단"] as const
+
+export async function FeaturedSermons() {
+  const [sundayVideos, otherVideos, sermons] = await Promise.all([
+    getYoutubeSermons("주일예배"),
+    Promise.all(OTHER_CATEGORIES.map((category) => getYoutubeSermons(category))),
+    getSermons(undefined, 1),
+  ])
+  const latest = sundayVideos[0]
+  const recent = otherVideos.map((videos) => videos[0]).filter((video): video is NonNullable<typeof video> => video !== undefined)
 
   return (
     <section className="bg-background py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="scroll-reveal mx-auto max-w-6xl px-4">
         <SectionHeading
           eyebrow="Message"
           title="최근 말씀"
           description="지난 예배의 은혜를 다시 한번 나눕니다."
         />
         {latest ? (
-          <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-xl shadow-primary/10">
+          <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-2xl border border-border bg-card shadow-xl shadow-primary/10">
             <div className="aspect-video bg-black">
               <iframe src={`https://www.youtube.com/embed/${latest.youtubeId}`} title={latest.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen className="h-full w-full" />
             </div>
@@ -58,7 +64,8 @@ export async function LatestSermons() {
                   </span>
                 </div>
                 <div className="p-3">
-                  <p className="line-clamp-2 text-sm font-semibold text-foreground">{video.title}</p>
+                  <p className="text-xs font-semibold text-primary">{video.category}</p>
+                  <p className="mt-0.5 line-clamp-2 text-sm font-semibold text-foreground">{video.title}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{video.preachedAt.toLocaleDateString("ko-KR")}</p>
                 </div>
               </a>

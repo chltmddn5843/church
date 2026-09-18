@@ -14,20 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { NavQuickAccess } from "@/components/nav-quick-access"
 import { authClient } from "@/lib/auth-client"
 import { church } from "@/lib/church"
-import type { getLatestBulletin } from "@/lib/queries"
 
 type SessionUser = { name: string; email: string; role?: string | null } | null
 
-export function SiteHeader({
-  user,
-  bulletin,
-}: {
-  user: SessionUser
-  bulletin: Awaited<ReturnType<typeof getLatestBulletin>>
-}) {
+export function SiteHeader({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
@@ -54,14 +46,14 @@ export function SiteHeader({
                 {item.title}
                 <ChevronDown className="h-3 w-3 opacity-50 transition-transform group-hover:rotate-180" />
               </Link>
-              <div className="invisible absolute left-0 top-full min-w-44 rounded-md border border-accent/40 bg-popover p-1 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="invisible absolute left-0 top-full w-full -translate-y-1 rounded-md border border-accent/40 bg-popover/90 p-1 opacity-0 shadow-lg backdrop-blur-sm transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                 {item.children.map((child) => (
                   <Link
                     key={child.title}
                     href={child.href}
                     target={child.href.startsWith("http") ? "_blank" : undefined}
                     rel={child.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="block rounded-sm px-3 py-2.5 text-base text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
+                    className="block rounded-sm px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
                   >
                     {child.title}
                   </Link>
@@ -69,7 +61,6 @@ export function SiteHeader({
               </div>
             </div>
           ))}
-          <NavQuickAccess bulletin={bulletin} />
         </nav>
 
         <div className="flex items-center gap-2">
@@ -116,13 +107,6 @@ export function SiteHeader({
             <SheetContent side="right" className="w-80 overflow-y-auto">
               <SheetTitle className="sr-only">주 메뉴</SheetTitle>
               <div className="mt-6 flex flex-col gap-1">
-                <div className="border-b border-border pb-2">
-                  <NavQuickAccess
-                    bulletin={bulletin}
-                    className="flex flex-col gap-1"
-                    triggerClassName="justify-start text-lg font-semibold text-foreground hover:bg-secondary"
-                  />
-                </div>
                 {church.nav.map((item) => (
                   <div key={item.title} className="border-b border-border pb-2">
                     <Link href={item.href} onClick={() => setOpen(false)} className="block px-2 py-2 text-lg font-semibold text-foreground">

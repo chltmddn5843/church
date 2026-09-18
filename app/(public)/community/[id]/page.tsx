@@ -1,10 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getPost, incrementPostView } from "@/lib/queries"
-import { Badge } from "@/components/ui/badge"
+import { getAdjacentPosts, getPost, incrementPostView } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Calendar, Download, User } from "lucide-react"
+import { ArrowLeft, Calendar, ChevronDown, ChevronUp, Download, List, User } from "lucide-react"
 import { after } from "next/server"
 import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
 import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
@@ -30,12 +29,13 @@ export default async function PostDetailPage({
   const post = await getPost(Number(id))
   if (!post) notFound()
   after(() => incrementPostView(post.id))
+  const { prev, next } = await getAdjacentPosts(post.id, post.category, post.createdAt)
 
   const isBulletin = post.category === "주보"
-  const bulletinFile = isBulletin
-    ? post.attachments.find((file) => file.contentType === "application/pdf") ?? post.attachments.find((file) => file.contentType.startsWith("image/"))
-    : post.attachments.find((file) => file.contentType === "application/pdf")
-  const otherAttachments = post.attachments.filter((file) => file.id !== bulletinFile?.id)
+  const bulletinPdf = post.attachments.find((file) => file.contentType === "application/pdf")
+  const bulletinImages = isBulletin && !bulletinPdf ? post.attachments.filter((file) => file.contentType.startsWith("image/")) : []
+  const usedIds = new Set([bulletinPdf?.id, ...bulletinImages.map((file) => file.id)].filter((id): id is number => id !== undefined))
+  const otherAttachments = post.attachments.filter((file) => !usedIds.has(file.id))
 
   return (
     <article className="py-12 md:py-16">
@@ -47,8 +47,8 @@ export default async function PostDetailPage({
           </>
         </Button>
 
-        <Badge variant="secondary">{post.category}</Badge>
-        <h1 className="mt-3 text-balance font-serif text-3xl font-bold text-foreground md:text-4xl">
+        <p className="text-sm font-medium text-muted-foreground">[{post.category}]</p>
+        <h1 className="mt-2 text-balance font-serif text-3xl font-bold text-foreground md:text-4xl">
           {post.title}
         </h1>
 
@@ -65,14 +65,36 @@ export default async function PostDetailPage({
         </div>
 
         <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>
-        {bulletinFile && (
-          bulletinFile.contentType === "application/pdf" ? (
-            <BulletinPdfViewer url={bulletinFile.url} title={bulletinFile.name} />
-          ) : (
-            <BulletinImageViewer url={bulletinFile.url} title={bulletinFile.name} />
-          )
-        )}
+        {bulletinPdf && <BulletinPdfViewer url={bulletinPdf.url} title={bulletinPdf.name} />}
+        {bulletinImages.length > 0 && <BulletinImageViewer images={bulletinImages} title={post.title} />}
         {otherAttachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{otherAttachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 rounded-lg border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
+
+        {(next || prev) && (
+          <div className="mt-12 divide-y divide-border rounded-xl border border-border">
+            {next && (
+              <Link href={`/community/${next.id}`} className="flex items-center gap-3 px-5 py-4 text-sm transition hover:bg-secondary">
+                <ChevronUp className="size-4 shrink-0 text-muted-foreground" />
+                <span className="shrink-0 font-medium text-muted-foreground">다음글</span>
+                <span className="truncate text-foreground">{next.title}</span>
+              </Link>
+            )}
+            {prev && (
+              <Link href={`/community/${prev.id}`} className="flex items-center gap-3 px-5 py-4 text-sm transition hover:bg-secondary">
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+                <span className="shrink-0 font-medium text-muted-foreground">이전글</span>
+                <span className="truncate text-foreground">{prev.title}</span>
+              </Link>
+            )}
+          </div>
+        )}
+
+        <div className="mt-6 text-center">
+          <Button render={<Link href={`/community?category=${encodeURIComponent(post.category)}`} />} nativeButton={false} variant="outline">
+            <>
+              <List className="mr-1.5 size-4" /> 목록으로
+            </>
+          </Button>
+        </div>
       </div>
     </article>
   )

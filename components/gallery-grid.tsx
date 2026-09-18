@@ -33,7 +33,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 flex items-end bg-gradient-to-t from-foreground/70 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="absolute inset-0 flex items-end bg-gradient-to-t from-foreground/70 to-transparent p-3">
               <span className="text-left text-sm font-medium text-primary-foreground">{item.title}</span>
             </div>
           </button>

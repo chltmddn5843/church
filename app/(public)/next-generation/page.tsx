@@ -44,7 +44,7 @@ const departments = [
     time: "주일 오전 11:00~12:20",
     place: "사랑관 3층 디모데홀",
     desc: "바른 말씀으로 건강한 자아와 하나님의 가치관을 세우고, 세상이 감당하지 못하는 믿음의 사람으로 훈련받습니다.",
-    image: "/images/next-generation/middle.jpg",
+    image: "/images/next-generation/중등부.jpeg",
     contain: true,
   },
   {
