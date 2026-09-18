@@ -24,7 +24,6 @@ export const church = {
         { title: "섬기는 분들", href: "/about#staff" },
         { title: "교회발자취", href: "/about#history" },
         { title: "비전·사명", href: "/about#vision" },
-        { title: "예배안내", href: "/#worship" },
         { title: "선교", href: "/about#mission" },
         { title: "오시는 길", href: "/about#location" },
       ],

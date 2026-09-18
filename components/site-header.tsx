@@ -14,12 +14,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { NavQuickAccess } from "@/components/nav-quick-access"
 import { authClient } from "@/lib/auth-client"
 import { church } from "@/lib/church"
+import type { getLatestBulletin } from "@/lib/queries"
 
 type SessionUser = { name: string; email: string; role?: string | null } | null
 
-export function SiteHeader({ user }: { user: SessionUser }) {
+export function SiteHeader({
+  user,
+  bulletin,
+}: {
+  user: SessionUser
+  bulletin: Awaited<ReturnType<typeof getLatestBulletin>>
+}) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
@@ -61,6 +69,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
               </div>
             </div>
           ))}
+          <NavQuickAccess bulletin={bulletin} />
         </nav>
 
         <div className="flex items-center gap-2">
@@ -107,6 +116,13 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             <SheetContent side="right" className="w-80 overflow-y-auto">
               <SheetTitle className="sr-only">주 메뉴</SheetTitle>
               <div className="mt-6 flex flex-col gap-1">
+                <div className="border-b border-border pb-2">
+                  <NavQuickAccess
+                    bulletin={bulletin}
+                    className="flex flex-col gap-1"
+                    triggerClassName="justify-start text-lg font-semibold text-foreground hover:bg-secondary"
+                  />
+                </div>
                 {church.nav.map((item) => (
                   <div key={item.title} className="border-b border-border pb-2">
                     <Link href={item.href} onClick={() => setOpen(false)} className="block px-2 py-2 text-lg font-semibold text-foreground">

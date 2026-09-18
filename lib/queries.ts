@@ -29,6 +29,18 @@ export async function getPosts(category?: string, limit?: number) {
   return limit ? q.limit(limit) : q
 }
 
+export async function getLatestBulletin() {
+  const [post] = await getPosts("주보", 1)
+  if (!post) return null
+  const pdf = await getDb()
+    .select({ url: attachments.url, name: attachments.name })
+    .from(attachments)
+    .where(and(eq(attachments.postId, post.id), eq(attachments.contentType, "application/pdf")))
+    .limit(1)
+    .get()
+  return { id: post.id, title: post.title, createdAt: post.createdAt, pdf: pdf ?? null }
+}
+
 export async function getPost(id: number) {
   if (!Number.isSafeInteger(id) || id < 1) return null
   const db = getDb()

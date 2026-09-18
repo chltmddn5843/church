@@ -1,5 +1,4 @@
 import { Hero } from "@/components/home/hero"
-import { WorshipTimes } from "@/components/home/worship-times"
 import { QuickLinks } from "@/components/home/quick-links"
 import { LatestSermons } from "@/components/home/latest-sermons"
 import { GalleryPreview } from "@/components/home/gallery-preview"
@@ -16,7 +15,6 @@ export default async function HomePage() {
       <SmartOfferingFloat />
       <PopupModal popups={popups} />
       <Hero />
-      <div className="scroll-reveal"><WorshipTimes /></div>
       <div className="scroll-reveal"><LiveStream /></div>
       <div className="scroll-reveal"><LatestSermons /></div>
       <div className="scroll-reveal"><QuickLinks /></div>
