@@ -17,8 +17,8 @@ export async function ChurchNews() {
   const groups = NEWS_CATEGORIES.map((c, i) => ({ ...c, posts: results[i] }))
 
   return (
-    <section className="py-16 md:py-20">
-      <div className="scroll-reveal mx-auto max-w-6xl px-4">
+    <section className="py-10">
+      <div className="scroll-reveal mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
         <SectionHeading eyebrow="News" title="교회 소식" description="원당교회의 최근 소식을 확인하세요." />
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {groups.map(({ category, tag, image, textClass, posts }) => (

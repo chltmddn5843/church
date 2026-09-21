@@ -125,8 +125,10 @@ export function BulletinPdfViewer({
               onClick={() => setPageIndex(i)}
               aria-label={`${i + 1}페이지로 이동`}
               aria-current={i === pageIndex}
-              className={cn("size-2 rounded-full transition", i === pageIndex ? "bg-primary" : "bg-border hover:bg-muted-foreground")}
-            />
+              className="flex size-6 items-center justify-center"
+            >
+              <span className={cn("size-2 rounded-full transition", i === pageIndex ? "bg-primary" : "bg-border hover:bg-muted-foreground")} />
+            </button>
           ))}
         </div>
       )}

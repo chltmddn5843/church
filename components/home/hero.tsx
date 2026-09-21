@@ -28,7 +28,7 @@ export function Hero() {
   }, [playing, next])
 
   return (
-    <section className="relative isolate h-[70dvh] min-h-[420px] w-full overflow-hidden md:h-[85dvh] md:min-h-[600px]">
+    <section className="relative isolate -mt-16 h-[70dvh] min-h-[420px] w-full overflow-hidden md:-mt-24 md:h-[85dvh] md:min-h-[600px]">
       {slides.map((slide, i) => (
         <Image
           key={slide.src}
@@ -40,7 +40,7 @@ export function Hero() {
           className={`object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 via-65% to-transparent" />
 
       <div className="absolute inset-x-6 bottom-20 md:inset-x-12 md:bottom-24 lg:max-w-3xl">
         <div className="relative">

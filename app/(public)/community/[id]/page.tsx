@@ -40,7 +40,7 @@ export default async function PostDetailPage({
   return (
     <article className="py-12 md:py-16">
       <div className={cn("mx-auto px-4", isBulletin ? "max-w-4xl" : "max-w-3xl")}>
-        <Button render={<Link href="/community" />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
+        <Button render={<Link href={`/community?category=${encodeURIComponent(post.category)}`} />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
           <>
             <ArrowLeft className="mr-1 h-4 w-4" />
             목록으로

@@ -17,6 +17,14 @@ export function PageBanner({
         <h1 className="font-serif text-3xl font-bold md:text-5xl">{title}</h1>
         {subtitle && <p className="mt-4 max-w-2xl text-pretty opacity-90">{subtitle}</p>}
       </div>
+      <div className="absolute inset-x-0 bottom-0 leading-none">
+        <svg viewBox="0 0 1440 74" preserveAspectRatio="none" className="h-10 w-full md:h-16" aria-hidden="true">
+          <path
+            d="M0,32L80,37.3C160,43,320,53,480,50.7C640,48,800,32,960,26.7C1120,21,1280,27,1360,29.3L1440,32L1440,74L1360,74C1280,74,1120,74,960,74C800,74,640,74,480,74C320,74,160,74,80,74L0,74Z"
+            fill="white"
+          />
+        </svg>
+      </div>
     </section>
   )
 }

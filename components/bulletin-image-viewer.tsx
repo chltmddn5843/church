@@ -1,10 +1,24 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { forwardRef, useRef, useState } from "react"
+import HTMLFlipBook from "react-pageflip"
 import { ChevronLeft, ChevronRight, Download, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type BulletinImage = { url: string; name: string }
+
+const Page = forwardRef<HTMLDivElement, { image: BulletinImage; alt: string }>(function Page({ image, alt }, ref) {
+  // react-pageflip overwrites this node's `style` attribute wholesale for its own layout math,
+  // so image rendering must live on a nested child instead of this ref'd element.
+  return (
+    <div ref={ref} className="h-full w-full bg-white">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic upload URL inside a flip-page canvas */}
+        <img src={image.url} alt={alt} className="h-auto max-h-full w-auto max-w-full object-contain" />
+      </div>
+    </div>
+  )
+})
 
 export function BulletinImageViewer({
   images,
@@ -18,15 +32,13 @@ export function BulletinImageViewer({
   heightClassName?: string
 }) {
   const [index, setIndex] = useState(0)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  // react-pageflip ships loose typings for the ref's imperative handle; `any` matches the library's own declaration.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const book = useRef<any>(null)
   const current = images[index]
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0 })
-  }, [index])
+  const multi = images.length > 1
 
   if (!current) return null
-  const multi = images.length > 1
 
   return (
     <div className={cn("flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm", className)}>
@@ -54,23 +66,52 @@ export function BulletinImageViewer({
         </div>
       </div>
 
-      <div className={cn("relative overflow-hidden bg-muted/30", heightClassName)}>
-        <div ref={scrollRef} className="absolute inset-0 overflow-y-auto p-2 md:p-4">
-          <div className="mx-auto max-w-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element -- dynamic upload URL, natural size varies per bulletin */}
-            <img
-              src={current.url}
-              alt={multi ? `${title} ${index + 1}페이지` : title}
-              className="w-full rounded-lg object-contain shadow-sm"
-            />
+      <div className={cn("relative flex items-center justify-center overflow-hidden bg-muted/30 p-4", heightClassName)}>
+        {multi ? (
+          <div className="mx-auto h-full w-full max-w-[340px]">
+            <HTMLFlipBook
+              key={images.length}
+              ref={book}
+              width={300}
+              height={680}
+              size="stretch"
+              minWidth={200}
+              maxWidth={340}
+              minHeight={450}
+              maxHeight={1170}
+              maxShadowOpacity={0.4}
+              showCover={false}
+              usePortrait
+              mobileScrollSupport={false}
+              className=""
+              style={{}}
+              startPage={0}
+              drawShadow
+              flippingTime={600}
+              useMouseEvents
+              swipeDistance={30}
+              clickEventForward
+              showPageCorners
+              disableFlipByClick={false}
+              startZIndex={0}
+              autoSize
+              onFlip={(e: { data: number }) => setIndex(e.data)}
+            >
+              {images.map((image, i) => (
+                <Page key={image.url} image={image} alt={`${title} ${i + 1}페이지`} />
+              ))}
+            </HTMLFlipBook>
           </div>
-        </div>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element -- dynamic upload URL, natural size varies per bulletin
+          <img src={current.url} alt={title} className="max-h-full max-w-full rounded-lg object-contain shadow-sm" />
+        )}
 
         {multi && (
           <>
             <button
               type="button"
-              onClick={() => setIndex((i) => Math.max(0, i - 1))}
+              onClick={() => book.current?.pageFlip().flipPrev()}
               disabled={index === 0}
               aria-label="이전 페이지"
               className="absolute left-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
@@ -79,7 +120,7 @@ export function BulletinImageViewer({
             </button>
             <button
               type="button"
-              onClick={() => setIndex((i) => Math.min(images.length - 1, i + 1))}
+              onClick={() => book.current?.pageFlip().flipNext()}
               disabled={index === images.length - 1}
               aria-label="다음 페이지"
               className="absolute right-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
@@ -96,11 +137,13 @@ export function BulletinImageViewer({
             <button
               key={image.url}
               type="button"
-              onClick={() => setIndex(i)}
+              onClick={() => book.current?.pageFlip().flip(i)}
               aria-label={`${i + 1}페이지로 이동`}
               aria-current={i === index}
-              className={cn("size-2 rounded-full transition", i === index ? "bg-primary" : "bg-border hover:bg-muted-foreground")}
-            />
+              className="flex size-6 items-center justify-center"
+            >
+              <span className={cn("size-2 rounded-full transition", i === index ? "bg-primary" : "bg-border hover:bg-muted-foreground")} />
+            </button>
           ))}
         </div>
       )}

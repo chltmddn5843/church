@@ -21,7 +21,7 @@ export default async function AdminLivePage() {
             className="h-12 border bg-background px-4 font-normal"
           />
         </label>
-        <Button className="w-fit">메인 생방송 저장</Button>
+        <Button type="submit" className="w-fit">메인 생방송 저장</Button>
       </form>
       {current && (
         <>

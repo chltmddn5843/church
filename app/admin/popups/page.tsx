@@ -69,7 +69,7 @@ export default async function AdminPopupsPage() {
                     </details>
                     <div className="mt-4 flex gap-2 border-t border-[#e5eef4] pt-4">
                       <form action={togglePopup.bind(null, item.id, !item.active)} className="flex-1">
-                        <Button size="sm" variant="outline" className="w-full">
+                        <Button type="submit" size="sm" variant="outline" className="w-full">
                           {item.active ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                           {item.active ? "숨기기" : "노출하기"}
                         </Button>

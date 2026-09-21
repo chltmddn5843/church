@@ -50,7 +50,7 @@ export default async function AdminMembersPage() {
                         const enabled = groups.includes(group)
                         return (
                           <form key={group} action={setMemberGroup.bind(null, member.id, group as keyof typeof groupLabels, !enabled)}>
-                            <Button size="sm" variant={enabled ? "default" : "outline"}>{label}</Button>
+                            <Button type="submit" size="sm" variant={enabled ? "default" : "outline"}>{label}</Button>
                           </form>
                         )
                       })}
@@ -63,17 +63,17 @@ export default async function AdminMembersPage() {
                       <div className="flex flex-wrap gap-2">
                         {member.role !== "member" && (
                           <form action={setMemberRole.bind(null, member.id, "member")}>
-                            <Button size="sm" variant="outline">회원 승인</Button>
+                            <Button type="submit" size="sm" variant="outline">회원 승인</Button>
                           </form>
                         )}
                         {member.role !== "admin" && (
                           <form action={setMemberRole.bind(null, member.id, "admin")}>
-                            <Button size="sm">관리자 지정</Button>
+                            <Button type="submit" size="sm">관리자 지정</Button>
                           </form>
                         )}
                         {member.role !== "pending" && (
                           <form action={setMemberRole.bind(null, member.id, "pending")}>
-                            <Button size="sm" variant="ghost">승인 취소</Button>
+                            <Button type="submit" size="sm" variant="ghost">승인 취소</Button>
                           </form>
                         )}
                       </div>

@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/next"
 import type { Metadata, Viewport } from "next"
-import { Noto_Sans_KR, Noto_Serif_KR } from "next/font/google"
+import { Noto_Sans_KR } from "next/font/google"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
@@ -8,13 +8,6 @@ const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
   variable: "--font-noto-sans-kr",
-  display: "swap",
-})
-
-const notoSerifKr = Noto_Serif_KR({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-noto-serif-kr",
   display: "swap",
 })
 
@@ -45,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko" className={`bg-background ${notoSansKr.variable} ${notoSerifKr.variable}`}>
+    <html lang="ko" className={`bg-background ${notoSansKr.variable}`}>
       <body className="font-sans antialiased">
         {children}
         <Toaster richColors position="top-center" />

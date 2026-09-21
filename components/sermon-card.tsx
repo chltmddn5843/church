@@ -15,10 +15,10 @@ function thumb(youtubeId: string | null) {
   return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : "/images/cross-light.png"
 }
 
-export function SermonCard({ sermon, href }: { sermon: Sermon, href?: string }) {
+export function SermonCard({ sermon, href, category }: { sermon: Sermon, href?: string, category?: string }) {
   return (
     <Link
-      href={href ?? `/sermons/${sermon.id}`}
+      href={href ?? `/sermons/${sermon.id}${category ? `?category=${encodeURIComponent(category)}` : ""}`}
       target={href ? "_blank" : undefined}
       rel={href ? "noopener noreferrer" : undefined}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md"

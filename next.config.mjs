@@ -15,10 +15,14 @@ const nextConfig = {
     },
   },
   async headers() {
+    // React's dev-mode debugging tools call eval(); only allow it outside production.
+    const scriptSrc = process.env.NODE_ENV === "development"
+      ? "'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com"
+      : "'self' 'unsafe-inline' https://unpkg.com"
     return [{
       source: "/(.*)",
       headers: [
-        { key: "Content-Security-Policy", value: "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob: https://img.youtube.com; font-src 'self' data:; frame-src https://www.youtube.com https://www.openstreetmap.org; connect-src 'self' https://vitals.vercel-insights.com" },
+        { key: "Content-Security-Policy", value: `default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src ${scriptSrc}; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob: https://img.youtube.com; font-src 'self' data:; frame-src https://www.youtube.com https://www.openstreetmap.org; connect-src 'self' https://vitals.vercel-insights.com` },
         { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },

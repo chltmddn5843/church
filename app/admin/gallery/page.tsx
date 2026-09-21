@@ -29,7 +29,7 @@ export default async function AdminGalleryPage({
         </select>
         <input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required className="h-11 rounded-lg border px-3 py-2" />
         <textarea name="description" rows={3} placeholder="설명" className="rounded-lg border p-3" />
-        <Button className="w-fit">사진 등록</Button>
+        <Button type="submit" className="w-fit">사진 등록</Button>
       </form>
       <div className="mt-8 grid gap-3 sm:grid-cols-2">
         {items.map((item) => (
@@ -40,7 +40,7 @@ export default async function AdminGalleryPage({
               <p className="max-w-64 truncate text-sm text-muted-foreground">{item.imageUrl}</p>
             </div>
             <form action={deleteGalleryItem.bind(null, item.id)}>
-              <Button size="sm" variant="destructive">삭제</Button>
+              <Button type="submit" size="sm" variant="destructive">삭제</Button>
             </form>
           </div>
         ))}

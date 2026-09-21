@@ -17,7 +17,7 @@ export default function SetupAdminPage() {
           <Label htmlFor="key">설정 키</Label>
           <Input id="key" name="key" type="password" required autoComplete="off" />
         </div>
-        <Button className="w-full">관리자 설정</Button>
+        <Button type="submit" className="w-full">관리자 설정</Button>
       </form>
     </main>
   )

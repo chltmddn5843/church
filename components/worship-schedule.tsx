@@ -1,4 +1,5 @@
 import { Clock, MapPin } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const mainWorship = [
   { name: "주일예배 1부", day: "주일 오전", time: "08:00 ~ 10:10", place: "믿음관/비전홀(1층)" },
@@ -63,18 +64,26 @@ function ScheduleTable({
   )
 }
 
-function SummaryStrip({ rows }: { rows: { name: string; day: string; time: string; place: string }[] }) {
+function SummaryStrip({ rows, variant = "light" }: { rows: { name: string; day: string; time: string; place: string }[]; variant?: "light" | "dark" }) {
+  const dark = variant === "dark"
   return (
-    <div className="grid divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+    <div
+      className={cn(
+        "grid overflow-hidden rounded-2xl shadow-xl sm:grid-cols-3",
+        dark
+          ? "divide-y divide-white/15 border border-white/20 bg-white/10 backdrop-blur-md sm:divide-x sm:divide-y-0"
+          : "divide-y divide-border border border-border bg-card sm:divide-x sm:divide-y-0",
+      )}
+    >
       {rows.map((row) => (
         <div key={row.name} className="p-7 text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{row.day}</p>
-          <p className="mt-1 font-serif text-xl font-bold text-foreground md:text-2xl">{row.name}</p>
-          <p className="mt-3 flex items-center justify-center gap-2 text-2xl font-bold tabular-nums text-primary md:text-3xl">
+          <p className={cn("text-sm font-semibold uppercase tracking-wide", dark ? "text-white/70" : "text-muted-foreground")}>{row.day}</p>
+          <p className={cn("mt-1 font-serif text-xl font-bold md:text-2xl", dark ? "text-white" : "text-foreground")}>{row.name}</p>
+          <p className={cn("mt-3 flex items-center justify-center gap-2 text-2xl font-bold tabular-nums md:text-3xl", dark ? "text-white" : "text-primary")}>
             <Clock aria-hidden className="size-6" />
             {row.time}
           </p>
-          <p className="mt-2 flex items-center justify-center gap-1.5 text-base text-muted-foreground">
+          <p className={cn("mt-2 flex items-center justify-center gap-1.5 text-base", dark ? "text-white/80" : "text-muted-foreground")}>
             <MapPin aria-hidden className="size-4 shrink-0" />
             {row.place}
           </p>
@@ -84,9 +93,9 @@ function SummaryStrip({ rows }: { rows: { name: string; day: string; time: strin
   )
 }
 
-export function WorshipSchedule({ sections = "all" }: { sections?: "summary" | "all" }) {
+export function WorshipSchedule({ sections = "all", variant = "light" }: { sections?: "summary" | "all"; variant?: "light" | "dark" }) {
   if (sections === "summary") {
-    return <SummaryStrip rows={mainWorship.filter((row) => row.name.startsWith("주일예배"))} />
+    return <SummaryStrip rows={mainWorship.filter((row) => row.name.startsWith("주일예배"))} variant={variant} />
   }
 
   return (

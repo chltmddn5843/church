@@ -28,25 +28,29 @@ export default async function AdminPage() {
 
   return (
     <>
-      <div className="border-b border-[#dedede] pb-7">
-        <p className="text-sm font-medium text-[#2F5D8A]">ADMINISTRATION</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-[-0.04em]">관리자 대시보드</h1>
-        <p className="mt-2 text-sm text-[#777]">원당교회 홈페이지의 콘텐츠와 회원 현황을 관리합니다.</p>
+      <div className="border-b border-[#d7e5ee] pb-6">
+        <p className="text-sm font-semibold text-[#2F5D8A]">ADMINISTRATION</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#183247]">관리자 대시보드</h1>
+        <p className="mt-2 text-sm text-[#526a7d]">원당교회 홈페이지의 콘텐츠와 회원 현황을 관리합니다.</p>
       </div>
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-lg font-bold">콘텐츠 현황</h2>
-          <span className="text-xs text-[#999]">현재 등록 기준</span>
+          <h2 className="text-lg font-bold text-[#183247]">콘텐츠 현황</h2>
+          <span className="text-xs text-[#6d7f8c]">현재 등록 기준</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {cards.map(({ label, value, href, icon: Icon, tone }) => (
-            <Link key={label} href={href} className="group border border-[#e1e1e1] bg-white p-5 transition hover:-translate-y-0.5 hover:border-[#aaa] hover:shadow-sm">
+            <Link
+              key={label}
+              href={href}
+              className="group rounded-lg border border-[#d7e5ee] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#9CC7E6] hover:shadow-md"
+            >
               <div className={`flex size-10 items-center justify-center rounded-full ${tone}`}><Icon className="size-[18px]" /></div>
-              <p className="mt-5 text-sm text-[#777]">{label}</p>
+              <p className="mt-5 text-sm text-[#526a7d]">{label}</p>
               <div className="mt-1 flex items-end justify-between">
-                <strong className="text-3xl tracking-[-0.04em]">{value}</strong>
-                <ArrowRight className="size-4 text-[#aaa] transition group-hover:translate-x-1 group-hover:text-[#333]" />
+                <strong className="text-3xl tracking-tight text-[#183247]">{value}</strong>
+                <ArrowRight className="size-4 text-[#9CC7E6] transition group-hover:translate-x-1 group-hover:text-[#2F5D8A]" />
               </div>
             </Link>
           ))}
@@ -54,17 +58,21 @@ export default async function AdminPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="mb-4 text-lg font-bold">빠른 등록</h2>
-        <div className="grid border border-[#dedede] sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="mb-4 text-lg font-bold text-[#183247]">빠른 등록</h2>
+        <div className="grid overflow-hidden rounded-lg border border-[#d7e5ee] bg-white shadow-sm sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["새 설교 등록", "/admin/sermons", BookOpen],
             ["공지사항 작성", "/admin/posts", Newspaper],
             ["갤러리 등록", "/admin/gallery", ImageIcon],
             ["팝업 등록", "/admin/popups", Bell],
           ].map(([label, href, Icon], index) => (
-            <Link key={label as string} href={href as string} className={`flex items-center justify-between bg-[#fafafa] px-5 py-4 text-sm font-medium hover:bg-[#f0f0f0] ${index > 0 ? "border-t border-[#dedede] sm:border-t-0 sm:border-l" : ""} ${index === 2 ? "sm:border-l-0 sm:border-t lg:border-l lg:border-t-0" : ""}`}>
-              <span className="flex items-center gap-3"><Icon className="size-[18px] text-[#555]" />{label as string}</span>
-              <Plus className="size-4 text-[#999]" />
+            <Link
+              key={label as string}
+              href={href as string}
+              className={`flex items-center justify-between px-5 py-4 text-sm font-medium text-[#183247] transition hover:bg-[#eaf7ff] ${index > 0 ? "border-t border-[#d7e5ee] sm:border-t-0 sm:border-l" : ""} ${index === 2 ? "sm:border-l-0 sm:border-t lg:border-l lg:border-t-0" : ""}`}
+            >
+              <span className="flex items-center gap-3"><Icon className="size-[18px] text-[#2F5D8A]" />{label as string}</span>
+              <Plus className="size-4 text-[#9CC7E6]" />
             </Link>
           ))}
         </div>
@@ -82,17 +90,21 @@ function RecentList({ title, href, empty, items, icon: Icon }: { title: string; 
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold">{title}</h2>
-        <Link href={href} className="flex items-center gap-1 text-xs text-[#777] hover:text-black">전체보기 <ArrowRight className="size-3" /></Link>
+        <h2 className="text-lg font-bold text-[#183247]">{title}</h2>
+        <Link href={href} className="flex items-center gap-1 text-xs text-[#6d7f8c] hover:text-[#183247]">전체보기 <ArrowRight className="size-3" /></Link>
       </div>
-      <div className="border-t-2 border-[#333]">
-        {items.length === 0 ? <p className="border-b py-8 text-center text-sm text-[#999]">{empty}</p> : items.map((item) => (
-          <div key={item.id} className="flex items-center gap-3 border-b border-[#e5e5e5] py-4">
-            <Icon className="size-4 shrink-0 text-[#999]" />
-            <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{item.title}</p><p className="mt-1 text-xs text-[#999]">{item.meta}</p></div>
-            <time className="shrink-0 text-xs text-[#999]">{item.date}</time>
-          </div>
-        ))}
+      <div className="overflow-hidden rounded-lg border border-[#d7e5ee] bg-white shadow-sm">
+        {items.length === 0 ? (
+          <p className="py-8 text-center text-sm text-[#6d7f8c]">{empty}</p>
+        ) : (
+          items.map((item, index) => (
+            <div key={item.id} className={`flex items-center gap-3 px-5 py-4 ${index > 0 ? "border-t border-[#e5eef4]" : ""}`}>
+              <Icon className="size-4 shrink-0 text-[#9CC7E6]" />
+              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-[#183247]">{item.title}</p><p className="mt-1 text-xs text-[#6d7f8c]">{item.meta}</p></div>
+              <time className="shrink-0 text-xs text-[#6d7f8c]">{item.date}</time>
+            </div>
+          ))
+        )}
       </div>
     </section>
   )

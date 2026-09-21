@@ -167,7 +167,7 @@ export default function AboutPage() {
       </section>
 
       {/* 오시는 길 */}
-      <section id="location" className="scroll-mt-24 bg-secondary py-16 md:py-24">
+      <section id="location" className="scroll-mt-24 bg-white py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
           <SectionHeading eyebrow="Location" title="오시는 길" />
           <div className="mt-12 grid gap-8 lg:grid-cols-2">
@@ -183,26 +183,26 @@ export default function AboutPage() {
                 src={`https://www.openstreetmap.org/export/embed.html?bbox=${church.map.lng - 0.008}%2C${church.map.lat - 0.005}%2C${church.map.lng + 0.008}%2C${church.map.lat + 0.005}&layer=mapnik&marker=${church.map.lat}%2C${church.map.lng}`}
               />
             </div>
-            <div className="flex flex-col justify-center gap-5">
-              <div className="flex items-start gap-3">
-                <MapPin className="mt-1 h-5 w-5 shrink-0 text-primary" />
+            <div className="flex flex-col justify-center gap-7">
+              <div className="flex items-start gap-4">
+                <MapPin className="mt-1 h-6 w-6 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">주소</p>
-                  <p className="text-muted-foreground">{church.address}</p>
+                  <p className="text-lg font-semibold text-foreground">주소</p>
+                  <p className="mt-1 text-lg text-muted-foreground">{church.address}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Phone className="mt-1 h-5 w-5 shrink-0 text-primary" />
+              <div className="flex items-start gap-4">
+                <Phone className="mt-1 h-6 w-6 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">전화</p>
-                  <p className="text-muted-foreground">{church.tel}</p>
+                  <p className="text-lg font-semibold text-foreground">전화</p>
+                  <p className="mt-1 text-lg text-muted-foreground">{church.tel}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Printer className="mt-1 h-5 w-5 shrink-0 text-primary" />
+              <div className="flex items-start gap-4">
+                <Printer className="mt-1 h-6 w-6 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">팩스</p>
-                  <p className="text-muted-foreground">{church.fax}</p>
+                  <p className="text-lg font-semibold text-foreground">팩스</p>
+                  <p className="mt-1 text-lg text-muted-foreground">{church.fax}</p>
                 </div>
               </div>
             </div>

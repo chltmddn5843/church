@@ -2,8 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { ChevronDown, Menu, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,12 +16,29 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { authClient } from "@/lib/auth-client"
 import { church } from "@/lib/church"
+import { cn } from "@/lib/utils"
 
 type SessionUser = { name: string; email: string; role?: string | null } | null
 
+const PRIMARY_RGB = "27, 78, 128"
+const HOME_FADE_DISTANCE = 260
+
 export function SiteHeader({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const pathname = usePathname()
   const router = useRouter()
+  const isHome = pathname === "/"
+
+  useEffect(() => {
+    if (!isHome) return
+    function onScroll() {
+      setScrollProgress(Math.min(window.scrollY / HOME_FADE_DISTANCE, 1))
+    }
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [isHome])
 
   async function handleSignOut() {
     await authClient.signOut()
@@ -30,7 +47,10 @@ export function SiteHeader({ user }: { user: SessionUser }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-accent/25 bg-primary text-white">
+    <header
+      className={cn("sticky top-0 z-50 w-full text-white", !isHome && "bg-primary")}
+      style={isHome ? { backgroundColor: `rgba(${PRIMARY_RGB}, ${0.25 + scrollProgress * 0.75})` } : undefined}
+    >
       <div className="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-4 md:h-24 xl:px-10">
         <Link href="/" className="flex items-center gap-2">
           <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-[53px]" priority />
@@ -41,7 +61,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             <div key={item.title} className="group relative">
               <Link
                 href={item.href}
-                className="flex items-center gap-1 rounded-md px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-ring hover:text-white"
+                className="flex items-center gap-1 rounded-md px-4 py-2 text-lg font-semibold text-white transition-colors hover:bg-ring hover:text-white"
               >
                 {item.title}
                 <ChevronDown className="h-3 w-3 opacity-50 transition-transform group-hover:rotate-180" />
