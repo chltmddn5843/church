@@ -114,10 +114,10 @@ export default function NextGenerationPage() {
                   <Image src={d.image} alt={d.name} fill className={d.contain ? "object-contain" : "object-cover"} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-widest text-primary">{d.age}</p>
-                  <h3 className="mt-2 font-serif text-2xl font-bold text-foreground md:text-3xl">{d.name}</h3>
-                  <p className="mt-4 leading-relaxed text-muted-foreground">{d.desc}</p>
-                  <div className="mt-6 flex flex-col gap-2 text-sm">
+                  <p className="text-base font-semibold uppercase tracking-widest text-primary md:text-lg">{d.age}</p>
+                  <h3 className="mt-2 font-serif text-3xl font-bold text-foreground md:text-4xl">{d.name}</h3>
+                  <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{d.desc}</p>
+                  <div className="mt-6 flex flex-col gap-2 text-base md:text-lg">
                     <span className="flex items-center gap-2 text-foreground">
                       <Clock className="h-4 w-4 text-primary" />
                       {d.time}
