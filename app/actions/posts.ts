@@ -8,7 +8,17 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { deleteUpload, uploadFile } from "@/lib/uploads"
 
-const VISIBILITIES = new Set(["public", "member", "bylaws", "offering", "committee"])
+const VISIBILITIES = new Set(["public", "member", "offering"])
+
+function safeReturnTo(formData: FormData, suffix: string) {
+  const requested = String(formData.get("returnTo") ?? "")
+  const isSafe =
+    requested.startsWith("/") &&
+    !requested.startsWith("//") &&
+    (requested === "/community?category=새가족소개" || requested.startsWith("/admin/posts"))
+  const base = isSafe ? requested : "/admin/posts"
+  return `${base}${base.includes("?") ? "&" : "?"}${suffix}`
+}
 
 function readPost(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim()
@@ -57,9 +67,7 @@ export async function createPost(formData: FormData) {
   revalidatePath("/admin/posts")
   revalidatePath("/community")
   revalidatePath("/")
-  const requestedReturnTo = String(formData.get("returnTo") ?? "")
-  const returnTo = requestedReturnTo === "/community?category=새가족소개" ? requestedReturnTo : "/admin/posts"
-  redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}saved=created`)
+  redirect(safeReturnTo(formData, "saved=created"))
 }
 
 export async function updatePost(id: number, formData: FormData) {
@@ -79,10 +87,10 @@ export async function updatePost(id: number, formData: FormData) {
   revalidatePath("/admin/posts")
   revalidatePath("/community")
   revalidatePath(`/community/${id}`)
-  redirect("/admin/posts?saved=updated")
+  redirect(safeReturnTo(formData, "saved=updated"))
 }
 
-export async function deletePost(id: number) {
+export async function deletePost(id: number, formData: FormData) {
   await requireAdmin()
   if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 게시글 번호가 아닙니다.")
   const db = getDb()
@@ -93,5 +101,5 @@ export async function deletePost(id: number) {
 
   revalidatePath("/admin/posts")
   revalidatePath("/community")
-  redirect("/admin/posts?saved=deleted")
+  redirect(safeReturnTo(formData, "saved=deleted"))
 }

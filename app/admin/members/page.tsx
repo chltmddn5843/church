@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/admin"
 import { getDb } from "@/lib/db"
 import { user, userGroups } from "@/lib/db/schema"
 
-const groupLabels = { bylaws: "정관", offering: "헌금", committee: "제직회" } as const
+const groupLabels = { offering: "헌금" } as const
 const roleLabels = { pending: "승인 대기", member: "회원", admin: "관리자" } as const
 
 export default async function AdminMembersPage() {

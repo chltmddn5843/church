@@ -16,9 +16,9 @@ export async function setMemberRole(userId: string, role: "pending" | "member" |
   redirect("/admin/members?saved=member")
 }
 
-export async function setMemberGroup(userId: string, group: "bylaws" | "offering" | "committee", enabled: boolean) {
+export async function setMemberGroup(userId: string, group: "offering", enabled: boolean) {
   await requireAdmin()
-  if (!userId || !(["bylaws", "offering", "committee"] as const).includes(group) || typeof enabled !== "boolean") throw new Error("올바른 그룹 정보가 아닙니다.")
+  if (!userId || !(["offering"] as const).includes(group) || typeof enabled !== "boolean") throw new Error("올바른 그룹 정보가 아닙니다.")
   const db = getDb()
   if (enabled) await db.insert(userGroups).values({ userId, group }).onConflictDoNothing()
   else await db.delete(userGroups).where(and(eq(userGroups.userId, userId), eq(userGroups.group, group)))

@@ -8,9 +8,7 @@ import { headers } from "next/headers"
 export const accessOptions = [
   ["public", "전체 공개"],
   ["member", "승인 회원"],
-  ["bylaws", "열람 그룹"],
   ["offering", "헌금 내역 그룹"],
-  ["committee", "조직표 그룹"],
 ] as const
 
 export async function getViewerAccess() {

@@ -29,6 +29,15 @@ const departments = [
     image: "/images/next-generation/kindergarten.jpg",
   },
   {
+    id: "lower-elementary",
+    name: "유년부",
+    age: "초등학교 1~3학년",
+    time: "주일 오후 12:00~1:20",
+    place: "소망관 2층 요셉홀",
+    desc: "믿음의 눈으로 세상을 바라보며 순종하는 예수님의 제자, 유년부! 하나님께서 맡기신 이 세상 가운데서도 믿음의 눈으로 세상을 바라보고, 하나님의 말씀에 순종하며 나아갑니다.",
+    image: "/images/next-generation/유년부.jpg",
+  },
+  {
     id: "elementary",
     name: "초등부",
     age: "초등학교 4~6학년",
@@ -82,7 +91,7 @@ const departments = [
     time: "주일 오후 2:00 · YM 토요일 오전 10:00",
     place: "사랑관 2층 드림홀 · 1층 만나홀",
     desc: "복음과 성경 암송, 재미있는 활동을 통해 어린이와 청소년이 예수 그리스도를 알고 사랑하고 섬기도록 훈련합니다. 참여 전 입단 과정이 필요합니다.",
-    image: "/images/next-generation/awana.jpg",
+    image: "/images/next-generation/어와나1.jpg",
     contain: true,
   },
 ]

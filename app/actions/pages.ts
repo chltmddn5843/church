@@ -16,7 +16,7 @@ export async function saveContentPage(formData: FormData) {
   const visibility = String(formData.get("visibility") ?? "public")
   if (!title || !content) throw new Error("제목과 내용을 입력해 주세요.")
   if (imageUrl && !imageUrl.startsWith("/")) throw new Error("이미지는 사이트 내부 경로만 사용할 수 있습니다.")
-  if (!new Set(["public", "member", "bylaws", "offering", "committee"]).has(visibility)) throw new Error("올바른 공개 범위를 선택해 주세요.")
+  if (!new Set(["public", "member", "offering"]).has(visibility)) throw new Error("올바른 공개 범위를 선택해 주세요.")
   const values = {
     legacyId,
     title,

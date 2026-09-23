@@ -6,7 +6,7 @@ import { Pagination } from "@/components/pagination"
 import { accessOptions } from "@/lib/access"
 import { getPosts, getPostsCount } from "@/lib/queries"
 
-const categories = ["교회소식", "공지사항", "새가족소개", "주보", "가정예배순서지", "봉사 섬김이", "자료실", "정관", "조직표"]
+const categories = ["교회소식", "공지사항", "새가족소개", "주보", "가정예배순서지", "봉사 섬김이", "자료실"]
 const PAGE_SIZE = 20
 
 const fieldClass =
@@ -17,15 +17,23 @@ const textareaClass =
 export default async function AdminPostsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; category?: string }>
 }) {
-  const { page: pageParam } = await searchParams
+  const { page: pageParam, category: categoryParam } = await searchParams
+  const category = categoryParam && categories.includes(categoryParam) ? categoryParam : undefined
   const page = Math.max(1, Number(pageParam) || 1)
   const [items, total] = await Promise.all([
-    getPosts(undefined, PAGE_SIZE, (page - 1) * PAGE_SIZE),
-    getPostsCount(),
+    getPosts(category, PAGE_SIZE, (page - 1) * PAGE_SIZE),
+    getPostsCount(category),
   ])
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  function hrefFor(p: number) {
+    const params = new URLSearchParams()
+    if (category) params.set("category", category)
+    if (p > 1) params.set("page", String(p))
+    const qs = params.toString()
+    return qs ? `/admin/posts?${qs}` : "/admin/posts"
+  }
 
   return (
     <>
@@ -36,11 +44,11 @@ export default async function AdminPostsPage({
       </div>
 
       <form action={createPost} className="mt-8 rounded-lg border border-[#d7e5ee] bg-white p-6 shadow-sm">
-        <input type="hidden" name="returnTo" value="/admin/posts" />
+        <input type="hidden" name="returnTo" value={hrefFor(1)} />
         <div className="grid gap-4 md:grid-cols-2">
           <input name="title" required placeholder="제목" className={`${fieldClass} md:col-span-2`} />
-          <select name="category" className={fieldClass}>
-            {categories.map((category) => <option key={category}>{category}</option>)}
+          <select name="category" defaultValue={category ?? categories[0]} className={fieldClass}>
+            {categories.map((c) => <option key={c}>{c}</option>)}
           </select>
           <select name="visibility" className={fieldClass}>
             {accessOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -73,6 +81,27 @@ export default async function AdminPostsPage({
           <h2 className="text-lg font-bold text-[#183247]">등록된 게시글</h2>
           <span className="text-xs text-[#6d7f8c]">총 {total}개</span>
         </div>
+        <div className="mb-4 flex flex-wrap gap-2">
+          <a
+            href="/admin/posts"
+            className={`flex h-8 items-center rounded-full px-3 text-xs font-semibold transition ${
+              !category ? "bg-[#2F5D8A] text-white" : "bg-[#eef4f8] text-[#526a7d] hover:bg-[#e0ebf2]"
+            }`}
+          >
+            전체
+          </a>
+          {categories.map((c) => (
+            <a
+              key={c}
+              href={`/admin/posts?category=${encodeURIComponent(c)}`}
+              className={`flex h-8 items-center rounded-full px-3 text-xs font-semibold transition ${
+                c === category ? "bg-[#2F5D8A] text-white" : "bg-[#eef4f8] text-[#526a7d] hover:bg-[#e0ebf2]"
+              }`}
+            >
+              {c}
+            </a>
+          ))}
+        </div>
         <div className="space-y-4">
           {items.map((item) => (
             <details key={item.id} className="overflow-hidden rounded-lg border border-[#d7e5ee] bg-white shadow-sm">
@@ -89,9 +118,10 @@ export default async function AdminPostsPage({
               </summary>
               <div className="grid gap-4 p-5">
                 <form action={updatePost.bind(null, item.id)} className="grid gap-3 md:grid-cols-2">
+                  <input type="hidden" name="returnTo" value={hrefFor(page)} />
                   <input name="title" required defaultValue={item.title} className={`${fieldClass} md:col-span-2`} />
                   <select name="category" defaultValue={item.category} className={fieldClass}>
-                    {categories.map((category) => <option key={category}>{category}</option>)}
+                    {categories.map((c) => <option key={c}>{c}</option>)}
                   </select>
                   <select name="visibility" defaultValue={item.visibility} className={fieldClass}>
                     {accessOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -108,13 +138,14 @@ export default async function AdminPostsPage({
                   </div>
                 </form>
                 <form action={deletePost.bind(null, item.id)} className="flex justify-end border-t border-[#e5eef4] pt-4">
+                  <input type="hidden" name="returnTo" value={hrefFor(1)} />
                   <ConfirmDeleteButton confirmMessage={`'${item.title}' 게시글을 삭제하시겠습니까?`} />
                 </form>
               </div>
             </details>
           ))}
         </div>
-        <Pagination page={page} totalPages={totalPages} hrefFor={(p) => (p > 1 ? `/admin/posts?page=${p}` : "/admin/posts")} />
+        <Pagination page={page} totalPages={totalPages} hrefFor={hrefFor} />
       </section>
     </>
   )

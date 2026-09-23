@@ -1,7 +1,7 @@
 import "server-only"
 import { getDb } from "@/lib/db"
 import { sermons, posts, gallery, popups, attachments, offeringReports } from "@/lib/db/schema"
-import { and, asc, count, desc, eq, gt, inArray, lt, ne, sql } from "drizzle-orm"
+import { and, asc, count, desc, eq, gt, inArray, like, lt, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
 export async function getSermons(category?: string, limit?: number, offset?: number) {
@@ -26,28 +26,45 @@ export async function getSermon(id: number) {
   return (await db.select().from(sermons).where(eq(sermons.id, id)).limit(1).get()) ?? null
 }
 
-export async function getPosts(category?: string, limit?: number, offset?: number) {
-  const db = getDb()
-  const viewer = await getViewerAccess()
+export type PostSearch = { field: "title" | "author"; q: string }
+
+function postsWhere(category: string | undefined, viewer: Awaited<ReturnType<typeof getViewerAccess>>, search?: PostSearch) {
   const visibility = viewer.role === "admin"
     ? undefined
     : inArray(posts.visibility, ["public", ...(viewer.role === "member" ? ["member"] : []), ...viewer.groups])
-  const where = and(category ? eq(posts.category, category) : undefined, ne(posts.category, "헌금 현황"), visibility)
+  const searchCondition = search?.q
+    ? like(search.field === "author" ? posts.authorName : posts.title, `%${search.q}%`)
+    : undefined
+  return and(category ? eq(posts.category, category) : undefined, ne(posts.category, "헌금 현황"), visibility, searchCondition)
+}
+
+export async function getPosts(category?: string, limit?: number, offset?: number, search?: PostSearch) {
+  const db = getDb()
+  const where = postsWhere(category, await getViewerAccess(), search)
   const q = db.select().from(posts).where(where).orderBy(desc(posts.pinned), desc(posts.createdAt))
   if (limit) q.limit(limit)
   if (offset) q.offset(offset)
   return q
 }
 
-export async function getPostsCount(category?: string) {
+export async function getPostsCount(category?: string, search?: PostSearch) {
   const db = getDb()
-  const viewer = await getViewerAccess()
-  const visibility = viewer.role === "admin"
-    ? undefined
-    : inArray(posts.visibility, ["public", ...(viewer.role === "member" ? ["member"] : []), ...viewer.groups])
-  const where = and(category ? eq(posts.category, category) : undefined, ne(posts.category, "헌금 현황"), visibility)
+  const where = postsWhere(category, await getViewerAccess(), search)
   const result = await db.select({ value: count() }).from(posts).where(where).get()
   return result?.value ?? 0
+}
+
+export async function getPostThumbnails(postIds: number[]) {
+  if (!postIds.length) return new Map<number, string>()
+  const rows = await getDb()
+    .select({ postId: attachments.postId, url: attachments.url, contentType: attachments.contentType })
+    .from(attachments)
+    .where(inArray(attachments.postId, postIds))
+  const thumbnails = new Map<number, string>()
+  for (const row of rows) {
+    if (row.contentType.startsWith("image/") && !thumbnails.has(row.postId)) thumbnails.set(row.postId, row.url)
+  }
+  return thumbnails
 }
 
 export async function getLatestBulletin() {

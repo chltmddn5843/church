@@ -56,7 +56,7 @@ export const church = {
       children: [
         { title: "유아부", href: "/next-generation#toddler" },
         { title: "유치부", href: "/next-generation#kindergarten" },
-        { title: "유년부", href: "/next-generation#elementary" },
+        { title: "유년부", href: "/next-generation#lower-elementary" },
         { title: "초등부", href: "/next-generation#elementary" },
         { title: "중등부", href: "/next-generation#middle" },
         { title: "고등부", href: "/next-generation#high" },

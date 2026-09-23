@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { church } from "@/lib/church"
 import { PageBanner } from "@/components/page-banner"
 import { SectionHeading } from "@/components/section-heading"
-import { Cross, Heart, Users, BookOpen, MapPin, Phone, Printer, Globe } from "lucide-react"
+import { Cross, Heart, Users, BookOpen, MapPin, Phone, Printer, Globe, ChevronDown } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "교회소개",
@@ -43,6 +43,158 @@ const elders = [
   { name: "정경위", role: "장로", image: "/images/staff/jeong-gyeongwi.jpg" },
   { name: "권태식", role: "장로", image: "/images/staff/gwon-taesik.jpg" },
   { name: "허수행", role: "장로", image: "/images/staff/heo-suhaeng.jpg" },
+]
+
+type HistoryEvent = { date: string; event: string }
+type HistoryGroup = { label: string; items: HistoryEvent[] }
+const historyGroups: HistoryGroup[] = [
+  {
+    label: "1963~1970년",
+    items: [
+      { date: "1963. 06. 16", event: "조인택 전도사님이 이원희씨 사랑방에서 김선흠 집사를 중심으로 10여명이 모여 예배드리기 시작." },
+      { date: "1963. 07. 28", event: "김포읍교회 11구역이였던 원당지역을 원당교회로 하는 환송 예배를 드림." },
+      { date: "1963. 08. 03", event: "김선흠 집사 소유 산 51-1번지에 서울청암교회 지원 받아 예배당 20평 착공." },
+      { date: "1964. 06. 16", event: "예배당 준공하고 21일 입당 예배 드림." },
+      { date: "1966. 09. 15", event: "조인택 목사 사임." },
+      { date: "1966. 10. 22", event: "이종수 전도사 부임." },
+      { date: "1968. 11. 25", event: "사택 10평(흙블록 스래트) 준공." },
+      { date: "1970. 01.", event: "이종수 전도사 사임." },
+      { date: "1970. 03.", event: "이기양 전도사 부임." },
+    ],
+  },
+  {
+    label: "1971~1980년",
+    items: [
+      { date: "1971. 03. 29", event: "이기양 전도사 사임." },
+      { date: "1971. 07. 30", event: "김해용 전도사 부임." },
+      { date: "1975. 01. 30", event: "김해용 전도사 사임." },
+      { date: "1975. 04. 06", event: "김보하 강도사 부임." },
+      { date: "1977. 01. 05", event: "김보하 목사 사임." },
+      { date: "1977. 01. 16", event: "임영석 전도사 부임." },
+      { date: "1978. 06. 16", event: "임영석 목사 사임." },
+      { date: "1978. 08. 10", event: "정연한 전도사 부임." },
+    ],
+  },
+  {
+    label: "1981~1990년",
+    items: [
+      { date: "1982. 01.", event: "교회 자립과 협력 선교 시작 : 애굽의 김신숙 선교사, 필리핀의 박기호 선교사, 신안교회." },
+      { date: "1982. 10. 12", event: "정연한 목사로 장립되고, 임시당회장 되다." },
+      { date: "1985. 06. 28", event: "김선흠 집사가 현 예배당 부지 311평을 교회명의로 이전 등기함." },
+      { date: "1986. 04. 15", event: "김선흠 초대 장로로 장립 받다." },
+      { date: "1988. 08. 30", event: "김선흠 장로 소유 산 1308평 재분할하여 산 51-2번지를 원당교회 소유로 등록 전환 함." },
+      { date: "1989. 06. 16", event: "정연한 목사 위임식과 초대 집사 장립(장용희, 오순복)과, 초대 권사 취임(권순례, 오의순, 서지순)." },
+    ],
+  },
+  {
+    label: "1991~2000년",
+    items: [
+      { date: "1993. 06. 16", event: "2대 집사 장립(박석원, 이순일)과, 2대 권사 취임(지복례, 최월순)." },
+      { date: "1994. 05. 22", event: "김선흠 장로 사임 하다." },
+      { date: "1995. 06. 17", event: "장용희, 이순일 2대 장로로, 허수행, 장현상 3대 집사로 장립되다." },
+      { date: "1995. 11", event: "장구산 원당동 61-8번지 1450평을 교회당 부지로 매입하다." },
+      { date: "1997. 05", event: "연건평 1500평 건축 허가 받음." },
+      { date: "1997. 10", event: "이충현 전도사 부임." },
+      { date: "1998. 02", event: "착공신고하고, 벌목과 절개 작업 수행." },
+      { date: "1998. 03", event: "장용희씨가 장로직을 사임." },
+      { date: "1999. 05. 29", event: "오순복, 박석원 3대 장로로 장립되고, 한덕숙 3대 권사로 취임되다. 장종구, 임용우 4대 집사로 장립되다." },
+    ],
+  },
+  {
+    label: "2001~2010년",
+    items: [
+      { date: "2003. 04", event: "정연한 목사 남서울노회 노회장이 되심." },
+      { date: "2004. 06. 19", event: "장현덕, 권태식, 이창근 5대 집사로 장립되고,  박일화, 이선심, 박태순, 정양애, 박영숙 4대 권사로 취임되다." },
+      { date: "2005. 11", event: "장구산에 교회당 연건평 1500평 건축 위해 재설계 신청하다." },
+      { date: "2006. 07. 17", event: "장구산에 교회당 건축 착공 예배를 드리다." },
+      { date: "2006. 09", event: "장구산 61-8번지가 436-3번지로 지적변경." },
+      { date: "2008. 06. 14", event: "성전준공 및 입당예배를 드리다." },
+      { date: "2007. 09", event: "이희숙 전도사 부임." },
+      { date: "2008. 08. 05", event: "이충현 부목사 사임" },
+      { date: "2008. 08. 10", event: "신학수 부목사 부임." },
+      { date: "2009. 12", event: "이희숙 전도사 사임." },
+      { date: "2010. 01", event: "서경수 전도사 부임." },
+      { date: "2010. 06. 19", event: "이창근, 박상근, 정경위, 권태식 4대 장로로 장립되고, 김수호, 최수복, 박창식, 임갑수, 이경춘, 김일환, 한현동, 이광근, 이희원 6대 집사로 장립되고, 황미자, 신정순, 김옥녀, 김영순, 이정순, 이은경, 김현춘, 구오남 5대 권사로 취임되다." },
+      { date: "2010. 11. 21", event: "인도 아바디 미라클교회당 헌당 예배 드림.(30평)" },
+    ],
+  },
+  {
+    label: "2011~2020년",
+    items: [
+      { date: "2012. 11. 25", event: "신학수 부목사 사임." },
+      { date: "2015. 02. 08", event: "원당대로820번1길 5번지로 교회를 이전하다." },
+      { date: "2015. 03. 22", event: "양승철 목사 담임목사 부임." },
+      { date: "2015. 04. 25", event: "정연한 목사 은퇴 및 양승철 목사 위임." },
+      { date: "2015. 08. 07", event: "수요예배 대신 금요예배 드림." },
+      { date: "2015. 11. 08", event: "서경수 전도사 사임." },
+      { date: "2015. 11. 08", event: "김수한 전도사 중등부 고등부 부임." },
+      { date: "2015. 12. 06", event: "황성훈 전도사 청년부, 박미나 전도사 유년부 초등부 부임." },
+      { date: "2016. 05. 13", event: "3대가 함께하는 월삭금요예배 시작." },
+      { date: "2016. 12. 11", event: "황성훈 전도사 사임." },
+      { date: "2016. 12. 11", event: "조영욱 전도사 중등부 고등부 부임." },
+      { date: "2017. 10. 08", event: "이수기 부목사 행정. 교구 부임." },
+      { date: "2017. 11. 12", event: "진미소 전도사 유아부 유치부 부임." },
+      { date: "2017. 11. 26", event: "박미나 전도사 유년부 초등부 사임." },
+      { date: "2017. 12. 03", event: "송명학 전도사 유년부 초등부 부임." },
+      { date: "2018. 06. 24", event: "송명학 전도사 유년부 초등부 사임." },
+      { date: "2018. 07. 01", event: "고예선 전도사 유년부 초등부 부임." },
+      { date: "2018. 11. 25", event: "진미소 전도사 유아부 유치부 사임." },
+      { date: "2018. 11. 25", event: "조영욱 전도사 중등부 고등부 사임." },
+      { date: "2018. 11. 25", event: "김수한 전도사 청년부 사임." },
+      { date: "2018. 12. 02", event: "박이슬 전도사 유아부 유치부 부임." },
+      { date: "2018. 12. 02", event: "정현기 전도사 교육전임 청년부 부임." },
+      { date: "2018. 12. 30", event: "이창은 전도사 중등부 고등부 부임." },
+      { date: "2019. 11. 24", event: "노정흠 전도사 초등부 부임." },
+      { date: "2020. 02. 16", event: "이창은 전도사 중고등부 사임." },
+      { date: "2020. 05. 03", event: "김철우 전도사 청소년부 부임." },
+      { date: "2020. 05. 17", event: "김철우 전도사 청소년부 사임." },
+      { date: "2020. 09. 06", event: "김이삭 전도사 청소년부 부임." },
+      { date: "2020. 11. 29", event: "고예선 전도사 유년부 사임." },
+      { date: "2020. 11. 29", event: "박이슬 전도사 유아부 유치부 사임." },
+      { date: "2020. 11. 29", event: "김이삭 전도사 청소년부 사임." },
+      { date: "2020. 12. 06", event: "김성진 전도사 청소년부 부임." },
+      { date: "2020. 12. 27", event: "김바울 전도사 유년부 부임." },
+    ],
+  },
+  {
+    label: "2021년~",
+    items: [
+      { date: "2021. 08. 15", event: "김연주 전도사 유아부 유치부 부임." },
+      { date: "2021. 11. 14", event: "김연주 전도사 유아부 유치부 사임." },
+      { date: "2021. 11. 28", event: "이수기 부목사 사임." },
+      { date: "2021. 12. 05", event: "노정흠 전도사 전임 전도사 부임." },
+      { date: "2021. 12. 05", event: "최종렬 전도사 유년부 부임." },
+      { date: "2021. 12. 12", event: "김혜연 전도사 유아부 유치부 부임." },
+      { date: "2022. 03. 08", event: "양승철 담임목사 한달간 안식월을 갖다.(3/8~4/8)" },
+      { date: "2022. 05. 23", event: "아라동 종교부지 5번(원당동1088번지), 1,033평을 교회당 부지로 분양받다." },
+      { date: "2022. 06. 11", event: "허수행 장로로 장립되고, 고성도, 이택근, 한용남, 최길림 안수집사로 장립되고, 서애경, 신건숙, 신건옥, 신정옥, 엄애자, 이미숙, 이애경, 한남숙 권사로 취임되다." },
+      { date: "2022. 12. 25", event: "김바울 전도사 청소년부 사임." },
+      { date: "2023. 01. 01", event: "신요섭 목사 청소년부 부임." },
+      { date: "2023. 03. 18", event: "비전센터 기공 감사예배 드림." },
+      { date: "2023. 08. 27", event: "비전센터 이음1로 320 믿음관 소망관 준공하고 봉헌." },
+      { date: "2023. 10. 15", event: "정현기 부목사 사임." },
+      { date: "2023. 11. 05", event: "박이찬 전도사 초등부 부임." },
+      { date: "2023. 11. 05", event: "신요섭 부목사 전임 목사 부임." },
+      { date: "2023. 11. 26", event: "김혜연 전도사 유아부 유치부 사임." },
+      { date: "2023. 11. 26", event: "최종렬 전도사 유년부 사임." },
+      { date: "2023. 12. 03", event: "오보배 전도사 유년부 부임." },
+      { date: "2023. 12. 03", event: "조은경 사모를 유아부 교육간사로 임명." },
+      { date: "2023. 12. 03", event: "이경은 집사를 유치부 교육간사로 임명." },
+      { date: "2023. 12. 10", event: "노정흠 강도사 초등부 청년부 사임." },
+      { date: "2023. 12. 17", event: "나정주 부목사 부임." },
+      { date: "2023. 12. 31", event: "김상준 목사를 협동목사로 임명." },
+      { date: "2024. 03. 14", event: "주일 오전 9시 영어예배 시작." },
+      { date: "2024. 09. 01", event: "김미경 집사를 찬양 행정간사로 임명." },
+      { date: "2024. 11. 10", event: "이효원 전도사 청소년부 부임." },
+      { date: "2024. 12. 02", event: "비전센터 사랑관 봉헌." },
+      { date: "2025. 01. 01", event: "김미경 간사를 전임 목회행정간사로 임명." },
+      { date: "2025. 04. 27", event: "이효원 전도사 청소년부 사임." },
+      { date: "2025. 06. 01", event: "허철 교육목사 중등부 부임." },
+      { date: "2025. 12. 01", event: "허철 부목사 전임 목사 부임." },
+      { date: "2025. 12. 01", event: "고강건 전도사 고등부 부임." },
+      { date: "2026. 09. 06", event: "1부 8시, 2부 10시, 3부 12시 예배를 드리다." },
+    ],
+  },
 ]
 
 export default function AboutPage() {
@@ -121,9 +273,31 @@ export default function AboutPage() {
 
       <section id="history" className="scroll-mt-24 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4">
-          <SectionHeading eyebrow="History" title="교회발자취" description="1963년 시작된 원당교회의 주요 발자취입니다." />
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {["1963년 원당 지역에서 예배 시작", "1964년 첫 예배당 입당", "2008년 성전 준공 및 입당", "2015년 양승철 담임목사 위임", "2023년 비전센터 믿음관·소망관 봉헌", "2024년 비전센터 사랑관 봉헌"].map(item => <p key={item} className="rounded-xl border bg-card p-5 text-muted-foreground">{item}</p>)}
+          <SectionHeading eyebrow="History" title="교회발자취" description="1963년 시작된 원당교회가 지나온 발자취입니다." />
+          <div className="mt-10 space-y-3">
+            {historyGroups.map((group, i) => (
+              <details
+                key={group.label}
+                open={i === historyGroups.length - 1}
+                className="group overflow-hidden rounded-2xl border border-border bg-card"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
+                  <span className="font-serif text-lg font-bold text-foreground">{group.label}</span>
+                  <span className="flex shrink-0 items-center gap-2 text-sm font-medium text-muted-foreground">
+                    {group.items.length}건
+                    <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
+                  </span>
+                </summary>
+                <ol className="space-y-4 border-t border-border px-6 py-6">
+                  {group.items.map((item) => (
+                    <li key={`${item.date}-${item.event}`} className="flex flex-wrap gap-x-4 gap-y-1 text-sm leading-relaxed sm:flex-nowrap">
+                      <span className="w-28 shrink-0 font-semibold tabular-nums text-primary">{item.date}</span>
+                      <span className="text-muted-foreground">{item.event}</span>
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            ))}
           </div>
         </div>
       </section>
