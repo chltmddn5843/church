@@ -12,7 +12,8 @@ const Page = forwardRef<HTMLDivElement, { image: BulletinImage; alt: string }>(f
   // so image rendering must live on a nested child instead of this ref'd element.
   return (
     <div ref={ref} className="h-full w-full bg-white">
-      <div className="flex h-full w-full items-center justify-center overflow-hidden">
+      {/* Pages share the first page's box; top-align so shorter pages don't float down the sheet. */}
+      <div className="flex h-full w-full items-start justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element -- dynamic upload URL inside a flip-page canvas */}
         <img src={image.url} alt={alt} className="h-auto max-h-full w-auto max-w-full object-contain" />
       </div>
@@ -68,7 +69,8 @@ export function BulletinImageViewer({
 
       <div className={cn("relative flex items-center justify-center overflow-hidden bg-muted/30 p-4", heightClassName)}>
         {multi ? (
-          <div className="mx-auto h-full w-full max-w-[340px]">
+          // Width follows the available height (same 300:680 ratio as the book) so the page never overflows vertically.
+          <div className="mx-auto aspect-[300/680] h-full max-w-full">
             <HTMLFlipBook
               key={images.length}
               ref={book}

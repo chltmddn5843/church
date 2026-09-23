@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button"
 
 export function WorshipTimes() {
   return (
-    <section id="worship" className="scroll-mt-24 relative isolate overflow-hidden py-20 md:py-28">
+    <section id="worship" className="scroll-mt-24 relative isolate overflow-x-clip pb-20 pt-28 md:pb-28 md:pt-40">
       <Image src="/images/wd-main.jpg" alt="" fill priority className="object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/75" />
+      <div aria-hidden="true" className="absolute -top-0.5 left-1/2 h-9 w-[160%] -translate-x-1/2 rounded-b-[50%_100%] bg-background md:h-[58px] md:w-[130%]" />
 
       <div className="scroll-reveal relative mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
         <div className="text-center">
@@ -20,14 +21,14 @@ export function WorshipTimes() {
         <div className="mt-10">
           <WorshipSchedule sections="summary" variant="dark" />
         </div>
-        <div className="mx-auto mt-8 max-w-5xl">
+        <div className="mt-4">
           <Button
             render={<Link href="/worship" />}
             nativeButton={false}
-            className="h-14 w-full gap-1.5 rounded-2xl bg-white text-base font-semibold text-primary shadow-sm hover:bg-white/90"
+            className="group h-14 w-full gap-2 rounded-md border border-white/20 bg-white/10 text-base font-semibold text-white shadow-xl backdrop-blur-md hover:bg-white/20"
           >
             전체 예배 안내 보기 (셀모임 · 새벽예배 · 다음세대)
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>
       </div>

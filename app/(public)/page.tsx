@@ -18,13 +18,13 @@ export default async function HomePage() {
       <PopupModal popups={popups} />
       <Hero />
       <LiveStream />
-      <section className="bg-white py-10">
+      <section className="bg-white py-14 md:py-20">
         <div className="scroll-reveal mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
-          <div className="grid gap-8 lg:grid-cols-[1fr_320px] lg:items-stretch">
+          <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-10">
             <div>
               <FeaturedSermons />
             </div>
-            <div className="rounded-2xl bg-primary/5 p-6 lg:p-8">
+            <div>
               <InfoBlocks bulletin={bulletin} />
               <GalleryCarousel items={recentPhotos} />
             </div>

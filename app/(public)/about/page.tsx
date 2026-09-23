@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { church } from "@/lib/church"
 import { PageBanner } from "@/components/page-banner"
 import { SectionHeading } from "@/components/section-heading"
-import { Cross, Heart, Users, BookOpen, MapPin, Phone, Printer, Globe, ChevronDown } from "lucide-react"
+import { Cross, Heart, Users, BookOpen, MapPin, Phone, Printer, ChevronDown } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "교회소개",
@@ -29,15 +29,29 @@ const staff = [
   { name: "김미경", role: "목회행정간사", image: "/images/staff/kim-migyeong.jpg" },
 ]
 
-const missionaries = [
-  { name: "김진곤 · 김미경", field: "중인도 마하라스트라주 뿌네지역" },
-  { name: "차용조 · 안기영", field: "브라질 아찌바이아" },
-  { name: "정남현 · 이은경", field: "아프리카 마다가스카르" },
-  { name: "강성춘 · 박성화", field: "태국 쁘라뚜 치앙마이" },
-  { name: "안중식 · 손인자", field: "일본" },
-  { name: "김정현 · 이효은", field: "기아대책 캄보디아" },
-  { name: "이윤주 · 강성현", field: "GP선교회 · 일본" },
+// 지도 좌표: 핀(lon, lat), 설명 박스 중심(lx, ly). 지도는 경도 -180~180, 위도 75~-50 정방형 투영.
+const missionFields = [
+  { region: "인도", lon: 73.9, lat: 18.5, lx: 45, ly: 46, people: [{ name: "김진곤 · 김미경", field: "중인도 마하라스트라주 뿌네지역" }] },
+  { region: "브라질", lon: -46.6, lat: -23.1, lx: -98, ly: -22, people: [{ name: "차용조 · 안기영", field: "브라질 아찌바이아" }] },
+  { region: "마다가스카르", lon: 47.5, lat: -18.9, lx: 12, ly: -38, people: [{ name: "정남현 · 이은경", field: "아프리카 마다가스카르" }] },
+  { region: "태국", lon: 99, lat: 18.8, lx: 82, ly: -24, people: [{ name: "강성춘 · 박성화", field: "태국 쁘라뚜 치앙마이" }] },
+  { region: "캄보디아", lon: 104.9, lat: 11.6, lx: 150, ly: -8, people: [{ name: "김정현 · 이효은", field: "기아대책 캄보디아" }] },
+  {
+    region: "일본",
+    lon: 139.7,
+    lat: 35.7,
+    lx: 150,
+    ly: 57,
+    people: [
+      { name: "안중식 · 손인자", field: "일본" },
+      { name: "이윤주 · 강성현", field: "GP선교회 · 일본" },
+    ],
+  },
 ]
+const HOME = { lon: 126.8, lat: 37.6 }
+const mapX = (lon: number) => lon + 180
+const mapY = (lat: number) => 75 - lat
+const mapPos = (lon: number, lat: number) => ({ left: `${(mapX(lon) / 360) * 100}%`, top: `${(mapY(lat) / 125) * 100}%` })
 
 const elders = [
   { name: "정경위", role: "장로", image: "/images/staff/jeong-gyeongwi.jpg" },
@@ -306,18 +320,61 @@ export default function AboutPage() {
         <div className="mx-auto max-w-6xl px-4">
           <SectionHeading eyebrow="Mission" title="선교" description="원당교회가 파송하고 후원하는 해외 선교사님을 소개합니다." />
           <h3 className="mt-12 text-center font-serif text-2xl font-bold">후원하는 해외 선교사님</h3>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {missionaries.map((m) => (
-              <div key={m.name} className="flex items-center gap-3 rounded-xl border border-border bg-card p-5 shadow-sm">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Globe className="h-5 w-5" />
+          <div className="mt-8 rounded-3xl border border-border bg-card p-3 shadow-sm sm:p-6">
+            <div className="relative aspect-[360/125]">
+              <Image src="/images/world-dots.svg" alt="" fill unoptimized className="select-none" />
+              <svg viewBox="0 0 360 125" preserveAspectRatio="none" className="absolute inset-0 hidden h-full w-full lg:block" aria-hidden="true">
+                {missionFields.map((f) => (
+                  <line key={f.region} x1={mapX(f.lon)} y1={mapY(f.lat)} x2={mapX(f.lx)} y2={mapY(f.ly)} className="stroke-primary/40" strokeWidth={1} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
+                ))}
+              </svg>
+              <span aria-hidden="true" className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#C9A15A] ring-2 ring-white" style={mapPos(HOME.lon, HOME.lat)} />
+              {missionFields.map((f, i) => (
+                <span key={f.region} aria-hidden="true" className="absolute -translate-x-1/2 -translate-y-1/2" style={mapPos(f.lon, f.lat)}>
+                  <span className="absolute inset-0 rounded-full bg-primary/40 motion-safe:animate-ping" />
+                  <span className="relative flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-white sm:size-6 sm:text-xs">
+                    {i + 1}
+                  </span>
                 </span>
-                <div>
-                  <p className="font-semibold text-foreground">{m.name} 선교사</p>
-                  <p className="text-sm text-muted-foreground">{m.field}</p>
+              ))}
+              {missionFields.map((f, i) => (
+                <div
+                  key={f.region}
+                  className="absolute hidden w-44 -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-white/95 px-3 py-2 shadow-md backdrop-blur-sm lg:block xl:w-48"
+                  style={mapPos(f.lx, f.ly)}
+                >
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-primary">
+                    <MapPin className="size-3.5" />
+                    {i + 1}. {f.region}
+                  </p>
+                  {f.people.map((p) => (
+                    <div key={p.name} className="mt-1">
+                      <p className="text-sm font-semibold leading-tight text-foreground">{p.name} 선교사</p>
+                      <p className="text-xs leading-snug text-muted-foreground">{p.field}</p>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <p className="mt-3 flex items-center justify-end gap-1.5 text-xs text-muted-foreground">
+              <span className="size-3 rounded-full bg-[#C9A15A]" /> 원당교회
+            </p>
+            <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:hidden">
+              {missionFields.map((f, i) => (
+                <li key={f.region} className="flex gap-3 rounded-xl border border-border p-3">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i + 1}</span>
+                  <div>
+                    <p className="text-xs font-bold text-primary">{f.region}</p>
+                    {f.people.map((p) => (
+                      <p key={p.name} className="mt-0.5 text-sm">
+                        <span className="font-semibold text-foreground">{p.name} 선교사</span>
+                        <span className="block text-xs text-muted-foreground">{p.field}</span>
+                      </p>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>

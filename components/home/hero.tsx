@@ -28,7 +28,7 @@ export function Hero() {
   }, [playing, next])
 
   return (
-    <section className="relative isolate -mt-16 h-[70dvh] min-h-[420px] w-full overflow-hidden md:-mt-24 md:h-[85dvh] md:min-h-[600px]">
+    <section className="relative isolate -mt-16 h-dvh min-h-[480px] w-full overflow-x-clip md:-mt-24">
       {slides.map((slide, i) => (
         <Image
           key={slide.src}
@@ -42,7 +42,7 @@ export function Hero() {
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 via-65% to-transparent" />
 
-      <div className="absolute inset-x-6 bottom-20 md:inset-x-12 md:bottom-24 lg:max-w-3xl">
+      <div className="absolute inset-x-6 bottom-28 md:inset-x-12 md:bottom-36 lg:max-w-3xl">
         <div className="relative">
           {slides.map((slide, i) => (
             <div
@@ -59,7 +59,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-6 left-6 flex items-center gap-3 md:bottom-8 md:left-12">
+      <div className="absolute bottom-14 left-6 flex items-center gap-3 md:bottom-20 md:left-12">
         <button
           type="button"
           onClick={prev}
@@ -91,6 +91,7 @@ export function Hero() {
           {slides.length}장 중 {index + 1}번째 이미지: {slides[index].title} — {slides[index].subtitle}
         </span>
       </div>
+      <div aria-hidden="true" className="absolute -bottom-0.5 left-1/2 h-9 w-[160%] -translate-x-1/2 rounded-t-[50%_100%] bg-white md:h-[58px] md:w-[130%]" />
     </section>
   )
 }

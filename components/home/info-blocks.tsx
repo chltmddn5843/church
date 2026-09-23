@@ -2,8 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { ArrowRight, BookOpen, Church, FileText, Images, Info, MapPin, Sprout, UserPlus } from "lucide-react"
-import { SectionHeading } from "@/components/section-heading"
+import { BookOpen, ChevronRight, Church, FileText, Images, Info, MapPin, Sprout, UserPlus } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
 import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
@@ -25,26 +24,27 @@ const links = [
   { key: "gallery", title: "갤러리", href: "/gallery", icon: Images },
 ] as const
 
-const rowClass = "group flex w-full items-center gap-4 py-4 text-left text-lg font-semibold text-foreground transition-colors hover:text-primary"
-const iconBadgeClass = "flex size-11 shrink-0 items-center justify-center rounded-full bg-muted text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-const arrowClass = "ml-auto flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 group-hover:translate-x-1 group-hover:border-primary group-hover:text-primary"
+const rowClass = "group flex w-full items-center gap-3 py-3 text-left text-base font-semibold text-foreground transition-colors hover:text-primary"
+const iconBadgeClass = "flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+const arrowClass = "ml-auto size-4 shrink-0 text-muted-foreground/60 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary"
 
 export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
   const [open, setOpen] = useState(false)
 
   return (
     <div>
-      <SectionHeading eyebrow="Guide" title="바로가기" />
-      <ul className="mt-6 divide-y divide-border">
+      <div className="pb-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A15A]">Guide</p>
+        <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">바로가기</h2>
+      </div>
+      <ul className="divide-y divide-border">
         <li>
           <button type="button" onClick={() => setOpen(true)} className={rowClass}>
             <span className={iconBadgeClass}>
               <FileText className="size-5" />
             </span>
             주보
-            <span className={arrowClass}>
-              <ArrowRight className="size-4" />
-            </span>
+            <ChevronRight className={arrowClass} />
           </button>
         </li>
         {links.map((item) => (
@@ -54,9 +54,7 @@ export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
                 <item.icon className="size-5" />
               </span>
               {item.title}
-              <span className={arrowClass}>
-                <ArrowRight className="size-4" />
-              </span>
+              <ChevronRight className={arrowClass} />
             </Link>
           </li>
         ))}

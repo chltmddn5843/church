@@ -69,10 +69,10 @@ function SummaryStrip({ rows, variant = "light" }: { rows: { name: string; day: 
   return (
     <div
       className={cn(
-        "grid overflow-hidden rounded-2xl shadow-xl sm:grid-cols-3",
+        "grid overflow-hidden shadow-xl sm:grid-cols-3",
         dark
-          ? "divide-y divide-white/15 border border-white/20 bg-white/10 backdrop-blur-md sm:divide-x sm:divide-y-0"
-          : "divide-y divide-border border border-border bg-card sm:divide-x sm:divide-y-0",
+          ? "divide-y divide-white/15 rounded-md border border-white/20 bg-white/10 backdrop-blur-md sm:divide-x sm:divide-y-0"
+          : "divide-y divide-border rounded-2xl border border-border bg-card sm:divide-x sm:divide-y-0",
       )}
     >
       {rows.map((row) => (

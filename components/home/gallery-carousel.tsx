@@ -24,9 +24,9 @@ export function GalleryCarousel({ items }: { items: GalleryItem[] }) {
   const multi = items.length > 1
 
   return (
-    <div className="mt-8 border-t border-border pt-6">
+    <div className="mt-6 border-t border-border pt-5">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold uppercase tracking-widest text-primary">Photo</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A15A]">Photo</p>
         {multi && (
           <button
             type="button"
@@ -39,7 +39,7 @@ export function GalleryCarousel({ items }: { items: GalleryItem[] }) {
         )}
       </div>
       <Link href="/gallery" className="group mt-3 block">
-        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md bg-muted">
           {current ? (
             <>
               {items.map((item, i) => (
