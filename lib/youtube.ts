@@ -20,9 +20,9 @@ function categoryOf(title: string) {
 
 export function parseSermonTitle(rawTitle: string) {
   const parts = rawTitle.split(/\s*[|ㅣ]\s*|\s+l\s+/i).map(part => part.trim()).filter(Boolean)
-  if (!/^\d{4}\.\d{1,2}\.\d{1,2}$/.test(parts[0]) || parts.length < 3) return { title: rawTitle, scripture: null }
+  if (!/^\d{4}\.\d{1,2}\.\d{1,2}$/.test(parts[0]) || parts.length < 3) return { title: rawTitle, scripture: null, preacher: null }
   const hasPreacher = /목사|전도사/.test(parts.at(-1) ?? "")
-  return { title: parts.slice(2, hasPreacher ? -1 : undefined).join(" | "), scripture: parts[1] }
+  return { title: parts.slice(2, hasPreacher ? -1 : undefined).join(" | "), scripture: parts[1], preacher: hasPreacher ? parts.at(-1)! : null }
 }
 
 async function loadFeed(category: string) {

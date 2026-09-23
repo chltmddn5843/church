@@ -1,10 +1,14 @@
 import Link from "next/link"
-import { ArrowUpRight, ChevronRight, Play } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { getSermons } from "@/lib/queries"
 import { SermonCard } from "@/components/sermon-card"
 import { getYoutubeSermons } from "@/lib/youtube"
+import { VideoFacade } from "@/components/home/video-facade"
 
 const OTHER_CATEGORIES = ["금요예배", "새벽예배", "쉐키나찬양단"] as const
+const RECENT_COUNT = 5
+
+const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\.\s?/g, "-").replace(/-$/, "")
 
 export async function FeaturedSermons() {
   const [sundayVideos, otherVideos, sermons] = await Promise.all([
@@ -13,87 +17,72 @@ export async function FeaturedSermons() {
     getSermons(undefined, 1),
   ])
   const latest = sundayVideos[0]
-  const recent = otherVideos.map((videos) => videos[0]).filter((video): video is NonNullable<typeof video> => video !== undefined)
+  // At most 2 per category so one busy playlist (e.g. 3부 찬양 uploads) doesn't fill the list.
+  const perCategory = new Map<string, number>()
+  const recent = [...sundayVideos.slice(1), ...otherVideos.flat()]
+    .sort((a, b) => b.preachedAt.getTime() - a.preachedAt.getTime())
+    .filter((v) => perCategory.set(v.category, (perCategory.get(v.category) ?? 0) + 1).get(v.category)! <= 2)
+    .slice(0, RECENT_COUNT)
 
   return (
     <div>
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A15A]">Message</p>
-          <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">최근 말씀</h2>
-        </div>
-        <Link href="/sermons" className="flex items-center gap-0.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-          전체 말씀 <ChevronRight className="size-4" />
-        </Link>
-      </div>
-      {latest ? (
-        <div className="mt-6">
-          <div className="aspect-video overflow-hidden rounded-md bg-black">
-            <iframe src={`https://www.youtube.com/embed/${latest.youtubeId}`} title={latest.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen className="h-full w-full" />
-          </div>
-          <div className="mt-4">
-            <h3 className="text-lg font-bold leading-snug text-foreground md:text-xl">{latest.title}</h3>
-            {latest.scripture && <p className="mt-1 text-sm text-muted-foreground">{latest.scripture}</p>}
-          </div>
-        </div>
-      ) : sermons.length > 0 ? (
-        <div className="mt-6"><SermonCard sermon={sermons[0]} /></div>
-      ) : (
-        <p className="mt-6 text-center text-muted-foreground">최근 말씀을 불러오지 못했습니다.</p>
-      )}
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8C6A2C]">Message</p>
+      <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">말씀 다시보기</h2>
 
-      {recent.length > 0 && (
-        <>
-          <div className="mt-10 flex items-end justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A15A]">Worship Video</p>
-              <h3 className="mt-0.5 text-lg font-bold text-foreground md:text-xl">최근 예배 영상</h3>
-            </div>
-            <a
-              href="https://www.youtube.com/@wondang1964"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-0.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              유튜브 채널 <ChevronRight className="size-4" />
-            </a>
+      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-10">
+        {latest ? (
+          <div className="aspect-video overflow-hidden rounded-md bg-black shadow-xl shadow-primary/15">
+            <VideoFacade youtubeId={latest.youtubeId} title={latest.title}>
+              <span className="block text-sm font-semibold tabular-nums text-[#E0C48A]">
+                {latest.category} · {fmt(latest.preachedAt)}
+              </span>
+              <span className="mt-2 block break-keep font-serif text-2xl font-bold leading-snug text-white md:text-4xl">{latest.title}</span>
+              {(latest.preacher || latest.scripture) && (
+                <span className="mt-2 block text-sm text-white/85 md:text-base">
+                  {[latest.preacher, latest.scripture].filter(Boolean).join(" / ")}
+                </span>
+              )}
+            </VideoFacade>
           </div>
-          <ol className="mt-4 space-y-1">
-            {recent.map((video, i) => (
-              <li key={video.youtubeId} className="scroll-reveal">
-                <a
-                  href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group -mx-3 flex items-center gap-4 rounded-md p-3 transition-colors hover:bg-muted/70 sm:gap-6"
-                >
-                  <span className="hidden w-8 shrink-0 font-serif text-2xl font-bold tabular-nums text-primary/25 transition-colors group-hover:text-primary sm:block">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div className="relative aspect-video w-32 shrink-0 overflow-hidden rounded-md bg-muted sm:w-48">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- external thumbnail, unoptimized images */}
-                    <img
-                      src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
-                      alt=""
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <span className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
-                      <Play aria-hidden className="size-6 fill-white text-white" />
-                    </span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-[#C9A15A]">{video.category}</p>
-                    <p className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-base">{video.title}</p>
-                    <p className="mt-1.5 text-xs text-muted-foreground">{video.preachedAt.toLocaleDateString("ko-KR")}</p>
-                  </div>
-                  <ArrowUpRight aria-hidden className="hidden size-5 shrink-0 text-muted-foreground/40 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary sm:block" />
-                </a>
-              </li>
-            ))}
-          </ol>
-        </>
-      )}
+        ) : sermons.length > 0 ? (
+          <SermonCard sermon={sermons[0]} />
+        ) : (
+          <p className="text-muted-foreground">최근 말씀을 불러오지 못했습니다.</p>
+        )}
+
+        {recent.length > 0 && (
+          <div className="flex flex-col">
+            <h3 className="text-sm font-bold text-foreground">최근 올라온 말씀</h3>
+            <ul className="mt-2 divide-y divide-border">
+              {recent.map((video) => (
+                <li key={video.youtubeId}>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    <p className="text-xs tabular-nums">
+                      <span className="font-semibold text-primary">{video.category}</span>
+                      <span className="ml-2 text-muted-foreground">{fmt(video.preachedAt)}</span>
+                    </p>
+                    <p className="mt-1 line-clamp-1 font-semibold text-foreground transition-colors group-hover:text-primary">{video.title}</p>
+                    {(video.preacher || video.scripture) && (
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">{[video.preacher, video.scripture].filter(Boolean).join(" · ")}</p>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/sermons"
+              className="group mt-auto inline-flex min-h-6 items-center gap-1 pt-3 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              말씀 전체 보기 <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { BookOpen, ChevronRight, Church, FileText, Images, Info, MapPin, Sprout, UserPlus } from "lucide-react"
+import { FileText } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
 import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
@@ -15,46 +15,39 @@ type Bulletin = {
 } | null
 
 const links = [
-  { key: "worship", title: "예배 안내", href: "/worship", icon: Church },
-  { key: "newcomer", title: "새가족 안내", href: "/community?category=새가족소개", icon: UserPlus },
-  { key: "location", title: "오시는 길", href: "/about#location", icon: MapPin },
-  { key: "about", title: "교회 소개", href: "/about", icon: Info },
-  { key: "discipleship", title: "제자훈련", href: "/discipleship", icon: BookOpen },
-  { key: "next-generation", title: "다음세대", href: "/next-generation", icon: Sprout },
-  { key: "gallery", title: "갤러리", href: "/gallery", icon: Images },
+  { key: "worship", en: "Worship", title: "예배 안내", href: "/worship" },
+  { key: "newcomer", en: "Welcome", title: "새가족 안내", href: "/community?category=새가족소개" },
+  { key: "location", en: "Location", title: "오시는 길", href: "/about#location" },
+  { key: "about", en: "About", title: "교회 소개", href: "/about" },
+  { key: "discipleship", en: "Disciple", title: "제자훈련", href: "/discipleship" },
+  { key: "next-generation", en: "Next Gen", title: "다음세대", href: "/next-generation" },
+  { key: "gallery", en: "Gallery", title: "갤러리", href: "/gallery" },
 ] as const
 
-const rowClass = "group flex w-full items-center gap-3 py-3 text-left text-base font-semibold text-foreground transition-colors hover:text-primary"
-const iconBadgeClass = "flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-const arrowClass = "ml-auto size-4 shrink-0 text-muted-foreground/60 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary"
+// Alternating navy shades like a tiled band; hover lifts the tile above its neighbours.
+const tileClass =
+  "group relative flex h-full w-full flex-col items-center justify-center gap-1 px-2 py-6 text-center text-white transition duration-200 hover:z-10 hover:bg-[#8C6A2C] hover:shadow-xl motion-safe:hover:scale-105 focus-visible:z-10 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white md:py-8"
+const shade = (i: number) => (i % 2 === 0 ? "bg-primary" : "bg-[#285d91]")
+const enClass = "text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E0C48A] transition-colors group-hover:text-white"
+const koClass = "break-keep text-sm font-bold md:text-base"
 
 export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div>
-      <div className="pb-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A15A]">Guide</p>
-        <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">바로가기</h2>
-      </div>
-      <ul className="divide-y divide-border">
-        <li>
-          <button type="button" onClick={() => setOpen(true)} className={rowClass}>
-            <span className={iconBadgeClass}>
-              <FileText className="size-5" />
-            </span>
-            주보
-            <ChevronRight className={arrowClass} />
+    <nav aria-label="바로가기">
+      <ul className="grid grid-cols-4 lg:grid-cols-8">
+        <li className={shade(0)}>
+          <button type="button" onClick={() => setOpen(true)} className={tileClass}>
+            <span className={enClass}>Bulletin</span>
+            <span className={koClass}>주보</span>
           </button>
         </li>
-        {links.map((item) => (
-          <li key={item.key}>
-            <Link href={item.href} className={rowClass}>
-              <span className={iconBadgeClass}>
-                <item.icon className="size-5" />
-              </span>
-              {item.title}
-              <ChevronRight className={arrowClass} />
+        {links.map((item, i) => (
+          <li key={item.key} className={shade(i + 1)}>
+            <Link href={item.href} className={tileClass}>
+              <span className={enClass}>{item.en}</span>
+              <span className={koClass}>{item.title}</span>
             </Link>
           </li>
         ))}
@@ -88,6 +81,6 @@ export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
           </Link>
         </DialogContent>
       </Dialog>
-    </div>
+    </nav>
   )
 }

@@ -1,14 +1,13 @@
 import Image from "next/image"
 import Link from "next/link"
 import { getPosts } from "@/lib/queries"
-import { SectionHeading } from "@/components/section-heading"
-import { cn } from "@/lib/utils"
+import { ChevronRight } from "lucide-react"
 
 const NEWS_CATEGORIES = [
-  { category: "공지사항", tag: "공지", image: "/images/gallery-2.png", textClass: "text-red-700" },
-  { category: "교회소식", tag: "소식", image: "/images/gallery-4.png", textClass: "text-blue-700" },
-  { category: "새가족소개", tag: "새가족", image: "/images/gallery-3.png", textClass: "text-emerald-700" },
-  { category: "봉사 섬김이", tag: "섬김이", image: "/images/hero-worship.jpg", textClass: "text-pink-700" },
+  { category: "공지사항", image: "/images/gallery-2.png" },
+  { category: "교회소식", image: "/images/gallery-4.png" },
+  { category: "새가족소개", image: "/images/gallery-3.png" },
+  { category: "봉사 섬김이", image: "/images/hero-worship.jpg" },
 ] as const
 const POSTS_PER_CATEGORY = 5
 
@@ -17,12 +16,20 @@ export async function ChurchNews() {
   const groups = NEWS_CATEGORIES.map((c, i) => ({ ...c, posts: results[i] }))
 
   return (
-    <section className="py-10">
+    <section className="py-14 md:py-20">
       <div className="scroll-reveal mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
-        <SectionHeading eyebrow="News" title="교회 소식" description="원당교회의 최근 소식을 확인하세요." />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {groups.map(({ category, tag, image, textClass, posts }) => (
-            <div key={category} className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="flex items-end justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8C6A2C]">News</p>
+            <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">교회 소식</h2>
+          </div>
+          <Link href="/community" className="flex min-h-6 items-center gap-0.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            전체 소식 <ChevronRight className="size-4" />
+          </Link>
+        </div>
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {groups.map(({ category, image, posts }) => (
+            <div key={category} className="flex flex-col overflow-hidden rounded-md border border-border bg-card">
               <div className="relative h-28 shrink-0">
                 <Image src={image} alt="" fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
@@ -34,7 +41,8 @@ export async function ChurchNews() {
                     <li key={post.id}>
                       <Link
                         href={`/community/${post.id}`}
-                        className="flex items-center gap-2 px-5 py-3 text-sm transition hover:bg-secondary/60"
+                        title={post.title}
+                        className="group flex items-center gap-3 px-5 py-3 text-sm transition hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                       >
                         <time
                           dateTime={new Date(post.createdAt).toISOString()}
@@ -42,8 +50,7 @@ export async function ChurchNews() {
                         >
                           {new Date(post.createdAt).toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" })}
                         </time>
-                        <span className={cn("shrink-0 text-xs font-bold", textClass)}>[{tag}]</span>
-                        <span className="truncate text-foreground">{post.title}</span>
+                        <span className="truncate text-foreground transition-colors group-hover:text-primary">{post.title}</span>
                       </Link>
                     </li>
                   ))
@@ -53,9 +60,9 @@ export async function ChurchNews() {
               </ul>
               <Link
                 href={`/community?category=${encodeURIComponent(category)}`}
-                className="block border-t border-border px-5 py-3 text-center text-xs font-semibold text-primary transition hover:bg-secondary/60"
+                className="flex items-center justify-center gap-0.5 border-t border-border px-5 py-3 text-xs font-semibold text-primary transition hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
               >
-                더보기 →
+                {category} 더보기 <ChevronRight aria-hidden className="size-3.5" />
               </Link>
             </div>
           ))}
