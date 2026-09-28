@@ -13,6 +13,7 @@
     "db:migrate": "wrangler d1 migrations apply church-db --remote",
     "db:migrate:local": "wrangler d1 migrations apply church-db --local",
     "content:import": "node scripts/import-legacy.mjs",
+    "backup": "node scripts/backup.mjs",
     "start": "next start",
     "lint": "eslint ."
   },

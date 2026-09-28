@@ -32,6 +32,8 @@ export default async function PostDetailPage({
   const { prev, next } = await getAdjacentPosts(post.id, post.category, post.createdAt)
 
   const isBulletin = post.category === "주보"
+  // 새가족반 lives on the 제자훈련 page, not in the community board list.
+  const listHref = post.category === "새가족반" ? "/discipleship#courses" : `/community?category=${encodeURIComponent(post.category)}`
   const bulletinPdf = post.attachments.find((file) => file.contentType === "application/pdf")
   const images = bulletinPdf ? [] : post.attachments.filter((file) => file.contentType.startsWith("image/"))
   // 주보 pages through its images in a viewer; every other board shows them in the post body (e.g. notice posters).
@@ -43,7 +45,7 @@ export default async function PostDetailPage({
   return (
     <article className="py-14 md:py-20">
       <div className={cn("mx-auto px-4", isBulletin ? "max-w-4xl" : "max-w-3xl")}>
-        <Button render={<Link href={`/community?category=${encodeURIComponent(post.category)}`} />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
+        <Button render={<Link href={listHref} />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
           <>
             <ArrowLeft className="mr-1 h-4 w-4" />
             목록으로
@@ -100,7 +102,7 @@ export default async function PostDetailPage({
         )}
 
         <div className="mt-6 text-center">
-          <Button render={<Link href={`/community?category=${encodeURIComponent(post.category)}`} />} nativeButton={false} variant="outline">
+          <Button render={<Link href={listHref} />} nativeButton={false} variant="outline">
             <>
               <List className="mr-1.5 size-4" /> 목록으로
             </>

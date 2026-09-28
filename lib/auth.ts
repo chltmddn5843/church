@@ -76,15 +76,26 @@ export function getAuth() {
       expiresIn: 60 * 60 * 24 * 7,
       updateAge: 60 * 60 * 24,
     },
-    ...(process.env.NODE_ENV === "development"
-      ? {
-          advanced: {
-            defaultCookieAttributes: {
-              sameSite: "lax" as const,
-              secure: false,
-            },
-          },
-        }
-      : {}),
+    // Brute-force limits per client IP, counted in D1 so they hold across Worker isolates.
+    rateLimit: {
+      enabled: true,
+      storage: "database",
+      window: 60,
+      max: 100,
+      customRules: {
+        "/sign-in/email": { window: 60, max: 5 },
+        "/sign-up/email": { window: 60 * 60, max: 5 },
+        "/request-password-reset": { window: 60 * 60, max: 3 },
+        "/send-verification-email": { window: 60 * 60, max: 3 },
+        "/reset-password": { window: 10 * 60, max: 5 },
+      },
+    },
+    advanced: {
+      // Cloudflare overwrites cf-connecting-ip; x-forwarded-for can carry client-supplied values.
+      ipAddress: { ipAddressHeaders: ["cf-connecting-ip"] },
+      ...(process.env.NODE_ENV === "development"
+        ? { defaultCookieAttributes: { sameSite: "lax" as const, secure: false } }
+        : {}),
+    },
   })
 }

@@ -12,8 +12,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
     start_url: `/offering/${token}`,
     scope: `/offering/${token}`,
     display: "standalone",
-    background_color: "#f6fbff",
-    theme_color: "#123A63",
+    background_color: "#F5F6F8",
+    theme_color: "#2769A5",
     icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }],
   }, { headers: { "Cache-Control": "private, no-store", "Content-Type": "application/manifest+json" } })
 }

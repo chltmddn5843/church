@@ -105,11 +105,11 @@ export default async function CommunityPage({
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <nav aria-label="이동 경로" className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Link href="/" className="flex items-center hover:text-primary">
-              <Home className="size-4" />
+            <Link href="/" aria-label="홈" className="flex size-8 items-center justify-center hover:text-primary">
+              <Home aria-hidden className="size-4" />
             </Link>
             <ChevronRight className="size-3.5 shrink-0" />
-            <Link href="/community" className="hover:text-primary">커뮤니티</Link>
+            <Link href="/community" className="inline-flex min-h-8 items-center hover:text-primary">커뮤니티</Link>
             <ChevronRight className="size-3.5 shrink-0" />
             <span className="font-medium text-foreground">{selected ?? "전체"}</span>
           </nav>

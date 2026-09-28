@@ -19,38 +19,38 @@ export default async function AdminPage() {
   ])
 
   const cards = [
-    { label: "등록된 설교", value: values[0], href: "/admin/sermons", icon: BookOpen, tone: "bg-[#9CC7E6]/35 text-[#123A63]" },
-    { label: "소식 및 공지", value: values[1], href: "/admin/posts", icon: Newspaper, tone: "bg-[#F2E9DA] text-[#123A63]" },
+    { label: "등록된 설교", value: values[0], href: "/admin/sermons", icon: BookOpen, tone: "bg-brand-light/35 text-primary" },
+    { label: "소식 및 공지", value: values[1], href: "/admin/posts", icon: Newspaper, tone: "bg-secondary text-primary" },
     { label: "갤러리 사진", value: values[2], href: "/admin/gallery", icon: ImageIcon, tone: "bg-[#e7fbf6] text-[#267b72]" },
-    { label: "등록된 팝업", value: values[3], href: "/admin/popups", icon: Bell, tone: "bg-[#f0f8ff] text-[#5a8fc7]" },
-    { label: "전체 회원", value: values[4], href: "/admin/members", icon: Users, tone: "bg-[#f2f8fc] text-[#496879]" },
+    { label: "등록된 팝업", value: values[3], href: "/admin/popups", icon: Bell, tone: "bg-muted text-brand" },
+    { label: "전체 회원", value: values[4], href: "/admin/members", icon: Users, tone: "bg-muted text-muted-foreground" },
   ]
 
   return (
     <>
-      <div className="border-b border-[#d7e5ee] pb-6">
-        <p className="text-sm font-semibold text-[#2F5D8A]">ADMINISTRATION</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#183247]">관리자 대시보드</h1>
-        <p className="mt-2 text-sm text-[#526a7d]">원당교회 홈페이지의 콘텐츠와 회원 현황을 관리합니다.</p>
+      <div className="border-b border-border pb-6">
+        <p className="text-sm font-semibold text-primary">ADMINISTRATION</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">관리자 대시보드</h1>
+        <p className="mt-2 text-sm text-muted-foreground">원당교회 홈페이지의 콘텐츠와 회원 현황을 관리합니다.</p>
       </div>
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-lg font-bold text-[#183247]">콘텐츠 현황</h2>
-          <span className="text-xs text-[#6d7f8c]">현재 등록 기준</span>
+          <h2 className="text-lg font-bold text-foreground">콘텐츠 현황</h2>
+          <span className="text-xs text-muted-foreground">현재 등록 기준</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {cards.map(({ label, value, href, icon: Icon, tone }) => (
             <Link
               key={label}
               href={href}
-              className="group rounded-lg border border-[#d7e5ee] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#9CC7E6] hover:shadow-md"
+              className="group rounded-lg border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-light hover:shadow-md"
             >
               <div className={`flex size-10 items-center justify-center rounded-full ${tone}`}><Icon className="size-[18px]" /></div>
-              <p className="mt-5 text-sm text-[#526a7d]">{label}</p>
+              <p className="mt-5 text-sm text-muted-foreground">{label}</p>
               <div className="mt-1 flex items-end justify-between">
-                <strong className="text-3xl tracking-tight text-[#183247]">{value}</strong>
-                <ArrowRight className="size-4 text-[#9CC7E6] transition group-hover:translate-x-1 group-hover:text-[#2F5D8A]" />
+                <strong className="text-3xl tracking-tight text-foreground">{value}</strong>
+                <ArrowRight className="size-4 text-brand-light transition group-hover:translate-x-1 group-hover:text-primary" />
               </div>
             </Link>
           ))}
@@ -58,8 +58,8 @@ export default async function AdminPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="mb-4 text-lg font-bold text-[#183247]">빠른 등록</h2>
-        <div className="grid overflow-hidden rounded-lg border border-[#d7e5ee] bg-white shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="mb-4 text-lg font-bold text-foreground">빠른 등록</h2>
+        <div className="grid overflow-hidden rounded-lg border border-border bg-white shadow-sm sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["새 설교 등록", "/admin/sermons", BookOpen],
             ["공지사항 작성", "/admin/posts", Newspaper],
@@ -69,10 +69,10 @@ export default async function AdminPage() {
             <Link
               key={label as string}
               href={href as string}
-              className={`flex items-center justify-between px-5 py-4 text-sm font-medium text-[#183247] transition hover:bg-[#eaf7ff] ${index > 0 ? "border-t border-[#d7e5ee] sm:border-t-0 sm:border-l" : ""} ${index === 2 ? "sm:border-l-0 sm:border-t lg:border-l lg:border-t-0" : ""}`}
+              className={`flex items-center justify-between px-5 py-4 text-sm font-medium text-foreground transition hover:bg-accent ${index > 0 ? "border-t border-border sm:border-t-0 sm:border-l" : ""} ${index === 2 ? "sm:border-l-0 sm:border-t lg:border-l lg:border-t-0" : ""}`}
             >
-              <span className="flex items-center gap-3"><Icon className="size-[18px] text-[#2F5D8A]" />{label as string}</span>
-              <Plus className="size-4 text-[#9CC7E6]" />
+              <span className="flex items-center gap-3"><Icon className="size-[18px] text-primary" />{label as string}</span>
+              <Plus className="size-4 text-brand-light" />
             </Link>
           ))}
         </div>
@@ -90,18 +90,18 @@ function RecentList({ title, href, empty, items, icon: Icon }: { title: string; 
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-[#183247]">{title}</h2>
-        <Link href={href} className="flex items-center gap-1 text-xs text-[#6d7f8c] hover:text-[#183247]">전체보기 <ArrowRight className="size-3" /></Link>
+        <h2 className="text-lg font-bold text-foreground">{title}</h2>
+        <Link href={href} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">전체보기 <ArrowRight className="size-3" /></Link>
       </div>
-      <div className="overflow-hidden rounded-lg border border-[#d7e5ee] bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-border bg-white shadow-sm">
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-[#6d7f8c]">{empty}</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">{empty}</p>
         ) : (
           items.map((item, index) => (
-            <div key={item.id} className={`flex items-center gap-3 px-5 py-4 ${index > 0 ? "border-t border-[#e5eef4]" : ""}`}>
-              <Icon className="size-4 shrink-0 text-[#9CC7E6]" />
-              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-[#183247]">{item.title}</p><p className="mt-1 text-xs text-[#6d7f8c]">{item.meta}</p></div>
-              <time className="shrink-0 text-xs text-[#6d7f8c]">{item.date}</time>
+            <div key={item.id} className={`flex items-center gap-3 px-5 py-4 ${index > 0 ? "border-t border-border" : ""}`}>
+              <Icon className="size-4 shrink-0 text-brand-light" />
+              <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-foreground">{item.title}</p><p className="mt-1 text-xs text-muted-foreground">{item.meta}</p></div>
+              <time className="shrink-0 text-xs text-muted-foreground">{item.date}</time>
             </div>
           ))
         )}

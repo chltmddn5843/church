@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { church } from "@/lib/church"
 import { MapPin, Phone, Printer, Mail } from "lucide-react"
+import { SocialLinks } from "@/components/home/social-float"
 
 export function SiteFooter() {
   return (
@@ -16,6 +17,7 @@ export function SiteFooter() {
               <br />
               {church.slogan}
             </p>
+            <SocialLinks className="mt-5 flex gap-3 md:hidden" />
           </div>
 
           {/* Contact */}
@@ -47,13 +49,13 @@ export function SiteFooter() {
             <ul className="grid grid-cols-2 gap-2 text-sm opacity-90">
               {church.nav.map((item) => (
                 <li key={item.title}>
-                  <Link href={item.href} className="transition-colors hover:text-sidebar-primary">
+                  <Link href={item.href} className="inline-flex min-h-8 items-center transition-colors hover:text-sidebar-primary">
                     {item.title}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/gallery" className="transition-colors hover:text-sidebar-primary">
+                <Link href="/gallery" className="inline-flex min-h-8 items-center transition-colors hover:text-sidebar-primary">
                   갤러리
                 </Link>
               </li>

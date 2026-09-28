@@ -12,14 +12,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const admin = await requireAdmin()
 
   return (
-    <div className="min-h-screen bg-[#f3f9fd] text-[#183247]">
-      <header className="flex h-[72px] items-center justify-between border-b border-[#d7e5ee] bg-white px-5 text-[#183247] md:px-8">
+    <div className="min-h-screen bg-muted text-foreground">
+      <header className="flex h-[72px] items-center justify-between border-b border-border bg-white px-5 text-foreground md:px-8">
         <Link href="/admin" className="font-serif text-xl font-semibold tracking-tight md:text-2xl">
           원당교회 관리자
         </Link>
         <div className="flex items-center gap-5">
-          <span className="hidden text-sm text-[#526a7d] sm:inline">{admin.name} 관리자</span>
-          <Link href="/" className="flex items-center gap-2 text-sm text-[#2F5D8A] transition hover:text-[#123A63]">
+          <span className="hidden text-sm text-muted-foreground sm:inline">{admin.name} 관리자</span>
+          <Link href="/" className="flex items-center gap-2 text-sm text-primary transition hover:text-primary">
             <span className="hidden sm:inline">홈페이지 보기</span>
             <ExternalLink className="size-4" />
           </Link>

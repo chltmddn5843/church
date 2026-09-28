@@ -45,7 +45,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="shrink-0 border-b border-[#d7e5ee] bg-[#f8fbfd] md:w-[264px] md:border-r md:border-b-0">
+    <aside className="shrink-0 border-b border-border bg-muted md:w-[264px] md:border-r md:border-b-0">
       <nav aria-label="관리자 메뉴" className="flex overflow-x-auto p-3 md:block md:space-y-1 md:p-4">
         {links.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href)
@@ -57,8 +57,8 @@ export function AdminSidebar() {
               className={cn(
                 "flex h-11 shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors md:w-full",
                 active
-                  ? "bg-[#123A63] text-white shadow-sm"
-                  : "text-[#496879] hover:bg-[#eaf7ff] hover:text-[#183247]",
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
               )}
             >
               <Icon className="size-[18px]" strokeWidth={2.2} />
@@ -68,14 +68,14 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="hidden border-t border-[#d7e5ee] p-4 md:block">
-        <Link href="/" className="flex h-11 items-center gap-3 rounded-md px-3 text-sm text-[#496879] hover:bg-[#eaf7ff]">
+      <div className="hidden border-t border-border p-4 md:block">
+        <Link href="/" className="flex h-11 items-center gap-3 rounded-md px-3 text-sm text-muted-foreground hover:bg-accent">
           <Home className="size-[18px]" /> 홈페이지 보기
         </Link>
         <button
           type="button"
           onClick={handleSignOut}
-          className="mt-1 flex h-11 w-full items-center gap-3 rounded-md px-3 text-sm text-[#496879] hover:bg-[#eaf7ff]"
+          className="mt-1 flex h-11 w-full items-center gap-3 rounded-md px-3 text-sm text-muted-foreground hover:bg-accent"
         >
           <LogOut className="size-[18px]" /> 로그아웃
         </button>

@@ -41,6 +41,14 @@ export const account = sqliteTable("account", {
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
+// better-auth rate-limit counters. D1 (not KV) so every Worker isolate sees the same count immediately.
+export const rateLimit = sqliteTable("rateLimit", {
+  id: text("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  count: integer("count").notNull(),
+  lastRequest: integer("lastRequest").notNull(),
+})
+
 export const verification = sqliteTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),

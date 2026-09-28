@@ -3,32 +3,14 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// Wording from the church's own 비전·사명 page (wdchurch.com/Page/Index/14).
+// From the church's own 비전·사명 page (wdchurch.com/Page/Index/14), cut to a keyword and one line each.
+// Photos are real church events chosen per message (gallery board 62). trimTop zooms in from the bottom
+// to cut the lyric screens at the top of sanctuary shots (portrait cards crop only the sides).
 const messages = [
-  {
-    label: "비전",
-    title: "하나님이 영광 받으시고, 예수님이 주인 되시고, 성령님이 이끌어 가시는 교회",
-    desc: "모든 면에서 예수님을 첫 자리에 모시고, 사람의 힘과 지혜가 아니라 성령님이 이끌어 가시도록 기도하며 순종합니다.",
-    image: "/images/worship-praise-2.jpg",
-  },
-  {
-    label: "우리의 사명",
-    title: "예수님의 제자 되어 세상을 변화시키자",
-    desc: "인격적으로 예수님을 닮고, 하나님 나라를 가르치고 전파하고 치유하는 사역을 감당합니다. 내가 먼저 변할 때 이웃과 세상이 변합니다.",
-    image: "/images/worship-sermon.jpg",
-  },
-  {
-    label: "시대적 사명",
-    title: "예배회복과 다음 세대 세움",
-    desc: "하나님의 임재가 충만한 예배를 회복하고, 말씀 암송과 제자훈련으로 다음 세대를 하나님 나라의 리더로 세웁니다.",
-    image: "/images/worship-praise-wide.jpg",
-  },
-  {
-    label: "교회의 역할",
-    title: "복된 만남을 통해 사랑하며 섬기는 행복한 교회",
-    desc: "누구든지 예수님을 만나고 가족으로 만나, 예배와 셀공동체 안에서 예수님의 사랑을 경험하며 이웃을 섬깁니다.",
-    image: "/images/discipleship/newfamily-graduation.jpg",
-  },
+  { label: "비전", keyword: "하나님께 영광", line: "예수님이 주인 되시고 성령님이 이끄시는 교회", image: "/images/vision/glory.jpg", trimTop: true },
+  { label: "우리의 사명", keyword: "제자 되어 세상으로", line: "예수님을 닮아 이웃과 세상을 변화시킵니다", image: "/images/vision/serve-neighbors.jpg" },
+  { label: "시대적 사명", keyword: "예배와 다음 세대", line: "예배를 회복하고 다음 세대를 세웁니다", image: "/images/vision/anniversary-worship.jpg" },
+  { label: "교회의 역할", keyword: "복된 만남", line: "사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
 ]
 
 // Full-width 비전·사명 panels, shared by the home page and 교회소개.
@@ -55,13 +37,16 @@ export function MessageCards({ home = false }: { home?: boolean }) {
 
       <ol className="grid gap-px bg-foreground sm:grid-cols-2 lg:grid-cols-4">
         {messages.map((m, i) => (
-          <li key={m.label} className="group relative isolate flex min-h-[440px] flex-col overflow-hidden pt-36 text-white md:min-h-[560px] md:pt-44">
+          <li key={m.label} className="group relative isolate flex min-h-[340px] flex-col overflow-hidden pt-28 text-white sm:min-h-[440px] sm:pt-36 md:min-h-[560px] md:pt-44">
             <Image
               src={m.image}
               alt=""
               fill
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-              className="-z-10 object-cover transition-transform duration-700 motion-safe:group-hover:scale-105"
+              className={cn(
+                "-z-10 object-cover transition-transform duration-700",
+                m.trimTop ? "origin-bottom scale-[1.35] motion-safe:group-hover:scale-[1.4]" : "motion-safe:group-hover:scale-105",
+              )}
             />
             <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
             <div className="mt-auto p-6 md:p-8">
@@ -69,8 +54,8 @@ export function MessageCards({ home = false }: { home?: boolean }) {
                 {String(i + 1).padStart(2, "0")}
               </span>
               <p className="mt-3 text-sm font-semibold text-white/85">{m.label}</p>
-              <h3 className="mt-2 break-keep font-serif text-2xl font-semibold leading-snug md:text-[1.7rem]">{m.title}</h3>
-              <p className="mt-4 break-keep leading-relaxed text-white/90">{m.desc}</p>
+              <h3 className="mt-2 break-keep text-3xl font-bold leading-tight lg:text-[1.9rem] xl:text-4xl">{m.keyword}</h3>
+              <p className="mt-3 break-keep text-base leading-relaxed text-white/90">{m.line}</p>
             </div>
           </li>
         ))}

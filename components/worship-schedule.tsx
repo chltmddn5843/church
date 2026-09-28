@@ -72,7 +72,7 @@ function SummaryStrip({ rows, variant = "light" }: { rows: { name: string; day: 
       className={cn(
         "grid overflow-hidden shadow-xl sm:grid-cols-3",
         dark
-          ? "divide-y divide-white/15 border border-white/20 bg-sidebar/55 backdrop-blur-md sm:divide-x sm:divide-y-0"
+          ? "divide-y divide-white/15 border border-white/20 bg-black/45 backdrop-blur-md sm:divide-x sm:divide-y-0"
           : "divide-y divide-border border border-border bg-card sm:divide-x sm:divide-y-0",
       )}
     >

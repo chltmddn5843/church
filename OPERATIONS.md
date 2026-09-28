@@ -30,10 +30,39 @@ npm run cf-deploy
 
 배포 직후 홈, 로그인, `/admin`, 게시글 조회, 팝업 이미지를 확인한다.
 
+## 백업 — 매월 1회 이상
+
+D1 Time Travel은 7일만 보관하고, R2(업로드 파일)는 지우면 복구할 수 없다. 매월 1회,
+그리고 대량 삭제·가져오기·마이그레이션 전에 전체 백업을 받는다.
+
+```bash
+npm run backup                 # 기본 저장 위치: ~/church-backups
+npm run backup -- --out=/Volumes/백업디스크/church
+```
+
+- `db/church-db-<시각>.sql`: D1 전체 SQL 덤프
+- `r2/<key>`: DB가 가리키는 모든 업로드 파일(이미 받은 파일은 건너뜀), `manifest-<시각>.txt`
+- DB가 가리키는데 R2에 없는 파일이 있으면 목록을 출력하고 종료 코드 1로 끝난다.
+
+백업에는 회원 정보가 들어 있으므로 저장소 안에 두거나 커밋하지 않는다. 외장 디스크나
+암호화된 저장소에 한 부 더 보관한다.
+
+DB 덤프 복원(전체 덮어쓰기, 신중히):
+
+```bash
+npx wrangler d1 execute church-db --remote --file ~/church-backups/db/church-db-<시각>.sql
+```
+
+R2 파일 복원:
+
+```bash
+npx wrangler r2 object put church/<key> --file ~/church-backups/r2/<key> --remote
+```
+
 ## D1 복구 — 7일
 
-D1 Time Travel이 자동으로 유지하는 복구 지점을 사용한다. 별도 장기 백업은 만들지
-않는다.
+D1 Time Travel이 자동으로 유지하는 7일 복구 지점을 사용한다. 그보다 오래된 시점은
+위의 월간 백업으로 복원한다.
 
 ```bash
 npx wrangler d1 time-travel info church-db

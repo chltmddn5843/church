@@ -103,13 +103,13 @@ export function AuthForm({ mode, emailEnabled }: { mode: "sign-in" | "sign-up"; 
 
         {!isSignUp && emailEnabled && (
           <p className="mt-4 text-center text-sm">
-            <Link href="/forgot-password" className="text-primary hover:underline">비밀번호를 잊으셨나요?</Link>
+            <Link href="/forgot-password" className="inline-flex min-h-8 items-center text-primary hover:underline">비밀번호를 잊으셨나요?</Link>
           </p>
         )}
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           {isSignUp ? "이미 계정이 있으신가요? " : "아직 계정이 없으신가요? "}
-          <Link href={isSignUp ? "/sign-in" : "/sign-up"} className="font-medium text-primary underline-offset-4 hover:underline">
+          <Link href={isSignUp ? "/sign-in" : "/sign-up"} className="inline-flex min-h-8 items-center font-medium text-primary underline-offset-4 hover:underline">
             {isSignUp ? "로그인" : "회원가입"}
           </Link>
         </p>

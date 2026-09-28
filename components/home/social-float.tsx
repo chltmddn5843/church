@@ -42,9 +42,9 @@ const links = [
   },
 ] as const
 
-export function SocialFloat() {
+export function SocialLinks({ className }: { className?: string }) {
   return (
-    <div className="fixed bottom-6 right-4 z-40 flex flex-col gap-3 md:right-6">
+    <div className={className}>
       {links.map(({ label, href, Icon, className }) => (
         <a
           key={label}
@@ -62,4 +62,9 @@ export function SocialFloat() {
       ))}
     </div>
   )
+}
+
+// Floating on wide screens only: on a phone the stack covered content, so the footer carries the same links there.
+export function SocialFloat() {
+  return <SocialLinks className="fixed bottom-6 right-6 z-40 hidden flex-col gap-3 md:flex" />
 }

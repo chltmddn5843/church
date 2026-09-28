@@ -48,7 +48,7 @@ export default async function OfferingReportPage({
   const sections = splitOfferingContent(report.content)
 
   return (
-    <main className="min-h-screen bg-[#f6fbff] px-4 py-8 text-[#183247] md:py-14">
+    <main className="min-h-screen bg-muted px-4 py-8 text-foreground md:py-14">
       <article className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
         <header className="border-b border-accent/30 bg-primary px-5 py-6 text-white md:px-8">
           <div className="flex items-center gap-2 text-sm text-white/85">
@@ -63,7 +63,7 @@ export default async function OfferingReportPage({
         </header>
 
         <div className="grid gap-5 p-5 md:p-8">
-          <aside className="flex items-start gap-3 rounded-xl border border-accent/60 bg-[#eaf7ff] p-4 text-sm leading-6 text-[#294d68]">
+          <aside className="flex items-start gap-3 rounded-xl border border-accent/60 bg-accent p-4 text-sm leading-6 text-foreground">
             <Smartphone className="mt-0.5 size-5 shrink-0" />
             <p><strong>휴대폰 홈 화면에 추가할 수 있습니다.</strong><br />브라우저의 공유 또는 메뉴에서 ‘홈 화면에 추가’를 선택하면 이 전용 링크로 바로 열립니다.</p>
           </aside>
@@ -81,13 +81,13 @@ export default async function OfferingReportPage({
                       </p>
                     ))
                   ) : (
-                    <p className="text-sm text-[#5b7180]">등록된 항목이 없습니다.</p>
+                    <p className="text-sm text-muted-foreground">등록된 항목이 없습니다.</p>
                   )}
                 </div>
               </section>
             ))
           ) : (
-            <pre className="whitespace-pre-wrap rounded-xl bg-[#f8fcff] p-5 text-sm leading-7">{report.content}</pre>
+            <pre className="whitespace-pre-wrap rounded-xl bg-muted p-5 text-sm leading-7">{report.content}</pre>
           )}
         </div>
       </article>
