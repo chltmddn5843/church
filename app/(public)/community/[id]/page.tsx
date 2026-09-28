@@ -53,7 +53,7 @@ export default async function PostDetailPage({
         </Button>
 
         <p className="text-sm font-semibold text-primary">{post.category}</p>
-        <h1 className="mt-2 text-balance font-serif text-3xl font-bold text-foreground md:text-4xl">
+        <h1 className="mt-2 text-balance break-keep font-serif text-2xl sm:text-3xl font-bold text-foreground md:text-4xl">
           {post.title}
         </h1>
 

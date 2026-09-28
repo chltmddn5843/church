@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { BookOpen, Church, Clock, FileText, Images, MapPin, Sprout, UserPlus } from "lucide-react"
+import { BookOpen, Church, Clock, FileText, HandHeart, Images, MapPin, UserPlus } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
 import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
@@ -20,7 +20,7 @@ const links = [
   { key: "location", title: "오시는 길", href: "/about#location", Icon: MapPin },
   { key: "about", title: "교회 소개", href: "/about", Icon: Church },
   { key: "discipleship", title: "제자훈련", href: "/discipleship", Icon: BookOpen },
-  { key: "next-generation", title: "다음세대", href: "/next-generation", Icon: Sprout },
+  { key: "offering", title: "스마트 헌금", href: "/offering", Icon: HandHeart },
   { key: "gallery", title: "갤러리", href: "/gallery", Icon: Images },
 ] as const
 

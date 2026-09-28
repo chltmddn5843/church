@@ -25,43 +25,98 @@ export function parseSermonTitle(rawTitle: string) {
   return { title: parts.slice(2, hasPreacher ? -1 : undefined).join(" | "), scripture: parts[1], preacher: hasPreacher ? parts.at(-1)! : null }
 }
 
-async function loadFeed(category: string) {
-  const playlist = PLAYLISTS[category]
-  const feed = playlist ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlist}` : FEED
+type Video = { youtubeId: string; title: string; scripture: string | null; preacher: string | null; category: string; preachedAt: Date }
+type Entry = { youtubeId: string; rawTitle: string; published: string }
 
-  try {
-    const xml = await fetch(feed, { next: { revalidate: 300 } }).then(response => {
-      if (!response.ok) throw new Error(`YouTube feed ${response.status}`)
-      return response.text()
-    })
-    return [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].flatMap(([, entry]) => {
-      const youtubeId = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1]
-      const rawTitle = entry.match(/<title>([\s\S]*?)<\/title>/)?.[1]
-      const published = entry.match(/<published>([^<]+)<\/published>/)?.[1]
-      if (!youtubeId || !rawTitle || !published) return []
-      const raw = decode(rawTitle)
-      if (!playlist && categoryOf(raw) !== category) return []
-      return [{ youtubeId, ...parseSermonTitle(raw), category, preachedAt: new Date(published) }]
-    })
-  } catch (error) {
-    console.error("Failed to load YouTube feed:", error)
-    return []
+const CHANNEL_UPLOADS = "UU0KYIf-En7v5Ee91PL1IchQ" // uploads playlist of channel UC0KYIf-En7v5Ee91PL1IchQ
+const FRESH_MS = 30 * 60 * 1000 // ~48 API calls per list per day, far inside the 10,000-unit daily quota
+const KEEP_SECONDS = 14 * 24 * 60 * 60 // stale copy kept long enough to cover a YouTube outage
+
+// YouTube Data API v3: reliable, needs YOUTUBE_API_KEY. Private/deleted items have no videoPublishedAt.
+async function fromApi(playlistId: string, key: string): Promise<Entry[]> {
+  const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${playlistId}&key=${encodeURIComponent(key)}`
+  const response = await fetch(url, { signal: AbortSignal.timeout(8000) })
+  if (!response.ok) throw new Error(`YouTube API ${response.status}`)
+  const data = (await response.json()) as { items?: { snippet?: { title?: string }; contentDetails?: { videoId?: string; videoPublishedAt?: string } }[] }
+  return (data.items ?? []).flatMap(({ snippet, contentDetails }) =>
+    contentDetails?.videoId && contentDetails.videoPublishedAt && snippet?.title
+      ? [{ youtubeId: contentDetails.videoId, rawTitle: snippet.title, published: contentDetails.videoPublishedAt }]
+      : [],
+  )
+}
+
+// Public RSS: no key, but YouTube serves it unreliably (intermittent 404/500), so it is only the fallback.
+async function fromRss(playlistId: string | null): Promise<Entry[]> {
+  const url = playlistId ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}` : FEED
+  const response = await fetch(url, { signal: AbortSignal.timeout(8000) })
+  if (!response.ok) throw new Error(`YouTube feed ${response.status}`)
+  const xml = await response.text()
+  return [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].flatMap(([, entry]) => {
+    const youtubeId = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1]
+    const rawTitle = entry.match(/<title>([\s\S]*?)<\/title>/)?.[1]
+    const published = entry.match(/<published>([^<]+)<\/published>/)?.[1]
+    return youtubeId && rawTitle && published ? [{ youtubeId, rawTitle: decode(rawTitle), published }] : []
+  })
+}
+
+function toVideos(entries: Entry[], category: string, filterByTitle: boolean): Video[] {
+  return entries.flatMap(({ youtubeId, rawTitle, published }) =>
+    filterByTitle && categoryOf(rawTitle) !== category ? [] : [{ youtubeId, ...parseSermonTitle(rawTitle), category, preachedAt: new Date(published) }],
+  )
+}
+
+// API → RSS → last good copy in KV. Fresh copies are reused for 30 minutes so page views don't spend quota.
+async function loadVideos(category: string): Promise<Video[]> {
+  const { getCloudflareContext } = await import("@opennextjs/cloudflare")
+  const { runtimeEnv } = await import("@/lib/runtime-env")
+  const kv = getCloudflareContext().env.AUTH_KV
+  const cacheKey = `youtube:v1:${category}`
+  const playlist = PLAYLISTS[category]
+  const revive = (videos: Video[]) => videos.map((video) => ({ ...video, preachedAt: new Date(video.preachedAt) }))
+
+  const cached = await kv.get<{ at: number; videos: Video[] }>(cacheKey, "json").catch(() => null)
+  if (cached && Date.now() - cached.at < FRESH_MS) return revive(cached.videos)
+
+  const key = runtimeEnv("YOUTUBE_API_KEY")
+  for (const [source, load] of [
+    ["api", () => (key ? fromApi(playlist ?? CHANNEL_UPLOADS, key) : Promise.reject(new Error("YOUTUBE_API_KEY not set")))],
+    ["rss", () => fromRss(playlist)],
+  ] as const) {
+    try {
+      const videos = toVideos(await load(), category, !playlist)
+      await kv.put(cacheKey, JSON.stringify({ at: Date.now(), videos }), { expirationTtl: KEEP_SECONDS }).catch(() => {})
+      return videos
+    } catch (error) {
+      console.warn(`YouTube ${source} failed for ${category}:`, error instanceof Error ? error.message : error)
+    }
   }
+  return cached ? revive(cached.videos) : []
 }
 
 export async function getYoutubeSermons(category?: string) {
   if (category && !(category in PLAYLISTS)) return []
   const categories = category ? [category] : Object.keys(PLAYLISTS)
-  const videos = (await Promise.all(categories.map(loadFeed))).flat()
+  const videos = (await Promise.all(categories.map(loadVideos))).flat()
   return [...new Map(videos.map(video => [video.youtubeId, video])).values()]
     .sort((a, b) => b.preachedAt.getTime() - a.preachedAt.getTime())
 }
 
+// Accepts a bare 11-char id or any YouTube link form admins paste: watch?v= (any param order), youtu.be,
+// /live/ (what YouTube shares for live streams), /embed/, /shorts/, with or without scheme, www./m. prefixes.
 export function parseYoutubeId(input: string): string | null {
   const value = input.trim()
-  for (const pattern of [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([\w-]{11})/, /^([\w-]{11})$/]) {
-    const match = value.match(pattern)
-    if (match) return match[1]
+  if (/^[\w-]{11}$/.test(value)) return value
+  let url: URL
+  try {
+    url = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`)
+  } catch {
+    return null
   }
-  return null
+  const host = url.hostname.replace(/^(www|m|music)\./, "")
+  const id = host === "youtu.be"
+    ? url.pathname.split("/")[1]
+    : host === "youtube.com" || host === "youtube-nocookie.com"
+      ? url.searchParams.get("v") ?? url.pathname.match(/^\/(?:live|embed|shorts|v)\/([^/]+)/)?.[1]
+      : undefined
+  return id && /^[\w-]{11}$/.test(id) ? id : null
 }

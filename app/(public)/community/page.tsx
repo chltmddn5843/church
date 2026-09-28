@@ -142,7 +142,7 @@ export default async function CommunityPage({
 
             {/* 모바일: 가로 스크롤 탭 */}
             <nav aria-label="커뮤니티 게시판" className="shrink-0 md:hidden">
-              <div className="flex gap-2 overflow-x-auto border border-border bg-card p-2">
+              <div className="flex flex-wrap gap-2 border border-border bg-card p-2">
                 {categories.map((cat) => {
                   const isActive = (cat === "전체" && !selected) || cat === selected
                   const href = cat === "전체" ? "/community" : `/community?category=${encodeURIComponent(cat)}`
@@ -152,7 +152,7 @@ export default async function CommunityPage({
                       href={href}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "flex h-12 shrink-0 items-center justify-center px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
+                        "flex h-11 items-center justify-center px-4 text-center text-sm font-semibold transition-all active:scale-[0.98] active:bg-white/40",
                         isActive
                           ? "bg-primary text-primary-foreground"
                           : "bg-white/40 text-foreground hover:bg-secondary hover:text-primary",
@@ -219,10 +219,10 @@ export default async function CommunityPage({
                   <span className="text-sm text-muted-foreground">새글 {newCount}/{total.toLocaleString("ko-KR")}</span>
                 </div>
 
-                <form action="/community" className="flex items-center gap-2">
+                <form action="/community" className="flex w-full items-center gap-2 sm:w-auto">
                   {selected && <input type="hidden" name="category" value={selected} />}
                   {view !== "list" && <input type="hidden" name="view" value={view} />}
-                  <select name="field" defaultValue={field} className="h-9 border border-border bg-background px-2 text-sm">
+                  <select name="field" defaultValue={field} aria-label="검색 기준" className="h-11 border border-border bg-background px-2 text-sm sm:h-9">
                     <option value="title">제목</option>
                     <option value="author">작성자</option>
                   </select>
@@ -230,10 +230,11 @@ export default async function CommunityPage({
                     type="search"
                     name="q"
                     defaultValue={q}
-                    placeholder="검색어를 입력하세요"
-                    className="h-9 w-36 border border-border bg-background px-3 text-sm sm:w-52"
+                    placeholder="검색어"
+                    aria-label="검색어"
+                    className="h-11 min-w-0 flex-1 border border-border bg-background px-3 text-sm sm:h-9 sm:w-52 sm:flex-none"
                   />
-                  <Button type="submit" size="sm" className="">검색</Button>
+                  <Button type="submit" size="sm" className="h-11 px-4 sm:h-8">검색</Button>
                 </form>
               </div>
 

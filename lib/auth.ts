@@ -1,9 +1,11 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { captcha } from "better-auth/plugins"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { authKvStorage } from "@/lib/auth-kv"
 import { getDb } from "@/lib/db"
 import { sendEmail } from "@/lib/email"
+import { runtimeEnv } from "@/lib/runtime-env"
 
 function sendLater(promise: Promise<void>) {
   getCloudflareContext().ctx.waitUntil(promise.catch((error) => console.error("Failed to send auth email:", error)))
@@ -76,6 +78,17 @@ export function getAuth() {
       expiresIn: 60 * 60 * 24 * 7,
       updateAge: 60 * 60 * 24,
     },
+    // Cloudflare Turnstile on the forms bots target. The token arrives as x-captcha-response and is checked with
+    // siteverify (success, action, hostname) before better-auth runs; a missing secret fails closed with 500.
+    plugins: [
+      captcha({
+        provider: "cloudflare-turnstile",
+        secretKey: runtimeEnv("TURNSTILE_SECRET") ?? "",
+        endpoints: ["/sign-in/email", "/sign-up/email", "/request-password-reset"],
+        expectedAction: runtimeEnv("TURNSTILE_ACTION") || undefined,
+        allowedHostnames: (runtimeEnv("TURNSTILE_HOSTNAMES") ?? "").split(",").map((host) => host.trim()).filter(Boolean),
+      }),
+    ],
     // Brute-force limits per client IP, counted in D1 so they hold across Worker isolates.
     rateLimit: {
       enabled: true,

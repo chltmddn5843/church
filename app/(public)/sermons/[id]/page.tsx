@@ -39,7 +39,7 @@ export default async function SermonDetailPage({
         </Button>
 
         <p className="text-sm font-semibold text-primary">{sermon.category}</p>
-        <h1 className="mt-3 text-balance font-serif text-3xl font-bold text-foreground md:text-4xl">
+        <h1 className="mt-3 text-balance break-keep font-serif text-2xl sm:text-3xl font-bold text-foreground md:text-4xl">
           {sermon.title}
         </h1>
 

@@ -11,11 +11,12 @@ import { parseYoutubeId } from "@/lib/youtube"
 export async function saveLiveStream(formData: FormData) {
   await requireAdmin()
   const youtubeId = parseYoutubeId(String(formData.get("url") ?? ""))
-  if (!youtubeId) throw new Error("올바른 YouTube 영상 주소를 입력해 주세요.")
+  // Back to the form with a message rather than an error page; admins paste many link shapes.
+  if (!youtubeId) redirect("/admin/live?error=youtube")
   await getDb().insert(liveStream).values({ id: 1, youtubeId, updatedAt: new Date() }).onConflictDoUpdate({ target: liveStream.id, set: { youtubeId, updatedAt: new Date() } })
   revalidatePath("/admin/live")
   revalidatePath("/")
-  redirect("/admin/live?saved=updated")
+  redirect("/admin/live?saved=live")
 }
 
 export async function clearLiveStream() {

@@ -4,6 +4,7 @@ import { getSermons } from "@/lib/queries"
 import { SermonCard } from "@/components/sermon-card"
 import { getYoutubeSermons } from "@/lib/youtube"
 import { VideoFacade } from "@/components/home/video-facade"
+import { cn } from "@/lib/utils"
 
 const OTHER_CATEGORIES = ["금요예배", "새벽예배", "쉐키나찬양단"] as const
 const RECENT_COUNT = 5
@@ -61,10 +62,11 @@ export async function FeaturedSermons() {
         )}
 
         {recent.length > 0 && (
-          // On lg the list leaves the flow so the row height is the video's; five equal rows then line up top and bottom with it.
+          // With a video on the left, the list leaves the flow on lg so its five rows share the video's height exactly.
+          // Without one there is no height to share, so the list keeps its natural height (else rows overlap).
           <div className="relative">
             <h3 className="sr-only">최근 올라온 말씀</h3>
-            <ol className="divide-y divide-border lg:absolute lg:inset-0 lg:grid lg:grid-rows-5">
+            <ol className={cn("divide-y divide-border", latest && "lg:absolute lg:inset-0 lg:grid lg:grid-rows-5")}>
               {recent.map((video, i) => (
                 <li key={video.youtubeId} className="min-h-0">
                   <a

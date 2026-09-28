@@ -36,11 +36,11 @@ export function SermonCard({ sermon, href, category }: { sermon: Sermon, href?: 
           </span>
         </div>
       </div>
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="line-clamp-2 font-serif text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
+      <div className="flex flex-1 flex-col p-3 sm:p-5">
+        <h3 className="line-clamp-2 break-keep font-serif text-sm sm:text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
           {sermon.title}
         </h3>
-        {sermon.scripture && <p className="mt-1 text-sm text-primary">{sermon.scripture}</p>}
+        {sermon.scripture && <p className="mt-1 truncate text-sm text-primary">{sermon.scripture}</p>}
       </div>
     </Link>
   )

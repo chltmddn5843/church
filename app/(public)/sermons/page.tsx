@@ -44,7 +44,7 @@ export default async function SermonsPage({
         <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SermonFilter active={category} />
           {sermons.length > 0 ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               {sermons.map((s) => (
                 <SermonCard key={s.id} sermon={s} category={category} />
               ))}
@@ -53,7 +53,7 @@ export default async function SermonsPage({
             videos.length === 0 && <p className="mt-16 text-center text-muted-foreground">해당 분류의 설교가 아직 없습니다.</p>
           )}
           <Pagination page={page} totalPages={totalPages} hrefFor={pageHref} />
-          {videos.length > 0 && <><div className="mt-16"><SectionHeading eyebrow="YouTube" title="원당교회 YouTube 최신 영상" /></div><div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{videos.map((video, index) => <SermonCard key={video.youtubeId} href={`https://www.youtube.com/watch?v=${video.youtubeId}`} sermon={{ id: -index - 1, title: video.title, preacher: "양승철", scripture: video.scripture, category: video.category, youtubeId: video.youtubeId, preachedAt: video.preachedAt }}/>)}</div></>}
+          {videos.length > 0 && <><div className="mt-16"><SectionHeading eyebrow="YouTube" title="원당교회 YouTube 최신 영상" /></div><div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">{videos.map((video, index) => <SermonCard key={video.youtubeId} href={`https://www.youtube.com/watch?v=${video.youtubeId}`} sermon={{ id: -index - 1, title: video.title, preacher: "양승철", scripture: video.scripture, category: video.category, youtubeId: video.youtubeId, preachedAt: video.preachedAt }}/>)}</div></>}
         </div>
       </section>
     </>

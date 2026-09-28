@@ -14,6 +14,11 @@ const messages: Record<string, string> = {
   offering: "헌금 현황이 저장되었습니다.",
   gallery: "사진이 등록되었습니다.",
   cleared: "생방송 섹션이 메인 페이지에서 내려갔습니다.",
+  live: "메인 페이지 생방송 영상이 저장되었습니다.",
+}
+
+const errors: Record<string, string> = {
+  youtube: "YouTube 영상 주소를 확인해 주세요. 예: https://www.youtube.com/live/영상ID 또는 https://youtu.be/영상ID",
 }
 
 export function ToastFromQuery() {
@@ -21,19 +26,25 @@ export function ToastFromQuery() {
   const pathname = usePathname()
   const router = useRouter()
   const saved = searchParams.get("saved")
+  const error = searchParams.get("error")
 
   useEffect(() => {
-    if (!saved) return
+    if (!saved && !error) return
 
-    const message = messages[saved] ?? "처리되었습니다."
-    toast.success(message)
-    if (saved === "deleted") window.alert(message)
+    if (error) {
+      toast.error(errors[error] ?? "처리하지 못했습니다. 입력 내용을 확인해 주세요.")
+    } else if (saved) {
+      const message = messages[saved] ?? "처리되었습니다."
+      toast.success(message)
+      if (saved === "deleted") window.alert(message)
+    }
 
     const next = new URLSearchParams(searchParams.toString())
     next.delete("saved")
+    next.delete("error")
     const query = next.toString()
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
-  }, [pathname, router, saved, searchParams])
+  }, [error, pathname, router, saved, searchParams])
 
   return null
 }

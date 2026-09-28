@@ -1,17 +1,24 @@
-"use client"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { AuthShell, OfficeContact } from "@/components/auth-form"
+import { runtimeEnv } from "@/lib/runtime-env"
+import { ForgotPasswordForm } from "./forgot-password-form"
 
-import { useState } from "react"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+export const dynamic = "force-dynamic"
+export const metadata: Metadata = { title: "비밀번호 찾기" }
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("")
-  const [message, setMessage] = useState("")
-  async function submit(event: React.FormEvent) {
-    event.preventDefault()
-    await authClient.requestPasswordReset({ email, redirectTo: "/reset-password" })
-    setMessage("가입된 이메일이면 재설정 링크를 보냈습니다.")
-  }
-  return <main className="mx-auto max-w-md px-4 py-20"><h1 className="text-3xl font-bold">비밀번호 찾기</h1><form onSubmit={submit} className="mt-8 space-y-4"><Input type="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="이메일" required/><Button type="submit" className="w-full">재설정 메일 보내기</Button></form>{message && <p className="mt-4 text-sm text-primary" role="status">{message}</p>}</main>
+  // Without outgoing email a reset request would claim success and send nothing, so point to the office instead.
+  const emailEnabled = Boolean(runtimeEnv("RESEND_API_KEY") && runtimeEnv("EMAIL_FROM"))
+  return (
+    <AuthShell
+      title="비밀번호 찾기"
+      description={emailEnabled ? "가입한 이메일을 입력하면 비밀번호 재설정 링크를 보내드려요." : undefined}
+    >
+      {emailEnabled ? <ForgotPasswordForm turnstileSiteKey={runtimeEnv("TURNSTILE_SITE_KEY") ?? ""} /> : <OfficeContact />}
+      <p className="mt-6 border-t border-border pt-5 text-sm">
+        <Link href="/sign-in" className="inline-flex min-h-8 items-center font-semibold text-primary underline-offset-4 hover:underline">로그인으로 돌아가기</Link>
+      </p>
+    </AuthShell>
+  )
 }

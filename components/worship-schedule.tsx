@@ -33,19 +33,22 @@ function ScheduleTable({
   rows: { name: string; day: string; time: string; place: string }[]
 }) {
   return (
-    <div className="overflow-x-auto border border-border shadow-sm">
-      <table className="w-full min-w-[560px] table-fixed text-left">
+    // On phones the place sits under the time; a third column there only showed up after a sideways swipe.
+    <div className="border border-border shadow-sm">
+      <table className="w-full table-fixed text-left">
         <caption className="sr-only">{caption}</caption>
         <colgroup>
-          <col className="w-[28%]" />
-          <col className="w-[34%]" />
-          <col className="w-[38%]" />
+          <col className="w-[40%] sm:w-[28%]" />
+          <col className="w-[60%] sm:w-[34%]" />
+          <col className="hidden sm:table-column sm:w-[38%]" />
         </colgroup>
         <thead>
           <tr className="bg-secondary">
             <th scope="col" className="px-5 py-4 text-sm font-bold text-foreground md:text-base">{firstColumn}</th>
-            <th scope="col" className="px-5 py-4 text-sm font-bold text-foreground md:text-base">요일 / 시간</th>
-            <th scope="col" className="px-5 py-4 text-sm font-bold text-foreground md:text-base">장소</th>
+            <th scope="col" className="px-5 py-4 text-sm font-bold text-foreground md:text-base">
+              요일 / 시간<span className="sm:hidden"> · 장소</span>
+            </th>
+            <th scope="col" className="hidden px-5 py-4 text-sm font-bold text-foreground sm:table-cell md:text-base">장소</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border bg-card">
@@ -55,8 +58,9 @@ function ScheduleTable({
               <td className="px-5 py-4 align-middle">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{row.day}</p>
                 <p className="mt-0.5 text-lg font-bold tabular-nums text-primary md:text-xl">{row.time}</p>
+                <p className="mt-1 break-keep text-sm text-muted-foreground sm:hidden">{row.place}</p>
               </td>
-              <td className="px-5 py-4 align-middle text-sm text-muted-foreground md:text-base">{row.place}</td>
+              <td className="hidden px-5 py-4 align-middle text-sm text-muted-foreground sm:table-cell md:text-base">{row.place}</td>
             </tr>
           ))}
         </tbody>
@@ -103,7 +107,7 @@ export function WorshipSchedule({ sections = "all", variant = "light" }: { secti
     <div className="space-y-10">
       <ScheduleTable caption="예배 시간표" firstColumn="예배" rows={mainWorship} />
       <div>
-        <h3 className="mb-4 text-lg font-bold text-foreground md:text-xl">교육부 · 다음세대</h3>
+        <h2 className="mb-4 text-lg font-bold text-foreground md:text-xl">교육부 · 다음세대</h2>
         <ScheduleTable caption="다음세대 예배 시간표" firstColumn="부서" rows={nextGenWorship} />
       </div>
     </div>

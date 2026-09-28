@@ -10,9 +10,14 @@ binding = "ASSETS"
 [vars]
 BETTER_AUTH_URL = "https://church.chltmddn5843.workers.dev"
 EMAIL_FROM = "원당교회 <noreply@wdchurch.com>"
+# Turnstile: public values only. The secret is a Worker secret (wrangler secret put TURNSTILE_SECRET).
+TURNSTILE_SITE_KEY = "0x4AAAAAAFFuLCMFsK7lyByY"
+TURNSTILE_HOSTNAMES = "church.chltmddn5843.workers.dev"
+TURNSTILE_ACTION = "auth"
 
 [secrets]
-required = ["BETTER_AUTH_SECRET"]
+# Deploys refuse to go out without these, so login can never ship with Turnstile unconfigured.
+required = ["BETTER_AUTH_SECRET", "TURNSTILE_SECRET", "YOUTUBE_API_KEY"]
 
 [[kv_namespaces]]
 binding = "AUTH_KV"
