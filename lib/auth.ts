@@ -83,7 +83,7 @@ export function getAuth() {
     plugins: [
       captcha({
         provider: "cloudflare-turnstile",
-        secretKey: runtimeEnv("TURNSTILE_SECRET") ?? "",
+        secretKey: runtimeEnv("TURNSTILE_SECRET")?.trim() ?? "", // trim: a pasted newline makes siteverify reject the secret
         endpoints: ["/sign-in/email", "/sign-up/email", "/request-password-reset"],
         expectedAction: runtimeEnv("TURNSTILE_ACTION") || undefined,
         allowedHostnames: (runtimeEnv("TURNSTILE_HOSTNAMES") ?? "").split(",").map((host) => host.trim()).filter(Boolean),
