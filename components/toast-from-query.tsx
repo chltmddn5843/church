@@ -13,8 +13,8 @@ const messages: Record<string, string> = {
   popup: "팝업 설정이 저장되었습니다.",
   offering: "헌금 현황이 저장되었습니다.",
   gallery: "사진이 등록되었습니다.",
-  cleared: "생방송 섹션이 메인 페이지에서 내려갔습니다.",
-  live: "메인 페이지 생방송 영상이 저장되었습니다.",
+  cleared: "직접 지정한 영상을 내렸습니다. 이제 생방송을 자동으로 찾아 표시합니다.",
+  live: "직접 지정한 영상이 메인 페이지 '말씀 다시보기' 자리에 표시됩니다.",
 }
 
 const errors: Record<string, string> = {

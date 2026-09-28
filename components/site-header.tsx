@@ -26,6 +26,8 @@ const HOME_FADE_DISTANCE = 260
 export function SiteHeader({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  // The header survives client navigation, so a clicked submenu would stay open (hover + focus-within) until the pointer leaves.
+  const [dismissed, setDismissed] = useState<string | null>(null)
   const pathname = usePathname()
   const router = useRouter()
   const isHome = pathname === "/"
@@ -58,7 +60,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
 
         <nav className="hidden items-center gap-1 lg:flex xl:gap-2" aria-label="주 메뉴">
           {church.nav.map((item) => (
-            <div key={item.title} className="group relative">
+            <div key={item.title} className="group relative" onMouseLeave={() => setDismissed(null)} onFocus={() => setDismissed(null)}>
               <Link
                 href={item.href}
                 className="flex items-center gap-1 whitespace-nowrap px-3 py-2 text-base font-semibold text-white transition-colors hover:bg-ring hover:text-white xl:px-4 2xl:text-lg"
@@ -66,13 +68,17 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                 {item.title}
                 <ChevronDown aria-hidden className="hidden h-3 w-3 opacity-50 transition-transform group-hover:rotate-180 xl:block" />
               </Link>
-              <div className="invisible absolute left-0 top-full w-full -translate-y-1 border border-accent/40 bg-popover/90 p-1 opacity-0 shadow-lg backdrop-blur-sm transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className={cn("invisible absolute left-0 top-full w-full -translate-y-1 border border-accent/40 bg-popover/90 p-1 opacity-0 shadow-lg backdrop-blur-sm transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100", dismissed === item.title && "invisible! opacity-0!")}>
                 {item.children.map((child) => (
                   <Link
                     key={child.title}
                     href={child.href}
                     target={child.href.startsWith("http") ? "_blank" : undefined}
                     rel={child.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    onClick={(e) => {
+                      e.currentTarget.blur()
+                      setDismissed(item.title)
+                    }}
                     className="block px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
                   >
                     {child.title}

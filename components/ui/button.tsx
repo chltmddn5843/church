@@ -49,6 +49,8 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
+      // Link-rendered buttons (<a>) are natively draggable; a button shouldn't tear off as a ghost when pressed and dragged.
+      draggable={false}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

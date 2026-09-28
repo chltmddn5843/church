@@ -1,23 +1,15 @@
 import { Analytics } from "@vercel/analytics/next"
 import type { Metadata, Viewport } from "next"
-import { Nanum_Gothic, Noto_Sans_KR } from "next/font/google"
+import { Nanum_Gothic } from "next/font/google"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
-// 나눔고딕 first; Noto Sans KR only fills glyphs it lacks, so it isn't preloaded.
+// 나눔고딕 is the only downloaded font; anything it lacks falls back to the phone's own Korean font (globals.css).
 const nanumGothic = Nanum_Gothic({
   subsets: ["latin"],
   weight: ["400", "700", "800"],
   variable: "--font-nanum-gothic",
   display: "swap",
-})
-
-const notoSansKr = Noto_Sans_KR({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-noto-sans-kr",
-  display: "swap",
-  preload: false,
 })
 
 export const metadata: Metadata = {
@@ -47,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko" className={`bg-background ${nanumGothic.variable} ${notoSansKr.variable}`}>
+    <html lang="ko" className={`bg-background ${nanumGothic.variable}`}>
       <body className="font-sans antialiased">
         {children}
         <Toaster richColors position="top-center" />

@@ -27,7 +27,7 @@ export async function ChurchNews() {
 
   return (
     <section className="py-20 md:py-28">
-      <div className="scroll-reveal mx-auto grid max-w-6xl gap-14 px-4 lg:max-w-[1360px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-16 lg:px-6">
+      <div className="scroll-reveal mx-auto grid max-w-6xl grid-cols-1 gap-14 px-4 lg:max-w-[1360px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-16 lg:px-6">
         <div>
           <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
             <div>

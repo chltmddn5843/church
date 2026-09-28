@@ -16,9 +16,15 @@ const AUTOPLAY_MS = 5000
 export function Hero() {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(true)
+  // Only the current slide and the next one are fetched; the rest load as the show reaches them.
+  const [loaded, setLoaded] = useState(() => new Set([0, 1]))
 
-  const next = useCallback(() => setIndex((i) => (i + 1) % slides.length), [])
-  const prev = useCallback(() => setIndex((i) => (i - 1 + slides.length) % slides.length), [])
+  const go = useCallback((target: number) => {
+    setIndex(target)
+    setLoaded((seen) => new Set([...seen, target, (target + 1) % slides.length]))
+  }, [])
+  const next = useCallback(() => go((index + 1) % slides.length), [go, index])
+  const prev = useCallback(() => go((index - 1 + slides.length) % slides.length), [go, index])
 
   useEffect(() => {
     if (!playing) return
@@ -29,7 +35,7 @@ export function Hero() {
 
   return (
     <section className="relative isolate -mt-16 h-dvh min-h-[480px] w-full overflow-x-clip md:-mt-24">
-      {slides.map((slide, i) => (
+      {slides.map((slide, i) => loaded.has(i) && (
         <Image
           key={slide.src}
           src={slide.src}

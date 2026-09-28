@@ -17,26 +17,28 @@ export const campusBuildings = [
   { id: "container", name: "컨테이너", english: "CONTAINER", position: "사랑관과 소망관 사이 · 두 건물 사이의 공간", floors: [
     { floor: "외부", rooms: "사랑관과 소망관 사이 컨테이너" },
   ], color: "#687e84", x: -20, z: -7, width: 4.4, depth: 4, height: 3, rotation: 0 },
-  { id: "parking", name: "마당 · 주차장", english: "PARKING", position: "교회 앞 · 넓은 사각형 마당", floors: [
+  { id: "parking", name: "마당 · 주차장", english: "PARKING", position: "사랑관 옆 · 소망관과 믿음관 앞의 부지 안쪽 마당", floors: [
     { floor: "외부", rooms: "주차 공간 · 가운데 차량 통행 공간" },
-  ], color: "#6a8473", x: 0, z: 44, width: 90, depth: 48, height: .1, rotation: 0 },
+  ], color: "#6a8473", x: 5, z: 15.5, width: 54, depth: 13, height: .1, rotation: 0 },
 ] as const
 export type BuildingId = (typeof campusBuildings)[number]["id"]
 
 export function createCampus() {
   const campus = new THREE.Group()
+  campus.name = "wondang-campus"
   const groups = new Map<BuildingId, THREE.Group>()
   const materials = new Map<string, THREE.MeshStandardMaterial>()
   function box(parent: THREE.Group, x: number, y: number, z: number, w: number, h: number, d: number, color: string) {
     if (!materials.has(color)) materials.set(color, new THREE.MeshStandardMaterial({ color, roughness: .82 }))
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), materials.get(color))
+    mesh.name = `${parent.name || "site"}-part-${parent.children.length + 1}`
     mesh.position.set(x, y, z)
     mesh.castShadow = true
     mesh.receiveShadow = true
     parent.add(mesh)
     return mesh
   }
-  box(campus, 0, -.65, 24, 98, 1, 98, "#d9dedc")
+  box(campus, -5.5, -.65, 3, 79, 1, 39, "#d9dedc").name = "site-base"
   for (const b of campusBuildings) {
     const group = new THREE.Group()
     group.name = b.id
@@ -48,23 +50,27 @@ export function createCampus() {
     if (b.id === "parking") {
       box(group, 0, -.08, 0, b.width, .12, b.depth, "#cecfca")
       // ponytail: parking bay counts are schematic until a measured parking plan is supplied.
-      for (const z of [-15, 15]) {
-        for (const x of [-30, -10, 10, 30]) {
-          box(group, x, .01, z, 16, .08, 9, "#9eaf92")
-          for (let dx = -8; dx <= 8; dx += 4) box(group, x + dx, .07, z, .13, .04, 9, "#f3f1e7")
-          for (const dz of [-4.5, 4.5]) box(group, x, .07, z + dz, 16, .04, .13, "#f3f1e7")
-          for (let dx = -7; dx < 8; dx += 1) box(group, x + dx, .06, z, .035, .02, 9, "#d1d5c6")
+      for (const z of [2]) {
+        for (const x of [-18, 0, 18]) {
+          box(group, x, .01, z, 14, .08, 6, "#9eaf92")
+          for (let dx = -7; dx <= 7; dx += 3.5) box(group, x + dx, .07, z, .13, .04, 6, "#f3f1e7")
+          for (const dz of [-3, 3]) box(group, x, .07, z + dz, 14, .04, .13, "#f3f1e7")
+          for (let dx = -6; dx < 7; dx += 1) box(group, x + dx, .06, z, .035, .02, 6, "#d1d5c6")
         }
       }
       group.traverse(object => { object.userData.buildingId = b.id })
       continue
     }
     if (b.id === "container") {
-      // ponytail: obscured in the reference photo; use a simple shell until exterior details are supplied.
-      box(group, 0, 1.5, 0, b.width, 3, b.depth, "#aab9b6")
-      box(group, 0, 3.1, 0, b.width + .2, .2, b.depth + .2, "#6f8282")
-      for (let x = -2; x <= 2; x += .4) box(group, x, 1.5, front + .03, .045, 2.9, .06, "#819594")
-      box(group, 1, 1.2, front + .1, 1.15, 2.4, .12, "#546c71")
+      // ponytail: editable shell; openings and dimensions await a measured container reference.
+      box(group, 0, .08, 0, b.width, .16, b.depth, "#6f8282").name = "container-floor"
+      box(group, 0, b.height + .1, 0, b.width + .2, .2, b.depth + .2, "#6f8282").name = "container-roof"
+      box(group, 0, b.height / 2, -front, b.width, b.height, .12, "#aab9b6").name = "container-wall-back"
+      for (const [side, x] of [["left", -b.width / 2], ["right", b.width / 2]] as const)
+        box(group, x, b.height / 2, 0, .12, b.height, b.depth, "#aab9b6").name = `container-wall-${side}`
+      box(group, 0, b.height / 2, front, b.width, b.height, .12, "#aab9b6").name = "container-wall-front"
+      for (let x = -2; x <= 2; x += .4) box(group, x, b.height / 2, front + .07, .045, b.height - .1, .06, "#819594").name = `container-rib-${x.toFixed(1)}`
+      box(group, 1, 1.2, front + .15, 1.15, 2.4, .12, "#546c71").name = "container-door"
       group.traverse(object => { object.userData.buildingId = b.id })
       continue
     }
@@ -119,10 +125,10 @@ export function createCampus() {
     group.traverse(object => { object.userData.buildingId = b.id })
   }
   // Landscaping is schematic; it is not a navigable path or a surveyed boundary.
-  for (const x of [-40, -34, 32, 39]) {
-    box(campus, x, 1, 71, .3, 2, .3, "#786854")
+  for (const x of [-42, 32]) {
+    box(campus, x, 1, 21, .3, 2, .3, "#786854")
     const tree = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7, 1), new THREE.MeshStandardMaterial({ color: "#668b69", roughness: 1 }))
-    tree.position.set(x, 3, 71)
+    tree.position.set(x, 3, 21)
     tree.castShadow = true
     campus.add(tree)
   }

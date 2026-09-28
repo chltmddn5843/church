@@ -28,13 +28,15 @@ export function VideoFacade({ youtubeId, title, children }: { youtubeId: string;
         alt=""
         // YouTube serves a 120px grey placeholder (not a 404) when no HD thumbnail exists.
         onLoad={(e) => e.currentTarget.naturalWidth <= 120 && setThumb(`https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`)}
+        // Live and upcoming streams often have no HD thumbnail at all (a real 404).
+        onError={() => setThumb(`https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`)}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
-      <span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10" />
+      <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 via-45% to-black/10" />
       <span className="absolute right-4 top-4 flex size-12 items-center justify-center bg-white/90 text-primary shadow-lg transition group-hover:bg-white motion-safe:group-hover:scale-110">
         <Play aria-hidden className="size-5 fill-current" />
       </span>
-      <span className="absolute inset-x-0 bottom-0 p-5 md:p-8">{children}</span>
+      <span className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-8">{children}</span>
     </button>
   )
 }

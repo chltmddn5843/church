@@ -27,7 +27,26 @@ assert.equal(campusBuildings[2].floors[0].rooms, "비전홀 (예배당)")
 console.log("Campus: all five areas have geometry and correct pointer hit targets.")
 
 const parking = new Box3().setFromObject(groups.get("parking"))
-assert.ok(parking.max.z - parking.min.z >= 48, "Parking must be a broad rectangular courtyard")
-assert.ok(parking.min.z > love.max.z, "Parking must sit in front of the buildings")
+assert.ok(parking.max.z - parking.min.z <= 14, "Parking must fit the building-sized site")
+assert.ok(parking.min.z < love.max.z, "Parking must sit beside Love inside the courtyard")
+assert.ok(parking.max.z <= love.max.z + 5, "Parking must not project far beyond Love")
+assert.ok(parking.min.x > love.max.x, "Parking must clear Love")
+assert.ok(parking.max.x <= new Box3().setFromObject(groups.get("faith")).max.x + 1)
+for (const part of ["roof", "floor", "door", "wall-front", "wall-back", "wall-left", "wall-right"])
+  assert.ok(groups.get("container").getObjectByName(`container-${part}`))
 assert.ok(hope.max.z - container.max.z > 8, "Container must be recessed behind the open gap")
 assert.ok(hope.min.x - love.max.x > 8, "Love and Hope need a visible open gap")
+
+// Verify the actual editable asset consumed by the website, too.
+const { readFile } = await import("node:fs/promises")
+const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js")
+const bytes = await readFile(new URL("../public/models/church-campus.glb", import.meta.url))
+const { scene: loaded } = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), "")
+for (const building of campusBuildings) {
+  const group = loaded.getObjectByName(building.id)
+  assert.ok(group, `Editable GLB must preserve ${building.id}`)
+  const bounds = new Box3().setFromObject(group)
+  assert.ok(!bounds.isEmpty())
+}
+assert.ok(loaded.getObjectByName("container-door"))
+console.log("Editable GLB loads and preserves all area groups and container parts.")

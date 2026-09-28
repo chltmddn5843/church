@@ -2,7 +2,9 @@ import Link from "next/link"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { getSermons } from "@/lib/queries"
 import { SermonCard } from "@/components/sermon-card"
-import { getYoutubeSermons } from "@/lib/youtube"
+import { getLiveBroadcast, getYoutubeSermons } from "@/lib/youtube"
+import { getDb } from "@/lib/db"
+import { liveStream } from "@/lib/db/schema"
 import { VideoFacade } from "@/components/home/video-facade"
 import { cn } from "@/lib/utils"
 
@@ -11,16 +13,20 @@ const RECENT_COUNT = 5
 
 const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\.\s?/g, "-").replace(/-$/, "")
 
+const startTime = (d: Date) => d.toLocaleString("ko-KR", { timeZone: "Asia/Seoul", weekday: "short", hour: "numeric", minute: "2-digit" })
+
 export async function FeaturedSermons() {
-  const [sundayVideos, otherVideos, sermons] = await Promise.all([
+  const [sundayVideos, otherVideos, sermons, live] = await Promise.all([
     getYoutubeSermons("주일예배"),
     Promise.all(OTHER_CATEGORIES.map((category) => getYoutubeSermons(category))),
     getSermons(undefined, 1),
+    getDb().select().from(liveStream).limit(1).get().then(getLiveBroadcast),
   ])
   const latest = sundayVideos[0]
   // At most 2 per category so one busy playlist (e.g. 3부 찬양 uploads) doesn't fill the list.
   const perCategory = new Map<string, number>()
-  const recent = [...sundayVideos.slice(1), ...otherVideos.flat()]
+  // While a broadcast holds the main slot, the latest Sunday sermon moves into the list instead of disappearing.
+  const recent = [...(live ? sundayVideos : sundayVideos.slice(1)), ...otherVideos.flat()]
     .sort((a, b) => b.preachedAt.getTime() - a.preachedAt.getTime())
     .filter((v) => perCategory.set(v.category, (perCategory.get(v.category) ?? 0) + 1).get(v.category)! <= 2)
     .slice(0, RECENT_COUNT)
@@ -40,8 +46,31 @@ export async function FeaturedSermons() {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-10">
-        {latest ? (
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-10">
+        {live ? (
+          // The main slot turns into the broadcast while one is live or about to start, so there's no separate section.
+          <div className="aspect-video overflow-hidden bg-black shadow-xl shadow-primary/15">
+            <VideoFacade youtubeId={live.youtubeId} title={live.title || "원당교회 예배 생방송"}>
+              <span className="flex items-center gap-2 text-sm font-semibold text-white">
+                {live.status === "live" ? (
+                  <>
+                    <span aria-hidden className="relative flex size-2.5">
+                      <span className="absolute inline-flex size-full rounded-full bg-red-500 opacity-75 motion-safe:animate-ping" />
+                      <span className="relative inline-flex size-2.5 rounded-full bg-red-500" />
+                    </span>
+                    지금 생방송 중
+                  </>
+                ) : (
+                  <>곧 생방송이 시작됩니다{live.scheduledStart && ` · ${startTime(live.scheduledStart)}`}</>
+                )}
+              </span>
+              <span className="mt-1.5 block break-keep text-xl font-bold leading-snug text-white sm:mt-2 sm:text-2xl md:text-4xl">{live.title || "원당교회 예배 생방송"}</span>
+              <span className="mt-2 hidden text-sm text-white/85 sm:block md:text-base">
+                {live.status === "live" ? "화면을 누르면 바로 함께 예배드릴 수 있어요." : "화면을 누르면 생방송 대기 화면으로 이동해요."}
+              </span>
+            </VideoFacade>
+          </div>
+        ) : latest ? (
           <div className="aspect-video overflow-hidden bg-black shadow-xl shadow-primary/15">
             <VideoFacade youtubeId={latest.youtubeId} title={latest.title}>
               <span className="block text-sm font-semibold tabular-nums text-brand-light">
@@ -66,7 +95,7 @@ export async function FeaturedSermons() {
           // Without one there is no height to share, so the list keeps its natural height (else rows overlap).
           <div className="relative">
             <h3 className="sr-only">최근 올라온 말씀</h3>
-            <ol className={cn("divide-y divide-border", latest && "lg:absolute lg:inset-0 lg:grid lg:grid-rows-5")}>
+            <ol className={cn("divide-y divide-border", (live || latest) && "lg:absolute lg:inset-0 lg:grid lg:grid-rows-5")}>
               {recent.map((video, i) => (
                 <li key={video.youtubeId} className="min-h-0">
                   <a

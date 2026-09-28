@@ -38,11 +38,17 @@ async function fromApi(playlistId: string, key: string): Promise<Entry[]> {
   const response = await fetch(url, { signal: AbortSignal.timeout(8000) })
   if (!response.ok) throw new Error(`YouTube API ${response.status}`)
   const data = (await response.json()) as { items?: { snippet?: { title?: string }; contentDetails?: { videoId?: string; videoPublishedAt?: string } }[] }
-  return (data.items ?? []).flatMap(({ snippet, contentDetails }) =>
+  const entries = (data.items ?? []).flatMap(({ snippet, contentDetails }) =>
     contentDetails?.videoId && contentDetails.videoPublishedAt && snippet?.title
       ? [{ youtubeId: contentDetails.videoId, rawTitle: snippet.title, published: contentDetails.videoPublishedAt }]
       : [],
   )
+  if (!entries.length) return entries
+  // Pre-created and running streams sit in playlists too; they belong in the live slot, not the sermon list.
+  const status = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${entries.map((e) => e.youtubeId).join(",")}&key=${encodeURIComponent(key)}`, { signal: AbortSignal.timeout(8000) })
+  if (!status.ok) throw new Error(`YouTube API ${status.status}`)
+  const aired = new Set(((await status.json()) as { items?: { id: string; snippet: { liveBroadcastContent: string } }[] }).items?.filter((item) => item.snippet.liveBroadcastContent === "none").map((item) => item.id))
+  return entries.filter((entry) => aired.has(entry.youtubeId))
 }
 
 // Public RSS: no key, but YouTube serves it unreliably (intermittent 404/500), so it is only the fallback.
@@ -70,7 +76,7 @@ async function loadVideos(category: string): Promise<Video[]> {
   const { getCloudflareContext } = await import("@opennextjs/cloudflare")
   const { runtimeEnv } = await import("@/lib/runtime-env")
   const kv = getCloudflareContext().env.AUTH_KV
-  const cacheKey = `youtube:v1:${category}`
+  const cacheKey = `youtube:v2:${category}`
   const playlist = PLAYLISTS[category]
   const revive = (videos: Video[]) => videos.map((video) => ({ ...video, preachedAt: new Date(video.preachedAt) }))
 
@@ -91,6 +97,60 @@ async function loadVideos(category: string): Promise<Video[]> {
     }
   }
   return cached ? revive(cached.videos) : []
+}
+
+export type LiveBroadcast = { youtubeId: string; title: string; status: "live" | "upcoming"; scheduledStart: Date | null }
+
+const LIVE_FRESH_MS = 5 * 60 * 1000 // 2 API units per check → ~600 units/day at most
+const UPCOMING_WINDOW_MS = 2 * 60 * 60 * 1000
+
+// Which video should fill the home page's main slot right now, if any.
+// A link saved in 관리자 > 예배 영상 관리 wins; otherwise the channel's newest uploads are checked for a live
+// broadcast, or one scheduled to start within 2 hours. The church pre-creates "upcoming" streams with no start
+// time that sit there for days, so those are ignored.
+export async function getLiveBroadcast(manual: { youtubeId: string } | null | undefined): Promise<LiveBroadcast | null> {
+  if (manual) return { youtubeId: manual.youtubeId, title: "", status: "live", scheduledStart: null }
+
+  const { getCloudflareContext } = await import("@opennextjs/cloudflare")
+  const { runtimeEnv } = await import("@/lib/runtime-env")
+  const kv = getCloudflareContext().env.AUTH_KV
+  const cacheKey = "youtube:v1:live"
+  type Cached = { at: number; live: (Omit<LiveBroadcast, "scheduledStart"> & { scheduledStart: string | null }) | null }
+  const revive = (live: Cached["live"]) => (live ? { ...live, scheduledStart: live.scheduledStart ? new Date(live.scheduledStart) : null } : null)
+
+  const cached = await kv.get<Cached>(cacheKey, "json").catch(() => null)
+  if (cached && Date.now() - cached.at < LIVE_FRESH_MS) return revive(cached.live)
+
+  const key = runtimeEnv("YOUTUBE_API_KEY")
+  if (!key) return null
+  try {
+    const api = "https://www.googleapis.com/youtube/v3"
+    const uploads = await fetch(`${api}/playlistItems?part=contentDetails&maxResults=10&playlistId=${CHANNEL_UPLOADS}&key=${encodeURIComponent(key)}`, { signal: AbortSignal.timeout(8000) })
+    if (!uploads.ok) throw new Error(`YouTube API ${uploads.status}`)
+    const ids = ((await uploads.json()) as { items?: { contentDetails?: { videoId?: string } }[] }).items?.flatMap((item) => item.contentDetails?.videoId ?? []) ?? []
+    const details = await fetch(`${api}/videos?part=snippet,liveStreamingDetails&id=${ids.join(",")}&key=${encodeURIComponent(key)}`, { signal: AbortSignal.timeout(8000) })
+    if (!details.ok) throw new Error(`YouTube API ${details.status}`)
+    type Item = { id: string; snippet: { title: string; liveBroadcastContent: string }; liveStreamingDetails?: { scheduledStartTime?: string } }
+    const items = ((await details.json()) as { items?: Item[] }).items ?? []
+    const now = Date.now()
+    const live = items.find((item) => item.snippet.liveBroadcastContent === "live")
+    const upcoming = items
+      .filter((item) => item.snippet.liveBroadcastContent === "upcoming" && item.liveStreamingDetails?.scheduledStartTime)
+      .map((item) => ({ item, start: Date.parse(item.liveStreamingDetails!.scheduledStartTime!) }))
+      .filter(({ start }) => start - now < UPCOMING_WINDOW_MS && now - start < 30 * 60 * 1000)
+      .sort((a, b) => a.start - b.start)[0]
+    const pick = live
+      ? { youtubeId: live.id, title: parseSermonTitle(decode(live.snippet.title)).title, status: "live" as const, scheduledStart: null }
+      : upcoming
+        ? { youtubeId: upcoming.item.id, title: parseSermonTitle(decode(upcoming.item.snippet.title)).title, status: "upcoming" as const, scheduledStart: new Date(upcoming.start).toISOString() }
+        : null
+    await kv.put(cacheKey, JSON.stringify({ at: now, live: pick }), { expirationTtl: 60 * 60 }).catch(() => {})
+    return revive(pick)
+  } catch (error) {
+    console.warn("YouTube live check failed:", error instanceof Error ? error.message : error)
+    // A broadcast seen in the last 15 minutes is probably still on; anything older must not linger.
+    return cached && Date.now() - cached.at < 15 * 60 * 1000 ? revive(cached.live) : null
+  }
 }
 
 export async function getYoutubeSermons(category?: string) {

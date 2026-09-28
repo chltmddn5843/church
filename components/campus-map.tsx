@@ -18,10 +18,22 @@ export function CampusMap() {
     let cancelled = false
     let cleanup = () => {}
     async function setup() {
-      const [THREE, { OrbitControls }, { createCampus }] = await Promise.all([
-        import("three"), import("three/addons/controls/OrbitControls.js"), import("@/lib/campus-model"),
+      const [THREE, { OrbitControls }, { GLTFLoader }] = await Promise.all([
+        import("three"), import("three/addons/controls/OrbitControls.js"), import("three/addons/loaders/GLTFLoader.js"),
       ])
       if (cancelled) return
+      const { scene: campus } = await new GLTFLoader().loadAsync("/models/church-campus.glb")
+      if (cancelled) return
+      const groups = new Map<BuildingId, import("three").Object3D>()
+      for (const building of campusBuildings) {
+        const group = campus.getObjectByName(building.id)
+        if (!group) throw new Error(`Missing model group: ${building.id}`)
+        group.traverse(object => { object.userData.buildingId = building.id })
+        groups.set(building.id, group)
+      }
+      campus.traverse(object => {
+        if (object instanceof THREE.Mesh) { object.castShadow = true; object.receiveShadow = true }
+      })
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       renderer.shadowMap.enabled = true
@@ -32,9 +44,9 @@ export function CampusMap() {
       renderer.domElement.setAttribute("role", "img")
       const scene = new THREE.Scene()
       const camera = new THREE.PerspectiveCamera(36, 1, .1, 500)
-      camera.position.set(58, 80, 125)
+      camera.position.set(42, 48, 76)
       const controls = new OrbitControls(camera, renderer.domElement)
-      controls.target.set(0, 1, 24)
+      controls.target.set(-5, 3, 3)
       controls.minDistance = 45
       controls.maxDistance = 280
       controls.maxPolarAngle = Math.PI / 2.15
@@ -48,7 +60,6 @@ export function CampusMap() {
       Object.assign(sun.shadow.camera, { left: -65, right: 65, top: 55, bottom: -90, near: 1, far: 240 })
       sun.shadow.normalBias = .06
       scene.add(sun)
-      const { campus, groups } = createCampus()
       scene.add(campus)
       const buildingMaterials = new Map<BuildingId, import("three").MeshStandardMaterial[]>()
       groups.forEach((group, id) => {
@@ -87,7 +98,10 @@ export function CampusMap() {
         renderer.render(scene, camera)
         const width = container.clientWidth, height = container.clientHeight
         campusBuildings.forEach((b, i) => {
-          const position = new THREE.Vector3(b.x, b.height + (b.id === "love" ? 5 : 3), b.z).project(camera)
+          const bounds = new THREE.Box3().setFromObject(groups.get(b.id)!)
+          const position = bounds.getCenter(new THREE.Vector3())
+          position.y = bounds.max.y + 2
+          position.project(camera)
           const label = labels[i]
           const halfWidth = label.offsetWidth / 2
           label.style.left = `${THREE.MathUtils.clamp((position.x * .5 + .5) * width, halfWidth + 8, width - halfWidth - 8)}px`
@@ -122,10 +136,10 @@ export function CampusMap() {
             offset.setLength(THREE.MathUtils.clamp(offset.length() * (mode === "zoomIn" ? .8 : 1.25), 45, 280))
             camera.position.copy(controls.target).add(offset)
           } else {
-            controls.target.set(0, 1, 24)
-            if (mode === "front") camera.position.set(0, 35, 155)
-            else if (mode === "top") camera.position.set(0, 150, 24.1)
-            else camera.position.set(58, 80, 125)
+            controls.target.set(-5, 3, 3)
+            if (mode === "front") camera.position.set(-5, 24, 110)
+            else if (mode === "top") camera.position.set(-5, 110, 3.1)
+            else camera.position.set(42, 48, 76)
           }
           controls.update()
           render()

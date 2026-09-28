@@ -38,7 +38,7 @@ export function ChurchSchool() {
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/40 to-black/10 lg:bg-gradient-to-r lg:from-black/70 lg:via-black/35 lg:to-black/25" />
 
-      <div className="mx-auto grid min-h-[600px] max-w-6xl grid-rows-[auto_auto_1fr] gap-8 px-4 py-16 md:min-h-[640px] md:py-20 lg:max-w-[1360px] lg:grid-cols-[minmax(0,1fr)_300px] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:px-6">
+      <div className="mx-auto grid min-h-[600px] max-w-6xl grid-cols-1 grid-rows-[auto_auto_1fr] gap-8 px-4 py-16 md:min-h-[640px] md:py-20 lg:max-w-[1360px] lg:grid-cols-[minmax(0,1fr)_300px] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:px-6">
         <div className="flex flex-wrap items-end gap-x-6 gap-y-2 lg:col-start-1 lg:row-start-1">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">Next Generation</p>

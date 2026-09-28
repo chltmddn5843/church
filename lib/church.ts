@@ -134,7 +134,7 @@ export const departments = [
     time: "주일 오전 10:55~12:20",
     place: "사랑관 2층 드림홀",
     desc: "즐겁게 찬양하고 기도로 깊어지며 말씀과 성경적 세계관으로 성장하는, 제자 되고 제자 삼는 공동체입니다.",
-    image: "/images/next-generation/elementary.png",
+    image: "/images/next-generation/elementary.jpg",
   },
   {
     id: "middle",
