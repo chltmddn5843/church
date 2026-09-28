@@ -33,12 +33,15 @@ export default async function PostDetailPage({
 
   const isBulletin = post.category === "주보"
   const bulletinPdf = post.attachments.find((file) => file.contentType === "application/pdf")
-  const bulletinImages = isBulletin && !bulletinPdf ? post.attachments.filter((file) => file.contentType.startsWith("image/")) : []
-  const usedIds = new Set([bulletinPdf?.id, ...bulletinImages.map((file) => file.id)].filter((id): id is number => id !== undefined))
+  const images = bulletinPdf ? [] : post.attachments.filter((file) => file.contentType.startsWith("image/"))
+  // 주보 pages through its images in a viewer; every other board shows them in the post body (e.g. notice posters).
+  const bulletinImages = isBulletin ? images : []
+  const inlineImages = isBulletin ? [] : images
+  const usedIds = new Set([bulletinPdf?.id, ...images.map((file) => file.id)].filter((id): id is number => id !== undefined))
   const otherAttachments = post.attachments.filter((file) => !usedIds.has(file.id))
 
   return (
-    <article className="py-12 md:py-16">
+    <article className="py-14 md:py-20">
       <div className={cn("mx-auto px-4", isBulletin ? "max-w-4xl" : "max-w-3xl")}>
         <Button render={<Link href={`/community?category=${encodeURIComponent(post.category)}`} />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
           <>
@@ -47,7 +50,7 @@ export default async function PostDetailPage({
           </>
         </Button>
 
-        <p className="text-sm font-medium text-muted-foreground">[{post.category}]</p>
+        <p className="text-sm font-semibold text-primary">{post.category}</p>
         <h1 className="mt-2 text-balance font-serif text-3xl font-bold text-foreground md:text-4xl">
           {post.title}
         </h1>
@@ -64,13 +67,21 @@ export default async function PostDetailPage({
           <span>조회 {post.views.toLocaleString("ko-KR")}</span>
         </div>
 
-        <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>
+        {post.content && <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>}
+        {inlineImages.length > 0 && (
+          <div className="mt-8 space-y-6">
+            {inlineImages.map((file) => (
+              // eslint-disable-next-line @next/next/no-img-element -- R2 files of unknown size, images are unoptimized anyway
+              <img key={file.id} src={file.url} alt={file.name.replace(/\.[^.]+$/, "")} loading="lazy" className="mx-auto h-auto w-full max-w-3xl border border-border" />
+            ))}
+          </div>
+        )}
         {bulletinPdf && <BulletinPdfViewer url={bulletinPdf.url} title={bulletinPdf.name} />}
         {bulletinImages.length > 0 && <BulletinImageViewer images={bulletinImages} title={post.title} />}
-        {otherAttachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{otherAttachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 rounded-lg border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
+        {otherAttachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{otherAttachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
 
         {(next || prev) && (
-          <div className="mt-12 divide-y divide-border rounded-xl border border-border">
+          <div className="mt-12 divide-y divide-border border border-border">
             {next && (
               <Link href={`/community/${next.id}`} className="flex items-center gap-3 px-5 py-4 text-sm transition hover:bg-secondary">
                 <ChevronUp className="size-4 shrink-0 text-muted-foreground" />

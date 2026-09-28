@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils"
 
 type SessionUser = { name: string; email: string; role?: string | null } | null
 
-const PRIMARY_RGB = "27, 78, 128"
+const PRIMARY_RGB = "39, 105, 165"
 const HOME_FADE_DISTANCE = 260
 
 export function SiteHeader({ user }: { user: SessionUser }) {
@@ -53,27 +53,27 @@ export function SiteHeader({ user }: { user: SessionUser }) {
     >
       <div className="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-4 md:h-24 xl:px-10">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-[53px]" priority />
+          <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-12 xl:h-[53px]" priority />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex xl:gap-5" aria-label="주 메뉴">
+        <nav className="hidden items-center gap-1 lg:flex xl:gap-2" aria-label="주 메뉴">
           {church.nav.map((item) => (
             <div key={item.title} className="group relative">
               <Link
                 href={item.href}
-                className="flex items-center gap-1 rounded-md px-4 py-2 text-lg font-semibold text-white transition-colors hover:bg-ring hover:text-white"
+                className="flex items-center gap-1 whitespace-nowrap px-3 py-2 text-base font-semibold text-white transition-colors hover:bg-ring hover:text-white xl:px-4 2xl:text-lg"
               >
                 {item.title}
-                <ChevronDown className="h-3 w-3 opacity-50 transition-transform group-hover:rotate-180" />
+                <ChevronDown aria-hidden className="hidden h-3 w-3 opacity-50 transition-transform group-hover:rotate-180 xl:block" />
               </Link>
-              <div className="invisible absolute left-0 top-full w-full -translate-y-1 rounded-md border border-accent/40 bg-popover/90 p-1 opacity-0 shadow-lg backdrop-blur-sm transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="invisible absolute left-0 top-full w-full -translate-y-1 border border-accent/40 bg-popover/90 p-1 opacity-0 shadow-lg backdrop-blur-sm transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                 {item.children.map((child) => (
                   <Link
                     key={child.title}
                     href={child.href}
                     target={child.href.startsWith("http") ? "_blank" : undefined}
                     rel={child.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="block rounded-sm px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
+                    className="block px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-secondary hover:text-primary"
                   >
                     {child.title}
                   </Link>
@@ -140,7 +140,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                           target={child.href.startsWith("http") ? "_blank" : undefined}
                           rel={child.href.startsWith("http") ? "noopener noreferrer" : undefined}
                           onClick={() => setOpen(false)}
-                          className="rounded-sm px-2 py-2 text-base text-muted-foreground hover:text-primary"
+                          className="px-2 py-2 text-base text-muted-foreground hover:text-primary"
                         >
                           {child.title}
                         </Link>

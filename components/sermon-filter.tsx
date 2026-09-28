@@ -5,7 +5,7 @@ const categories = ["전체", "주일예배", "금요예배", "새벽예배", "�
 
 export function SermonFilter({ active }: { active?: string }) {
   return (
-    <nav className="overflow-x-auto rounded-2xl border border-border bg-card p-2 shadow-sm" aria-label="말씀과 찬양 게시판">
+    <nav className="overflow-x-auto border border-border bg-card p-2 shadow-sm" aria-label="말씀과 찬양 게시판">
       <div className="flex min-w-max gap-2">
         {categories.map((cat) => {
           const isActive = (cat === "전체" && !active) || cat === active
@@ -17,7 +17,7 @@ export function SermonFilter({ active }: { active?: string }) {
               href={href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex h-12 items-center justify-center rounded-2xl px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
+                "flex h-12 items-center justify-center px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
                 isActive
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-white/40 text-foreground hover:bg-secondary hover:text-primary",

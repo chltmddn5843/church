@@ -7,7 +7,7 @@ export const BulletinPdfViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="mt-8 rounded-2xl border border-border bg-card p-16 text-center text-sm text-muted-foreground shadow-sm">
+      <div className="mt-8 border border-border bg-card p-16 text-center text-sm text-muted-foreground shadow-sm">
         주보를 불러오는 중이에요...
       </div>
     ),

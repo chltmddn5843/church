@@ -1,8 +1,11 @@
-import { writeFile } from "node:fs/promises"
+import { mkdir, writeFile } from "node:fs/promises"
 import { spawnSync } from "node:child_process"
 
 const origin = "https://www.wdchurch.com"
 const output = "/tmp/church-legacy-import.sql"
+const fileDir = "/tmp/church-legacy-files"
+// --local targets the dev D1/R2 state so an import can be checked before touching production.
+const target = process.argv.includes("--local") ? "--local" : "--remote"
 const onlyBoard = Number(process.argv.find(arg => arg.startsWith("--board="))?.split("=")[1]) || null
 const maxPages = Number(process.argv.find(arg => arg.startsWith("--pages="))?.split("=")[1]) || 50
 const boards = new Map([
@@ -21,6 +24,40 @@ const between = (html, start, end) => {
   const to = html.indexOf(end, from + start.length)
   return from < 0 || to < 0 ? "" : html.slice(from + start.length, to)
 }
+const uploads = []
+const extensions = { "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp", "application/pdf": "pdf" }
+
+// Old notices are mostly poster images: keep every attached file (and any body image without one),
+// copy it into our R2 bucket, and link it to the post by its legacy id.
+function legacyFiles(html) {
+  const files = [...html.matchAll(/data-href="(\/File\/Download\?paramFileU=\d+)"[^>]*filename='([^']*)'/g)]
+    .map(([, href, name]) => ({ url: `${origin}${href}`, name: decode(name) }))
+  const names = new Set(files.map(file => file.name))
+  const body = between(html, '<div class="detail-content">', '<div class="board-share">')
+  for (const [, alt, src] of body.matchAll(/<img[^>]*alt="([^"]*)"[^>]*src="([^"]+)"/g)) {
+    if (!names.has(decode(alt))) files.push({ url: src.replace(/^http:/, "https:"), name: decode(alt) || src.split("/").pop() })
+  }
+  return files
+}
+
+async function copyFiles(boardId, id, date, files) {
+  const statements = []
+  for (const [n, file] of files.entries()) {
+    const response = await fetch(file.url)
+    if (!response.ok) { console.warn(`skip ${file.url}: ${response.status}`); continue }
+    const contentType = (response.headers.get("content-type") || "application/octet-stream").split(";")[0]
+    const bytes = Buffer.from(await response.arrayBuffer())
+    const ext = extensions[contentType] || file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "bin"
+    const key = `attachments/legacy/${boardId}/${id}/${n + 1}.${ext}`
+    const localPath = `${fileDir}/${key.replaceAll("/", "_")}`
+    await writeFile(localPath, bytes)
+    uploads.push({ key, localPath, contentType })
+    const url = `/api/uploads/${key}`
+    statements.push(`INSERT INTO attachments (postId,name,url,contentType,size,createdAt) SELECT id,${quote(file.name)},${quote(url)},${quote(contentType)},${bytes.length},${date} FROM posts WHERE legacyBoard=${boardId} AND legacyId=${id} AND NOT EXISTS (SELECT 1 FROM attachments WHERE url=${quote(url)});`)
+  }
+  return statements
+}
+
 async function get(path) {
   const response = await fetch(`${origin}${path}`)
   if (!response.ok) throw new Error(`${path}: ${response.status}`)
@@ -68,22 +105,34 @@ async function importBoard([boardId, [category, visibility]]) {
       try { html = await get(`/Board/Detail/${boardId}/${id}`) } catch { return null }
       const title = decode(between(html, '<div class="document-title">', "</div>"))
       const content = decode(between(html, '<div class="detail-content">', '<div class="board-share">'))
-      const date = decode(between(html, '<div class="document-regdate">', "</div>"))
-      return title && content ? `INSERT OR IGNORE INTO posts (title,content,category,authorName,pinned,visibility,legacyBoard,legacyId,createdAt,updatedAt) VALUES (${quote(title)},${quote(content)},${quote(category)},'관리자',0,${quote(visibility)},${boardId},${id},unixepoch(${quote(date)}),unixepoch(${quote(date)}));` : null
+      const files = legacyFiles(html)
+      if (!title || (!content && !files.length)) return null
+      // The old site shows Korea time; store it as the real instant.
+      const date = `unixepoch(${quote(decode(between(html, '<div class="document-regdate">', "</div>")))},'-9 hours')`
+      return [
+        `INSERT OR IGNORE INTO posts (title,content,category,authorName,pinned,visibility,legacyBoard,legacyId,createdAt,updatedAt) VALUES (${quote(title)},${quote(content)},${quote(category)},'관리자',0,${quote(visibility)},${boardId},${id},${date},${date});`,
+        ...(await copyFiles(boardId, id, date, files)),
+      ]
     }))
-    statements.push(...records.filter(Boolean))
+    statements.push(...records.filter(Boolean).flat())
   }
   return statements
 }
+await mkdir(fileDir, { recursive: true })
 const selectedBoards = onlyBoard ? [...boards].filter(([id]) => id === onlyBoard) : [...boards]
 if (!selectedBoards.length) throw new Error(`Unknown board: ${onlyBoard}`)
 sql.push(...(await Promise.all(selectedBoards.map(importBoard))).flat())
 
 await writeFile(output, `${sql.join("\n")}\n`)
-console.log(`Generated ${sql.length - 1} records: ${output}`)
+console.log(`Generated ${sql.length - 1} statements and ${uploads.length} files: ${output}, ${fileDir}`)
 if (process.argv.includes("--apply")) {
-  const result = spawnSync("npx", ["wrangler", "d1", "execute", "church-db", "--remote", "--file", output], { stdio: "inherit" })
+  // Files first, so no attachment row ever points at a missing object.
+  for (const { key, localPath, contentType } of uploads) {
+    const put = spawnSync("npx", ["wrangler", "r2", "object", "put", `church/${key}`, "--file", localPath, "--content-type", contentType, target], { stdio: "inherit" })
+    if (put.status !== 0) { process.exitCode = put.status ?? 1; throw new Error(`upload failed: ${key}`) }
+  }
+  const result = spawnSync("npx", ["wrangler", "d1", "execute", "church-db", target, "--file", output], { stdio: "inherit" })
   process.exitCode = result.status ?? 1
 } else {
-  console.log("Review the SQL, then run: npm run content:import -- --apply")
+  console.log("Review the SQL, then run: npm run content:import -- --apply (add --local to try it on the dev database)")
 }

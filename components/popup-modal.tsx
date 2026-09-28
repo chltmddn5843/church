@@ -57,12 +57,12 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
           key={p.id}
           role="dialog"
           aria-label={p.title}
-          className="pointer-events-auto max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
+          className="pointer-events-auto max-w-[calc(100vw-2rem)] overflow-hidden border border-border bg-card shadow-2xl"
           style={{ width: p.width ?? 420 }}
         >
-          <div className="flex items-center justify-between bg-primary px-4 py-2 text-primary-foreground">
+          <div className="flex items-center justify-between bg-primary py-0 pl-4 pr-2 text-primary-foreground">
             <span className="line-clamp-1 text-sm font-semibold">{p.title}</span>
-            <button type="button" onClick={() => close(p.id)} aria-label="팝업 닫기" className="rounded p-1 hover:bg-primary-foreground/20">
+            <button type="button" onClick={() => close(p.id)} aria-label="팝업 닫기" className="-mr-2 flex size-11 items-center justify-center hover:bg-primary-foreground/20">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -79,11 +79,11 @@ export function PopupModal({ popups }: { popups: Popup[] }) {
               </div>
             ))}
           {p.content && <p className="px-4 py-3 text-sm leading-relaxed text-card-foreground">{p.content}</p>}
-          <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
-            <button type="button" onClick={() => hideForDay(p.id)} className="hover:text-foreground">
+          <div className="flex items-center justify-between border-t border-border px-2 text-sm text-muted-foreground">
+            <button type="button" onClick={() => hideForDay(p.id)} className="min-h-11 px-2 hover:text-foreground">
               오늘 하루 보지 않기
             </button>
-            <button type="button" onClick={() => close(p.id)} className="hover:text-foreground">
+            <button type="button" onClick={() => close(p.id)} className="min-h-11 px-2 hover:text-foreground">
               닫기
             </button>
           </div>

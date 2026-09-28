@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowUpRight, Banknote, Building2, Ticket } from "lucide-react"
+import { PageBanner } from "@/components/page-banner"
+import { SectionHeading } from "@/components/section-heading"
 
 export const metadata: Metadata = {
   title: "스마트 헌금",
@@ -15,39 +17,36 @@ const offerings = [
 
 export default function SmartOfferingPage() {
   return (
-    <section className="bg-[#f6fbff] px-4 py-16 md:py-24">
-      <div className="mx-auto max-w-5xl">
-        <div className="text-center">
-          <p className="text-sm font-semibold tracking-[.2em] text-ring">SMART OFFERING</p>
-          <h1 className="mt-3 font-serif text-4xl font-bold text-[#183247] md:text-5xl">스마트 헌금</h1>
-          <p className="mx-auto mt-4 max-w-xl break-keep text-muted-foreground">
-            이용할 항목을 선택하면 안전한 외부 신청 페이지로 이동합니다.
-          </p>
-        </div>
+    <>
+      <PageBanner title="스마트 헌금" subtitle="이용할 항목을 선택하면 안전한 외부 신청 페이지로 이동합니다." />
+      <section className="px-4 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeading eyebrow="Smart Offering" title="헌금 · 식권" />
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {offerings.map(({ title, description, href, icon: Icon }) => (
-            <Link
-              key={title}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex min-h-56 flex-col rounded-2xl border border-border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-accent hover:shadow-lg"
-            >
-              <span className="flex size-12 items-center justify-center rounded-xl bg-[#eaf7ff] text-primary">
-                <Icon className="size-6" />
-              </span>
-              <h2 className="mt-6 text-xl font-bold text-[#183247]">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-              <span className="mt-auto flex items-center gap-1 pt-6 text-sm font-semibold text-ring">
-                이용하기 <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </span>
-            </Link>
-          ))}
-        </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {offerings.map(({ title, description, href, icon: Icon }) => (
+              <Link
+                key={title}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex min-h-56 flex-col border border-border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-accent hover:shadow-lg"
+              >
+                <span className="flex size-12 items-center justify-center bg-muted text-primary">
+                  <Icon className="size-6" />
+                </span>
+                <h3 className="mt-6 font-serif text-xl font-semibold text-foreground">{title}</h3>
+                <p className="mt-2 leading-relaxed text-muted-foreground">{description}</p>
+                <span className="mt-auto flex items-center gap-1 pt-6 text-sm font-semibold text-primary">
+                  이용하기 <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+              </Link>
+            ))}
+          </div>
 
-        <p className="mt-8 text-center text-sm text-muted-foreground">헌금 현황은 관리자가 전달한 전용 링크에서만 확인할 수 있습니다.</p>
-      </div>
-    </section>
+          <p className="mt-8 text-sm text-muted-foreground">헌금 현황은 관리자가 전달한 전용 링크에서만 확인할 수 있습니다.</p>
+        </div>
+      </section>
+    </>
   )
 }

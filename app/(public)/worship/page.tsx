@@ -11,8 +11,8 @@ export default function WorshipPage() {
   return (
     <>
       <PageBanner title="예배 안내" subtitle="원당교회의 예배와 모임 시간을 확인하세요." image="/images/worship-praise-wide.jpg" />
-      <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4">
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <WorshipSchedule sections="all" />
         </div>
       </section>

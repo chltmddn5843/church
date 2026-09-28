@@ -30,10 +30,11 @@ export function Pagination({
     <nav aria-label="페이지" className="mt-8 flex items-center justify-center gap-1">
       <Link
         href={hrefFor(Math.max(1, page - 1))}
+        aria-label="이전 페이지"
         aria-disabled={page <= 1}
         tabIndex={page <= 1 ? -1 : undefined}
         className={cn(
-          "flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground",
+          "flex h-9 w-9 items-center justify-center border border-border text-muted-foreground",
           page <= 1 ? "pointer-events-none opacity-40" : "hover:bg-secondary hover:text-foreground",
         )}
       >
@@ -48,7 +49,7 @@ export function Pagination({
             href={hrefFor(p)}
             aria-current={p === page ? "page" : undefined}
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold",
+              "flex h-9 w-9 items-center justify-center text-sm font-semibold",
               p === page ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary",
             )}
           >
@@ -58,10 +59,11 @@ export function Pagination({
       )}
       <Link
         href={hrefFor(Math.min(totalPages, page + 1))}
+        aria-label="다음 페이지"
         aria-disabled={page >= totalPages}
         tabIndex={page >= totalPages ? -1 : undefined}
         className={cn(
-          "flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground",
+          "flex h-9 w-9 items-center justify-center border border-border text-muted-foreground",
           page >= totalPages ? "pointer-events-none opacity-40" : "hover:bg-secondary hover:text-foreground",
         )}
       >

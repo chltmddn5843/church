@@ -25,11 +25,11 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
           <button
             key={item.id}
             onClick={() => setSelected(item)}
-            className="group relative aspect-square overflow-hidden rounded-xl border border-border"
+            className="group relative aspect-square overflow-hidden border border-border"
           >
             <Image
               src={item.imageUrl || "/placeholder.svg"}
-              alt={item.title}
+              alt=""
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
@@ -49,9 +49,9 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                 <Image src={selected.imageUrl || "/placeholder.svg"} alt={selected.title} fill className="object-contain" />
               </div>
               <div className="p-5">
-                <h3 className="font-serif text-lg font-bold text-foreground">{selected.title}</h3>
+                <h3 className="font-serif text-lg font-semibold text-foreground">{selected.title}</h3>
                 {selected.description && (
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{selected.description}</p>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">{selected.description}</p>
                 )}
               </div>
             </>

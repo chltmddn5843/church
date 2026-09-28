@@ -26,6 +26,7 @@ export const church = {
         { title: "비전·사명", href: "/about#vision" },
         { title: "선교", href: "/about#mission" },
         { title: "오시는 길", href: "/about#location" },
+        { title: "3D 공간 안내", href: "/campus" },
       ],
     },
     {
@@ -92,6 +93,11 @@ export const church = {
 
 export type NavItem = (typeof church.nav)[number]
 
+export const worshipPlaces = {
+  mainSanctuary: "믿음관(FAITH) 1층 비전홀 (예배당)",
+  kindergarten: "사랑관(LOVE) 2층 유치부",
+} as const
+
 // Education departments, shared by the 다음세대 page and the home 교회학교 strip.
 export const departments = [
   {
@@ -108,7 +114,7 @@ export const departments = [
     name: "유치부",
     age: "5~7세",
     time: "주일 오전 11:00",
-    place: "소망관 2층 다윗홀",
+    place: worshipPlaces.kindergarten,
     desc: "즐겁게 찬양하고 기도하며 말씀을 배우고, 바른 예배 습관과 말씀 묵상으로 세상의 빛과 소금이 되는 예수님의 꼬마 제자를 세웁니다.",
     image: "/images/next-generation/kindergarten.jpg",
   },
@@ -117,7 +123,7 @@ export const departments = [
     name: "유년부",
     age: "초등학교 1~3학년",
     time: "주일 오후 12:00~1:20",
-    place: "소망관 2층 요셉홀",
+    place: "소망관 1층",
     desc: "믿음의 눈으로 세상을 바라보며 순종하는 예수님의 제자, 유년부! 하나님께서 맡기신 이 세상 가운데서도 믿음의 눈으로 세상을 바라보고, 하나님의 말씀에 순종하며 나아갑니다.",
     image: "/images/next-generation/유년부.jpg",
   },

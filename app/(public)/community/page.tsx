@@ -5,6 +5,7 @@ import { Eye, ExternalLink, User, ChevronRight, Home, List, LayoutGrid, ImageIco
 import { createPost } from "@/app/actions/posts"
 import { Button } from "@/components/ui/button"
 import { Pagination } from "@/components/pagination"
+import { PageBanner } from "@/components/page-banner"
 import { cn } from "@/lib/utils"
 import { getPosts, getPostsCount, getPostThumbnails } from "@/lib/queries"
 import { getSessionUser } from "@/lib/session"
@@ -100,8 +101,9 @@ export default async function CommunityPage({
 
   return (
     <>
-      <section className="py-8 md:py-12">
-        <div className="mx-auto max-w-6xl px-4">
+      <PageBanner title="커뮤니티" subtitle="원당교회의 소식과 이야기를 나눕니다." image="/images/worship-praise-2.jpg" />
+      <section className="py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <nav aria-label="이동 경로" className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Link href="/" className="flex items-center hover:text-primary">
               <Home className="size-4" />
@@ -150,7 +152,7 @@ export default async function CommunityPage({
                       href={href}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "flex h-12 shrink-0 items-center justify-center rounded-sm px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
+                        "flex h-12 shrink-0 items-center justify-center px-6 text-center text-base font-semibold transition-all active:scale-[0.98] active:bg-white/40",
                         isActive
                           ? "bg-primary text-primary-foreground"
                           : "bg-white/40 text-foreground hover:bg-secondary hover:text-primary",
@@ -171,32 +173,32 @@ export default async function CommunityPage({
                     <input type="hidden" name="category" value="새가족소개" />
                     <input type="hidden" name="visibility" value="public" />
                     <input type="hidden" name="returnTo" value="/community?category=새가족소개" />
-                    <input name="title" required placeholder="제목" className="h-11 rounded-sm border bg-background px-3" />
-                    <textarea name="content" required rows={6} placeholder="내용" className="rounded-sm border bg-background p-3" />
-                    <Button type="submit" className="w-fit rounded-sm">등록</Button>
+                    <input name="title" required placeholder="제목" className="h-11 border bg-background px-3" />
+                    <textarea name="content" required rows={6} placeholder="내용" className="border bg-background p-3" />
+                    <Button type="submit" className="w-fit">등록</Button>
                   </form>
                 </details>
               )}
 
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h1 className="text-2xl font-bold text-foreground">{selected ?? "전체"}</h1>
+                <h2 className="font-serif text-2xl font-semibold text-foreground">{selected ?? "전체"}</h2>
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-muted-foreground">총 {total.toLocaleString("ko-KR")}건</span>
                   {user?.role === "admin" && selected !== "새가족소개" && (
-                    <Button render={<Link href={writeHref} />} nativeButton={false} size="sm" className="rounded-sm">글쓰기</Button>
+                    <Button render={<Link href={writeHref} />} nativeButton={false} size="sm" className="">글쓰기</Button>
                   )}
                 </div>
               </div>
 
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 rounded-sm border border-border p-1" role="group" aria-label="보기 방식">
+                  <div className="flex items-center gap-1 border border-border p-1" role="group" aria-label="보기 방식">
                     <Link
                       href={viewHref("list")}
                       aria-current={view === "list" ? "page" : undefined}
                       aria-label="목록형으로 보기"
                       className={cn(
-                        "flex size-8 items-center justify-center rounded-sm transition-colors",
+                        "flex size-8 items-center justify-center transition-colors",
                         view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
                       )}
                     >
@@ -207,7 +209,7 @@ export default async function CommunityPage({
                       aria-current={view === "gallery" ? "page" : undefined}
                       aria-label="갤러리형으로 보기"
                       className={cn(
-                        "flex size-8 items-center justify-center rounded-sm transition-colors",
+                        "flex size-8 items-center justify-center transition-colors",
                         view === "gallery" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary",
                       )}
                     >
@@ -220,7 +222,7 @@ export default async function CommunityPage({
                 <form action="/community" className="flex items-center gap-2">
                   {selected && <input type="hidden" name="category" value={selected} />}
                   {view !== "list" && <input type="hidden" name="view" value={view} />}
-                  <select name="field" defaultValue={field} className="h-9 rounded-sm border border-border bg-background px-2 text-sm">
+                  <select name="field" defaultValue={field} className="h-9 border border-border bg-background px-2 text-sm">
                     <option value="title">제목</option>
                     <option value="author">작성자</option>
                   </select>
@@ -229,9 +231,9 @@ export default async function CommunityPage({
                     name="q"
                     defaultValue={q}
                     placeholder="검색어를 입력하세요"
-                    className="h-9 w-36 rounded-sm border border-border bg-background px-3 text-sm sm:w-52"
+                    className="h-9 w-36 border border-border bg-background px-3 text-sm sm:w-52"
                   />
-                  <Button type="submit" size="sm" className="rounded-sm">검색</Button>
+                  <Button type="submit" size="sm" className="">검색</Button>
                 </form>
               </div>
 
@@ -240,14 +242,14 @@ export default async function CommunityPage({
                 <table className="w-full table-fixed text-sm">
                   <colgroup>
                     <col className="w-16" />
-                    <col className="w-24" />
+                    <col className="w-32" />
                     <col />
                     <col className="w-28" />
                     <col className="w-28" />
                     <col className="w-20" />
                   </colgroup>
                   <thead>
-                    <tr className="border-b border-border bg-secondary/50 text-xs font-semibold text-muted-foreground">
+                    <tr className="border-b border-border bg-secondary/50 text-sm font-semibold text-muted-foreground">
                       <th className="px-4 py-3 text-center font-semibold">번호</th>
                       <th className="px-4 py-3 text-left font-semibold">구분</th>
                       <th className="px-4 py-3 text-left font-semibold">제목</th>
@@ -264,7 +266,7 @@ export default async function CommunityPage({
                           <tr key={post.id} className="hover:bg-secondary/40">
                             <td className="px-4 py-3 text-center">
                               {post.pinned ? (
-                                <span className="inline-flex h-6 items-center rounded-sm bg-primary/10 px-2 text-xs font-bold text-primary">공지</span>
+                                <span className="text-sm font-bold text-primary">공지</span>
                               ) : (
                                 <span className="text-muted-foreground">{post.num}</span>
                               )}
@@ -278,7 +280,7 @@ export default async function CommunityPage({
                                   <Link href={`/community/${post.id}`} className="truncate hover:text-primary hover:underline">{post.title}</Link>
                                 )}
                                 {href && <ExternalLink className="size-3.5 shrink-0 text-muted-foreground" />}
-                                {isNewPost(post.createdAt) && <span className="shrink-0 text-xs font-bold text-primary">N</span>}
+                                {isNewPost(post.createdAt) && <span className="shrink-0 text-sm font-bold text-primary">N</span>}
                               </span>
                             </td>
                             <td className="truncate px-4 py-3 text-center text-muted-foreground">{post.authorName}</td>
@@ -304,13 +306,13 @@ export default async function CommunityPage({
                     const row = (
                       <>
                         <div className="flex items-center justify-between gap-3">
-                          <div className="flex min-w-0 flex-wrap items-baseline gap-2 text-xs font-medium text-muted-foreground">
+                          <div className="flex min-w-0 flex-wrap items-baseline gap-2 text-sm font-medium text-muted-foreground">
                             <span>[{post.category}]</span>
                             {post.pinned && <span className="font-bold text-primary">공지</span>}
                             {isNewPost(post.createdAt) && <span className="font-bold text-primary">N</span>}
                             {href && <ExternalLink className="size-3.5 shrink-0" />}
                           </div>
-                          <div className="hidden shrink-0 items-center gap-3 text-xs text-muted-foreground sm:flex">
+                          <div className="hidden shrink-0 items-center gap-3 text-sm text-muted-foreground sm:flex">
                             <time dateTime={new Date(post.createdAt).toISOString()}>{new Date(post.createdAt).toLocaleDateString("ko-KR")}</time>
                             {post.id > 0 && (
                               <span className="flex items-center gap-1">
@@ -325,7 +327,7 @@ export default async function CommunityPage({
                           <p className="mt-1 truncate text-sm text-muted-foreground">{excerpt(post.content)}</p>
                         )}
 
-                        <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground sm:hidden">
+                        <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground sm:hidden">
                           <span className="flex items-center gap-1">
                             <User className="size-3.5" /> {post.authorName}
                           </span>
@@ -365,7 +367,7 @@ export default async function CommunityPage({
                       const thumb = thumbnails.get(post.id)
                       const inner = (
                         <>
-                          <div className="relative aspect-square w-full overflow-hidden rounded-sm border border-border bg-secondary">
+                          <div className="relative aspect-square w-full overflow-hidden border border-border bg-secondary">
                             {thumb ? (
                               <Image src={thumb} alt="" fill className="object-cover" />
                             ) : (
@@ -373,15 +375,13 @@ export default async function CommunityPage({
                                 <ImageIcon className="size-8" />
                               </div>
                             )}
-                            {post.pinned && (
-                              <span className="absolute left-2 top-2 rounded-sm bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">공지</span>
-                            )}
-                            {isNewPost(post.createdAt) && (
-                              <span className="absolute right-2 top-2 rounded-sm bg-card px-1.5 py-0.5 text-xs font-bold text-primary">N</span>
-                            )}
                           </div>
-                          <h3 className="mt-2 truncate text-sm font-semibold text-foreground">{post.title}</h3>
-                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                          <h3 className="mt-2 flex min-w-0 items-center gap-1.5 text-sm font-semibold text-foreground">
+                            {post.pinned && <span className="shrink-0 font-bold text-primary">공지</span>}
+                            <span className="truncate">{post.title}</span>
+                            {isNewPost(post.createdAt) && <span className="shrink-0 text-sm font-bold text-primary">N</span>}
+                          </h3>
+                          <p className="mt-0.5 truncate text-sm text-muted-foreground">
                             {post.authorName} · {new Date(post.createdAt).toLocaleDateString("ko-KR")}
                           </p>
                         </>

@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getSermon } from "@/lib/queries"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, User, BookOpen } from "lucide-react"
 
@@ -30,7 +29,7 @@ export default async function SermonDetailPage({
   if (!sermon) notFound()
 
   return (
-    <article className="py-12 md:py-16">
+    <article className="py-14 md:py-20">
       <div className="mx-auto max-w-4xl px-4">
         <Button render={<Link href={category ? `/sermons?category=${encodeURIComponent(category)}` : "/sermons"} />} nativeButton={false} variant="ghost" size="sm" className="mb-6">
           <>
@@ -39,7 +38,7 @@ export default async function SermonDetailPage({
           </>
         </Button>
 
-        <Badge variant="secondary">{sermon.category}</Badge>
+        <p className="text-sm font-semibold text-primary">{sermon.category}</p>
         <h1 className="mt-3 text-balance font-serif text-3xl font-bold text-foreground md:text-4xl">
           {sermon.title}
         </h1>
@@ -62,7 +61,7 @@ export default async function SermonDetailPage({
         </div>
 
         {sermon.youtubeId ? (
-          <div className="mt-8 aspect-video w-full overflow-hidden rounded-2xl border border-border shadow-sm">
+          <div className="mt-8 aspect-video w-full overflow-hidden border border-border shadow-sm">
             <iframe
               className="h-full w-full"
               src={`https://www.youtube.com/embed/${sermon.youtubeId}`}
@@ -72,14 +71,14 @@ export default async function SermonDetailPage({
             />
           </div>
         ) : (
-          <div className="mt-8 flex aspect-video w-full items-center justify-center rounded-2xl border border-border bg-secondary text-muted-foreground">
+          <div className="mt-8 flex aspect-video w-full items-center justify-center border border-border bg-secondary text-muted-foreground">
             영상이 준비 중입니다.
           </div>
         )}
 
         {sermon.summary && (
-          <div className="mt-8 rounded-xl border border-border bg-card p-6">
-            <h2 className="font-serif text-lg font-bold text-foreground">말씀 요약</h2>
+          <div className="mt-8 border border-border bg-card p-6">
+            <h2 className="font-serif text-lg font-semibold text-foreground">말씀 요약</h2>
             <p className="mt-3 whitespace-pre-line leading-relaxed text-muted-foreground">{sermon.summary}</p>
           </div>
         )}

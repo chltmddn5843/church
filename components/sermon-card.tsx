@@ -12,7 +12,7 @@ type Sermon = {
 }
 
 function thumb(youtubeId: string | null) {
-  return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : "/images/cross-light.png"
+  return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : "/images/worship-sermon.jpg"
 }
 
 export function SermonCard({ sermon, href, category }: { sermon: Sermon, href?: string, category?: string }) {
@@ -21,23 +21,23 @@ export function SermonCard({ sermon, href, category }: { sermon: Sermon, href?: 
       href={href ?? `/sermons/${sermon.id}${category ? `?category=${encodeURIComponent(category)}` : ""}`}
       target={href ? "_blank" : undefined}
       rel={href ? "noopener noreferrer" : undefined}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md"
+      className="group flex flex-col overflow-hidden border border-border bg-card shadow-sm transition-all hover:shadow-md"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={thumb(sermon.youtubeId) || "/placeholder.svg"}
-          alt={sermon.title}
+          alt=""
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 opacity-0 transition-opacity group-hover:opacity-100">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
+          <span className="flex h-14 w-14 items-center justify-center bg-accent text-accent-foreground">
             <Play className="h-6 w-6 fill-current" />
           </span>
         </div>
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="line-clamp-2 font-serif text-lg font-bold text-foreground transition-colors group-hover:text-primary">
+        <h3 className="line-clamp-2 font-serif text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
           {sermon.title}
         </h3>
         {sermon.scripture && <p className="mt-1 text-sm text-primary">{sermon.scripture}</p>}

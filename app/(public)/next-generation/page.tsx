@@ -19,25 +19,25 @@ export default function NextGenerationPage() {
         image="/images/next-generation.jpg"
       />
 
-      <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4">
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SectionHeading
             eyebrow="Next Generation"
             title="교육부서 안내"
             description="연령별 맞춤 신앙 교육으로 자라나는 다음세대"
           />
-          <div className="mt-12 space-y-16">
+          <div className="mt-10 space-y-16 md:space-y-24">
             {departments.map((d, i) => (
               <div
                 key={d.id}
                 id={d.id}
                 className="grid scroll-mt-24 items-center gap-8 md:grid-cols-2"
               >
-                <div className={`relative aspect-[4/3] overflow-hidden rounded-2xl bg-secondary shadow-lg ${i % 2 === 1 ? "md:order-2" : ""}`}>
+                <div className={`relative aspect-[4/3] overflow-hidden bg-secondary shadow-lg ${i % 2 === 1 ? "md:order-2" : ""}`}>
                   <Image src={d.image} alt={d.name} fill className={d.contain ? "object-contain" : "object-cover"} />
                 </div>
                 <div>
-                  <p className="text-base font-semibold uppercase tracking-widest text-primary md:text-lg">{d.age}</p>
+                  <p className="text-sm font-semibold text-primary md:text-base">{d.age}</p>
                   <h3 className="mt-2 font-serif text-3xl font-bold text-foreground md:text-4xl">{d.name}</h3>
                   <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{d.desc}</p>
                   <div className="mt-6 flex flex-col gap-2 text-base md:text-lg">

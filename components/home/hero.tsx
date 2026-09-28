@@ -40,9 +40,9 @@ export function Hero() {
           className={`object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 via-65% to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 via-65% to-transparent" />
 
-      <div className="absolute inset-x-6 bottom-28 md:inset-x-12 md:bottom-36 lg:max-w-3xl">
+      <div className="absolute inset-x-6 bottom-40 md:inset-x-12 md:bottom-52 lg:max-w-3xl">
         <div className="relative">
           {slides.map((slide, i) => (
             <div
@@ -59,7 +59,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-14 left-6 flex items-center gap-3 md:bottom-20 md:left-12">
+      <div className="absolute bottom-24 left-6 flex items-center gap-3 md:bottom-32 md:left-12">
         <button
           type="button"
           onClick={prev}
@@ -91,7 +91,6 @@ export function Hero() {
           {slides.length}장 중 {index + 1}번째 이미지: {slides[index].title} — {slides[index].subtitle}
         </span>
       </div>
-      <div aria-hidden="true" className="absolute -bottom-0.5 left-1/2 h-9 w-[160%] -translate-x-1/2 rounded-t-[50%_100%] bg-white md:h-[58px] md:w-[130%]" />
     </section>
   )
 }

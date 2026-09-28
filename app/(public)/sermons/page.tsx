@@ -4,6 +4,7 @@ import { SermonCard } from "@/components/sermon-card"
 import { SermonFilter } from "@/components/sermon-filter"
 import { PageBanner } from "@/components/page-banner"
 import { Pagination } from "@/components/pagination"
+import { SectionHeading } from "@/components/section-heading"
 import { getYoutubeSermons } from "@/lib/youtube"
 
 const PAGE_SIZE = 12
@@ -38,12 +39,12 @@ export default async function SermonsPage({
 
   return (
     <>
-      <PageBanner title="말씀과 찬양" subtitle="선포된 하나님의 말씀으로 은혜를 나눕니다." />
-      <section className="py-16 md:py-20">
-        <div className="mx-auto max-w-6xl px-4">
+      <PageBanner title="말씀과 찬양" subtitle="선포된 하나님의 말씀으로 은혜를 나눕니다." image="/images/worship-sermon.jpg" />
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SermonFilter active={category} />
           {sermons.length > 0 ? (
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sermons.map((s) => (
                 <SermonCard key={s.id} sermon={s} category={category} />
               ))}
@@ -52,7 +53,7 @@ export default async function SermonsPage({
             videos.length === 0 && <p className="mt-16 text-center text-muted-foreground">해당 분류의 설교가 아직 없습니다.</p>
           )}
           <Pagination page={page} totalPages={totalPages} hrefFor={pageHref} />
-          {videos.length > 0 && <><h2 className="mt-14 text-2xl font-bold">원당교회 YouTube 최신 영상</h2><div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{videos.map((video, index) => <SermonCard key={video.youtubeId} href={`https://www.youtube.com/watch?v=${video.youtubeId}`} sermon={{ id: -index - 1, title: video.title, preacher: "양승철", scripture: video.scripture, category: video.category, youtubeId: video.youtubeId, preachedAt: video.preachedAt }}/>)}</div></>}
+          {videos.length > 0 && <><div className="mt-16"><SectionHeading eyebrow="YouTube" title="원당교회 YouTube 최신 영상" /></div><div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{videos.map((video, index) => <SermonCard key={video.youtubeId} href={`https://www.youtube.com/watch?v=${video.youtubeId}`} sermon={{ id: -index - 1, title: video.title, preacher: "양승철", scripture: video.scripture, category: video.category, youtubeId: video.youtubeId, preachedAt: video.preachedAt }}/>)}</div></>}
         </div>
       </section>
     </>

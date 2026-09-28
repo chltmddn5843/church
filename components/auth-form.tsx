@@ -54,14 +54,14 @@ export function AuthForm({ mode, emailEnabled }: { mode: "sign-in" | "sign-up"; 
     <main className="flex min-h-svh items-center justify-center bg-secondary px-4 py-12">
       <Card className="w-full max-w-sm p-6">
         <Link href="/" className="mb-6 flex items-center justify-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <span className="flex h-10 w-10 items-center justify-center bg-primary text-primary-foreground">
             <Cross className="h-5 w-5" />
           </span>
-          <span className="font-serif text-xl font-bold text-foreground">{church.name}</span>
+          <span className="font-serif text-xl font-semibold text-foreground">{church.name}</span>
         </Link>
 
         <div className="mb-6 text-center">
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             {isSignUp ? "회원가입" : "로그인"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

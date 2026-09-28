@@ -50,16 +50,16 @@ export default async function DiscipleshipPage() {
       <PageBanner
         title="제자훈련"
         subtitle="배워서 남 주는 제자, 예수님을 닮아가는 훈련"
-        image="/images/discipleship.png"
+        image="/images/discipleship/newfamily-sanctuary.jpg"
       />
 
-      <section id="intro" className="scroll-mt-24 py-16 md:py-24">
-        <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-2 md:items-center">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg">
-            <Image src="/images/discipleship.png" alt="제자훈련 소그룹 모임" fill className="object-cover" />
+      <section id="intro" className="scroll-mt-24 py-20 md:py-28">
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-2 md:items-center lg:max-w-[1360px] lg:px-6">
+          <div className="relative aspect-[4/3] overflow-hidden shadow-lg">
+            <Image src="/images/discipleship/newfamily-graduation.jpg" alt="새가족반 수료식 단체 사진" fill className="object-cover" />
           </div>
           <div>
-            <SectionHeading eyebrow="Discipleship" title="제자훈련 안내" align="left" />
+            <SectionHeading eyebrow="Discipleship" title="제자훈련 안내" />
             <div className="mt-6 space-y-4 leading-relaxed text-muted-foreground">
               <p>
                 원당교회 제자훈련은 한 사람이 예수 그리스도의 온전한 제자로 세워지는 것을 목표로 합니다.
@@ -73,29 +73,29 @@ export default async function DiscipleshipPage() {
         </div>
       </section>
 
-      <section id="courses" className="scroll-mt-24 bg-secondary py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4">
+      <section id="courses" className="scroll-mt-24 bg-secondary py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SectionHeading eyebrow="Courses" title="훈련 과정" description="단계별로 성장하는 양육 시스템" />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {courses.map((course) => (
-              <div key={course.title} className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <div key={course.title} className="flex flex-col border border-border bg-card p-6 shadow-sm">
+                <span className="flex h-12 w-12 items-center justify-center bg-primary text-primary-foreground">
                   <course.icon className="h-6 w-6" />
                 </span>
-                <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-accent-foreground">
+                <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                   {course.step}
                 </p>
-                <h3 className="mt-1 font-serif text-xl font-bold text-foreground">{course.title}</h3>
+                <h3 className="mt-1 font-serif text-xl font-semibold text-foreground">{course.title}</h3>
                 <p className="text-sm font-medium text-primary">{course.period}</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{course.desc}</p>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{course.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="graduates" className="scroll-mt-24 py-16 md:py-24">
-        <div className="mx-auto max-w-6xl px-4">
+      <section id="graduates" className="scroll-mt-24 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SectionHeading eyebrow="Graduates" title="전체 수료자 사진" description="새가족반, 양육반, 제자반, 사역반 수료 사진을 통합해 볼 수 있습니다." />
           <div className="mt-10">
             <GalleryGrid items={graduates} />

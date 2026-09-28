@@ -39,25 +39,25 @@ export function BulletinPdfViewer({
   const multi = (numPages ?? 0) > 1
 
   return (
-    <div className={cn("flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm", className)}>
+    <div className={cn("flex flex-col overflow-hidden border border-border bg-card shadow-sm", className)}>
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-secondary/60 px-4 py-3">
         <p className="truncate text-sm font-semibold text-foreground">
           {title}
-          {multi && <span className="ml-1.5 text-xs font-normal text-muted-foreground">({pageIndex + 1}/{numPages})</span>}
+          {multi && <span className="ml-1.5 text-sm font-normal text-muted-foreground">({pageIndex + 1}/{numPages})</span>}
         </p>
         <div className="flex shrink-0 gap-2">
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground transition hover:bg-muted"
+            className="inline-flex h-9 items-center gap-1.5 border border-border bg-background px-3 text-sm font-medium text-foreground transition hover:bg-muted"
           >
             <ExternalLink className="size-3.5" /> 새 창
           </a>
           <a
             href={url}
             download
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground transition hover:bg-primary/90"
+            className="inline-flex h-9 items-center gap-1.5 bg-primary px-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
           >
             <Download className="size-3.5" /> 다운로드
           </a>
@@ -86,7 +86,7 @@ export function BulletinPdfViewer({
                 width={pageWidth}
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
-                className="overflow-hidden rounded-lg shadow-sm"
+                className="overflow-hidden shadow-sm"
               />
             </Document>
           )}
@@ -99,7 +99,7 @@ export function BulletinPdfViewer({
               onClick={() => setPageIndex((i) => Math.max(0, i - 1))}
               disabled={pageIndex === 0}
               aria-label="이전 페이지"
-              className="absolute left-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
+              className="absolute left-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center bg-black/50 text-white transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
             >
               <ChevronLeft className="size-5" />
             </button>
@@ -108,7 +108,7 @@ export function BulletinPdfViewer({
               onClick={() => setPageIndex((i) => Math.min((numPages ?? 1) - 1, i + 1))}
               disabled={pageIndex === (numPages ?? 1) - 1}
               aria-label="다음 페이지"
-              className="absolute right-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
+              className="absolute right-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center bg-black/50 text-white transition hover:bg-black/70 disabled:pointer-events-none disabled:opacity-0"
             >
               <ChevronRight className="size-5" />
             </button>
@@ -127,7 +127,7 @@ export function BulletinPdfViewer({
               aria-current={i === pageIndex}
               className="flex size-6 items-center justify-center"
             >
-              <span className={cn("size-2 rounded-full transition", i === pageIndex ? "bg-primary" : "bg-border hover:bg-muted-foreground")} />
+              <span className={cn("size-2 transition", i === pageIndex ? "bg-primary" : "bg-border hover:bg-muted-foreground")} />
             </button>
           ))}
         </div>

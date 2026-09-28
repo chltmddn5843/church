@@ -31,8 +31,8 @@ export default async function GalleryPage({
   return (
     <>
       <PageBanner title="갤러리" subtitle="원당교회의 소중한 순간들" image="/images/gallery-1.jpg" />
-      <section className="py-16 md:py-20">
-        <div className="mx-auto max-w-6xl px-4">
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           {user?.role === "admin" && <div className="mb-6 flex justify-end"><Button render={<Link href="/admin/gallery" />} nativeButton={false}>사진 등록</Button></div>}
           <GalleryGrid items={items} />
           <Pagination page={page} totalPages={totalPages} hrefFor={(p) => (p > 1 ? `/gallery?page=${p}` : "/gallery")} />

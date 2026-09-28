@@ -6,7 +6,7 @@ import { MapPin, Phone, Printer, Mail } from "lucide-react"
 export function SiteFooter() {
   return (
     <footer className="mt-auto bg-sidebar text-sidebar-foreground">
-      <div className="mx-auto max-w-6xl px-4 py-12">
+      <div className="mx-auto max-w-6xl px-4 py-12 lg:max-w-[1360px] lg:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           {/* Church identity */}
           <div>
@@ -61,7 +61,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-xs opacity-60">
+        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-sm opacity-60">
           <p>
             {church.pastorTitle} {church.pastor} · © {new Date().getFullYear()} {church.name}. All rights reserved.
           </p>
