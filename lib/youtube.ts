@@ -30,7 +30,6 @@ type Entry = { youtubeId: string; rawTitle: string; published: string }
 
 const CHANNEL_UPLOADS = "UU0KYIf-En7v5Ee91PL1IchQ" // uploads playlist of channel UC0KYIf-En7v5Ee91PL1IchQ
 const FRESH_MS = 30 * 60 * 1000 // ~48 API calls per list per day, far inside the 10,000-unit daily quota
-const KEEP_SECONDS = 14 * 24 * 60 * 60 // stale copy kept long enough to cover a YouTube outage
 
 // YouTube Data API v3: reliable, needs YOUTUBE_API_KEY. Private/deleted items have no videoPublishedAt.
 async function fromApi(playlistId: string, key: string): Promise<Entry[]> {
@@ -71,32 +70,60 @@ function toVideos(entries: Entry[], category: string, filterByTitle: boolean): V
   )
 }
 
-// API → RSS → last good copy in KV. Fresh copies are reused for 30 minutes so page views don't spend quota.
+// JSON rows in D1's app_cache table. Imported lazily so lib/youtube.test.ts can load this file under plain Node.
+async function cacheStore() {
+  const [{ getDb }, { appCache }, { eq }] = await Promise.all([import("@/lib/db"), import("@/lib/db/schema"), import("drizzle-orm")])
+  const db = getDb()
+  return {
+    get: async <T>(key: string) => {
+      const row = await db.select({ value: appCache.value }).from(appCache).where(eq(appCache.key, key)).get().catch(() => undefined)
+      return row ? (JSON.parse(row.value) as T) : null
+    },
+    put: async (key: string, value: unknown) => {
+      const json = JSON.stringify(value)
+      await db.insert(appCache).values({ key, value: json }).onConflictDoUpdate({ target: appCache.key, set: { value: json } }).catch(() => {})
+    },
+  }
+}
+type CacheStore = Awaited<ReturnType<typeof cacheStore>>
+
+// API → RSS → last good copy in D1. Fresh copies are reused for 30 minutes so page views don't spend quota.
+// A stale copy is served at once and refreshed in the background, so no visitor waits on YouTube (up to 8s per try).
 async function loadVideos(category: string): Promise<Video[]> {
   const { getCloudflareContext } = await import("@opennextjs/cloudflare")
   const { runtimeEnv } = await import("@/lib/runtime-env")
-  const kv = getCloudflareContext().env.AUTH_KV
+  const { ctx } = getCloudflareContext()
+  const store = await cacheStore()
   const cacheKey = `youtube:v2:${category}`
   const playlist = PLAYLISTS[category]
   const revive = (videos: Video[]) => videos.map((video) => ({ ...video, preachedAt: new Date(video.preachedAt) }))
 
-  const cached = await kv.get<{ at: number; videos: Video[] }>(cacheKey, "json").catch(() => null)
+  const cached = await store.get<{ at: number; videos: Video[] }>(cacheKey)
   if (cached && Date.now() - cached.at < FRESH_MS) return revive(cached.videos)
 
-  const key = runtimeEnv("YOUTUBE_API_KEY")
-  for (const [source, load] of [
-    ["api", () => (key ? fromApi(playlist ?? CHANNEL_UPLOADS, key) : Promise.reject(new Error("YOUTUBE_API_KEY not set")))],
-    ["rss", () => fromRss(playlist)],
-  ] as const) {
-    try {
-      const videos = toVideos(await load(), category, !playlist)
-      await kv.put(cacheKey, JSON.stringify({ at: Date.now(), videos }), { expirationTtl: KEEP_SECONDS }).catch(() => {})
-      return videos
-    } catch (error) {
-      console.warn(`YouTube ${source} failed for ${category}:`, error instanceof Error ? error.message : error)
+  const refresh = async () => {
+    const key = runtimeEnv("YOUTUBE_API_KEY")
+    for (const [source, load] of [
+      ["api", () => (key ? fromApi(playlist ?? CHANNEL_UPLOADS, key) : Promise.reject(new Error("YOUTUBE_API_KEY not set")))],
+      ["rss", () => fromRss(playlist)],
+    ] as const) {
+      try {
+        const videos = toVideos(await load(), category, !playlist)
+        await store.put(cacheKey, { at: Date.now(), videos })
+        return videos
+      } catch (error) {
+        console.warn(`YouTube ${source} failed for ${category}:`, error instanceof Error ? error.message : error)
+      }
     }
+    return null
   }
-  return cached ? revive(cached.videos) : []
+
+  // ponytail: every request that sees the stale copy starts its own refresh until one lands; add a lock row if quota ever runs short.
+  if (cached) {
+    ctx.waitUntil(refresh())
+    return revive(cached.videos)
+  }
+  return (await refresh()) ?? []
 }
 
 export type LiveBroadcast = { youtubeId: string; title: string; status: "live" | "upcoming"; scheduledStart: Date | null }
@@ -113,16 +140,27 @@ export async function getLiveBroadcast(manual: { youtubeId: string } | null | un
 
   const { getCloudflareContext } = await import("@opennextjs/cloudflare")
   const { runtimeEnv } = await import("@/lib/runtime-env")
-  const kv = getCloudflareContext().env.AUTH_KV
+  const store = await cacheStore()
   const cacheKey = "youtube:v1:live"
   type Cached = { at: number; live: (Omit<LiveBroadcast, "scheduledStart"> & { scheduledStart: string | null }) | null }
   const revive = (live: Cached["live"]) => (live ? { ...live, scheduledStart: live.scheduledStart ? new Date(live.scheduledStart) : null } : null)
 
-  const cached = await kv.get<Cached>(cacheKey, "json").catch(() => null)
+  const cached = await store.get<Cached>(cacheKey)
   if (cached && Date.now() - cached.at < LIVE_FRESH_MS) return revive(cached.live)
 
   const key = runtimeEnv("YOUTUBE_API_KEY")
   if (!key) return null
+  // A broadcast seen in the last 15 minutes is probably still on: serve it now and re-check in the background.
+  // Anything older must not linger, so that request waits for the check.
+  if (cached && Date.now() - cached.at < 15 * 60 * 1000) {
+    getCloudflareContext().ctx.waitUntil(checkLive(key, store, cacheKey))
+    return revive(cached.live)
+  }
+  const live = await checkLive(key, store, cacheKey)
+  return live === undefined ? null : revive(live)
+}
+
+async function checkLive(key: string, store: CacheStore, cacheKey: string) {
   try {
     const api = "https://www.googleapis.com/youtube/v3"
     const uploads = await fetch(`${api}/playlistItems?part=contentDetails&maxResults=10&playlistId=${CHANNEL_UPLOADS}&key=${encodeURIComponent(key)}`, { signal: AbortSignal.timeout(8000) })
@@ -144,12 +182,11 @@ export async function getLiveBroadcast(manual: { youtubeId: string } | null | un
       : upcoming
         ? { youtubeId: upcoming.item.id, title: parseSermonTitle(decode(upcoming.item.snippet.title)).title, status: "upcoming" as const, scheduledStart: new Date(upcoming.start).toISOString() }
         : null
-    await kv.put(cacheKey, JSON.stringify({ at: now, live: pick }), { expirationTtl: 60 * 60 }).catch(() => {})
-    return revive(pick)
+    await store.put(cacheKey, { at: now, live: pick })
+    return pick
   } catch (error) {
     console.warn("YouTube live check failed:", error instanceof Error ? error.message : error)
-    // A broadcast seen in the last 15 minutes is probably still on; anything older must not linger.
-    return cached && Date.now() - cached.at < 15 * 60 * 1000 ? revive(cached.live) : null
+    return undefined
   }
 }
 

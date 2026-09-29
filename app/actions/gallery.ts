@@ -37,7 +37,7 @@ export async function createGalleryItem(formData: FormData) {
   redirect("/admin/gallery?saved=gallery")
 }
 
-export async function deleteGalleryItem(id: number) {
+export async function deleteGalleryItem(id: number, formData: FormData) {
   await requireAdmin()
   if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 사진 번호가 아닙니다.")
   const db = getDb()
@@ -47,5 +47,7 @@ export async function deleteGalleryItem(id: number) {
   revalidatePath("/admin/gallery")
   revalidatePath("/gallery")
   revalidatePath("/discipleship")
-  redirect("/admin/gallery?saved=deleted")
+  const back = String(formData.get("returnTo") ?? "")
+  const base = back.startsWith("/admin/gallery") ? back : "/admin/gallery"
+  redirect(`${base}${base.includes("?") ? "&" : "?"}saved=deleted`)
 }

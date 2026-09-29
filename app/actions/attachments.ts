@@ -8,7 +8,7 @@ import { getDb } from "@/lib/db"
 import { attachments } from "@/lib/db/schema"
 import { deleteUpload } from "@/lib/uploads"
 
-export async function deleteAttachment(id: number) {
+export async function deleteAttachment(id: number, formData: FormData) {
   await requireAdmin()
   if (!Number.isSafeInteger(id) || id < 1) throw new Error("올바른 첨부파일 번호가 아닙니다.")
   const db = getDb()
@@ -18,5 +18,7 @@ export async function deleteAttachment(id: number) {
   await deleteUpload(file.url)
   revalidatePath("/admin/attachments")
   revalidatePath(`/community/${file.postId}`)
-  redirect("/admin/attachments?saved=deleted")
+  const back = String(formData.get("returnTo") ?? "")
+  const base = back.startsWith("/admin/attachments") ? back : "/admin/attachments"
+  redirect(`${base}${base.includes("?") ? "&" : "?"}saved=deleted`)
 }

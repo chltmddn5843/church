@@ -64,6 +64,13 @@
       "when": 1790560327389,
       "tag": "0008_auth_rate_limit",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1790670750545,
+      "tag": "0009_thin_northstar",
+      "breakpoints": true
     }
   ]
 }

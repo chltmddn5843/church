@@ -151,3 +151,9 @@ export const liveStream = sqliteTable("live_stream", {
   youtubeId: text("youtubeId").notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
+
+// Small JSON cache for the YouTube lists and live check. D1 rather than KV: KV Free allows only 1,000 writes/day.
+export const appCache = sqliteTable("app_cache", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+})

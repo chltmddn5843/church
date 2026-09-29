@@ -3,22 +3,23 @@ import { worshipPlaces } from "@/lib/church"
 import { cn } from "@/lib/utils"
 
 const mainWorship = [
-  { name: "주일예배 1부", day: "주일 오전", time: "08:00 ~ 10:10", place: worshipPlaces.mainSanctuary },
+  { name: "주일예배 1부", day: "주일 오전", time: "08:00 ~ 09:10", place: worshipPlaces.mainSanctuary },
   { name: "주일예배 2부", day: "주일 오전", time: "10:00 ~ 11:10", place: worshipPlaces.mainSanctuary },
   { name: "주일예배 3부", day: "주일 오후", time: "12:00 ~ 01:10", place: worshipPlaces.mainSanctuary },
   { name: "주일셀모임", day: "주일 오후", time: "02:30 ~ 04:30", place: "각 장소" },
-  { name: "금요예배", day: "금요일 저녁", time: "09:00 ~ 11:00", place: worshipPlaces.mainSanctuary },
+  { name: "금요예배", day: "금요일 오후", time: "09:00 ~ 11:00", place: worshipPlaces.mainSanctuary },
   { name: "새벽예배", day: "월~금 오전", time: "05:00 ~ 05:30", place: worshipPlaces.mainSanctuary },
 ]
 
 const nextGenWorship = [
   { name: "유아부", day: "주일 오전", time: "10:00 ~ 11:10", place: "소망관/사무엘홀(1층)" },
-  { name: "유치부", day: "주일 오전", time: "10:00 ~ 11:20", place: worshipPlaces.kindergarten },
-  { name: "유년부", day: "주일 오후", time: "12:00 ~ 01:20", place: "소망관 1층" },
+  { name: "유치부", day: "주일 오전", time: "10:00 ~ 11:20", place: "소망관/다윗홀(2층)" },
+  { name: "유년부", day: "주일 오후", time: "12:00 ~ 01:20", place: "소망관/요셉홀(2층)" },
   { name: "초등부", day: "주일 오전", time: "11:55 ~ 01:20", place: "사랑관/드림홀(2층)" },
   { name: "중등부", day: "주일 오전", time: "11:00 ~ 12:20", place: "사랑관/디모데홀(3층)" },
   { name: "고등부", day: "주일 오전", time: "11:00 ~ 12:20", place: "소망관/다니엘홀(2층)" },
-  { name: "어와나(AWANA)", day: "주일 · 토요", time: "02:30~04:30 · 10:00~12:00", place: "사랑관 드림홀(2층)/만나홀(1층)" },
+  { name: "어와나 (유초등부)", day: "주일 오후", time: "02:30 ~ 04:30", place: "사랑관/드림홀(2층)" },
+  { name: "어와나 (중고등부)", day: "토요일 오전", time: "10:00 ~ 12:00", place: "사랑관/드림홀(2층)" },
   { name: "영어예배부", day: "주일 오전", time: "10:00 ~ 11:10", place: "사랑관/드림홀(2층)" },
   { name: "청년부", day: "주일 오후", time: "02:00 ~ 03:00", place: "사랑관/디모데홀(3층)" },
 ]

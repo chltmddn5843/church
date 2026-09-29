@@ -5,10 +5,10 @@ export const campusBuildings = [
   { id: "love", name: "사랑관", english: "LOVE", position: "왼쪽 · 앞뒤로 길게 놓인 3층 건물 · 소망관 사이에 컨테이너", floors: [
     { floor: "1F", rooms: "식당 · 화장실" },
     { floor: "2F", rooms: "초등부 예배실" },
-    { floor: "3F", rooms: "디모데홀 · 요셉홀 · 지혜방 · 열매방" },
+    { floor: "3F", rooms: "디모데홀 · 로뎀방 · 지혜방 · 열매방" },
   ], color: "#2677aa", x: -34, z: 5, width: 25, depth: 18, height: 15, rotation: Math.PI / 2 },
   { id: "hope", name: "소망관", english: "HOPE", position: "정면 · 사랑관 옆에서 믿음관으로 이어지는 건물", floors: [
-    { floor: "1F", rooms: "카페 · 유아부 · 유년부 예배실" },
+    { floor: "1F", rooms: "카페 · 유아부 예배실" },
     { floor: "2F", rooms: "다윗홀 · 요셉홀 · 다니엘홀" },
   ], color: "#b77b25", x: -8, z: -3, width: 12, depth: 14, height: 8, rotation: 0 },
   { id: "faith", name: "믿음관", english: "FAITH", position: "제일 오른쪽 · 십자가가 있는 주황색 건물", floors: [

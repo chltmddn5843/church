@@ -114,16 +114,16 @@ export async function getLegacyPost(board: number, id: number) {
   return getDb().select({ id: posts.id }).from(posts).where(and(eq(posts.legacyBoard, board), eq(posts.legacyId, id))).get()
 }
 
-export async function getGallery(limit?: number, offset?: number) {
+export async function getGallery(limit?: number, offset?: number, category?: string) {
   const db = getDb()
-  const q = db.select().from(gallery).orderBy(desc(gallery.createdAt))
+  const q = db.select().from(gallery).where(category ? eq(gallery.category, category) : undefined).orderBy(desc(gallery.createdAt))
   if (limit) q.limit(limit)
   if (offset) q.offset(offset)
   return q
 }
 
-export async function getGalleryCount() {
-  const result = await getDb().select({ value: count() }).from(gallery).get()
+export async function getGalleryCount(category?: string) {
+  const result = await getDb().select({ value: count() }).from(gallery).where(category ? eq(gallery.category, category) : undefined).get()
   return result?.value ?? 0
 }
 
