@@ -75,3 +75,13 @@ assert.ok(frontRow.min.z - central.max.z >= 8, "Front parking must retain a driv
 assert.ok(frontRow.max.z < parking.max.z && frontRow.min.x > parking.min.x, "Front bays must fit inside the site")
 assert.ok(central.max.x - central.min.x >= 36, "Central parking markings must fill the courtyard width")
 console.log("Love proportions and expanded parking rows preserve setbacks and driving aisles.")
+
+for (const [id, width] of [["love", 8.5], ["hope", 4.3], ["faith", 5.3]]) {
+ const entry = loaded.getObjectByName(`${id}-main-entry`)
+ assert.ok(entry, `${id} entrance must be present in the exported model`)
+ const size = new Box3().setFromObject(entry).getSize(new Vector3())
+ assert.ok(Math.abs((id === "love" ? size.z : size.x) - width) < .02, "Door width must not stretch with the building")
+}
+assert.ok(loaded.getObjectByName("sign-원당교회"))
+assert.ok(loaded.getObjectByName("entry-barrier-arm"))
+console.log("Entrance proportions, church signage and vehicle gate verified in GLB.")

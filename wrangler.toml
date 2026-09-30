@@ -2,17 +2,18 @@ name = "church"
 main = ".open-next/worker.js"
 compatibility_date = "2026-07-23"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+routes = [{ pattern = "www.wdchurch.com", custom_domain = true }]
 
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
 [vars]
-BETTER_AUTH_URL = "https://church.chltmddn5843.workers.dev"
+BETTER_AUTH_URL = "https://www.wdchurch.com"
 EMAIL_FROM = "원당교회 <noreply@wdchurch.com>"
 # Turnstile: public values only. The secret is a Worker secret (wrangler secret put TURNSTILE_SECRET).
 TURNSTILE_SITE_KEY = "0x4AAAAAAFFuLCMFsK7lyByY"
-TURNSTILE_HOSTNAMES = "church.chltmddn5843.workers.dev"
+TURNSTILE_HOSTNAMES = "www.wdchurch.com"
 TURNSTILE_ACTION = "auth"
 
 [secrets]
