@@ -44,9 +44,9 @@ export function CampusMap() {
       renderer.domElement.setAttribute("role", "img")
       const scene = new THREE.Scene()
       const camera = new THREE.PerspectiveCamera(36, 1, .1, 500)
-      camera.position.set(42, 48, 76)
+      camera.position.set(54, 75, 116)
       const controls = new OrbitControls(camera, renderer.domElement)
-      controls.target.set(-5, 3, 3)
+      controls.target.set(-5, 3, 22)
       controls.minDistance = 45
       controls.maxDistance = 280
       controls.maxPolarAngle = Math.PI / 2.15
@@ -136,10 +136,10 @@ export function CampusMap() {
             offset.setLength(THREE.MathUtils.clamp(offset.length() * (mode === "zoomIn" ? .8 : 1.25), 45, 280))
             camera.position.copy(controls.target).add(offset)
           } else {
-            controls.target.set(-5, 3, 3)
-            if (mode === "front") camera.position.set(-5, 24, 110)
-            else if (mode === "top") camera.position.set(-5, 110, 3.1)
-            else camera.position.set(42, 48, 76)
+            controls.target.set(-5, 3, 22)
+            if (mode === "front") camera.position.set(-5, 35, 150)
+            else if (mode === "top") camera.position.set(-5, 155, 22.1)
+            else camera.position.set(54, 75, 116)
           }
           controls.update()
           render()

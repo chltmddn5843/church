@@ -6,20 +6,21 @@ export const campusBuildings = [
     { floor: "1F", rooms: "식당 · 화장실" },
     { floor: "2F", rooms: "초등부 예배실" },
     { floor: "3F", rooms: "디모데홀 · 로뎀방 · 지혜방 · 열매방" },
-  ], color: "#2677aa", x: -34, z: 5, width: 25, depth: 18, height: 15, rotation: Math.PI / 2 },
-  { id: "hope", name: "소망관", english: "HOPE", position: "정면 · 사랑관 옆에서 믿음관으로 이어지는 건물", floors: [
-    { floor: "1F", rooms: "카페 · 유아부 예배실" },
+  ], color: "#2677aa", x: -34, z: 22.5, width: 60, depth: 18, height: 15, rotation: Math.PI / 2 },
+  { id: "hope", name: "소망관", english: "HOPE", position: "정면 · 사랑관 옆 · 믿음관과 좁은 틈으로 분리된 건물", floors: [
+    { floor: "1F", rooms: "코이노니아 카페 · 유아부 예배실" },
     { floor: "2F", rooms: "다윗홀 · 요셉홀 · 다니엘홀" },
   ], color: "#b77b25", x: -8, z: -3, width: 12, depth: 14, height: 8, rotation: 0 },
   { id: "faith", name: "믿음관", english: "FAITH", position: "제일 오른쪽 · 십자가가 있는 주황색 건물", floors: [
     { floor: "1F", rooms: "비전홀 (예배당)" },
-  ], color: "#bb502f", x: 19, z: -3, width: 26, depth: 23, height: 12, rotation: 0 },
+  ], color: "#bb502f", x: 20.5, z: -3, width: 26, depth: 23, height: 12, rotation: 0 },
   { id: "container", name: "컨테이너", english: "CONTAINER", position: "사랑관과 소망관 사이 · 두 건물 사이의 공간", floors: [
-    { floor: "외부", rooms: "사랑관과 소망관 사이 컨테이너" },
-  ], color: "#687e84", x: -20, z: -7, width: 4.4, depth: 4, height: 3, rotation: 0 },
+    { floor: "1F", rooms: "컨테이너 하층 · 앞쪽 카페 야외 공간" },
+    { floor: "2F", rooms: "컨테이너 상층 · 오른쪽 외부 계단" },
+  ], color: "#687e84", x: -20, z: -6, width: 6, depth: 4, height: 6.4, rotation: 0 },
   { id: "parking", name: "마당 · 주차장", english: "PARKING", position: "사랑관 옆 · 소망관과 믿음관 앞의 부지 안쪽 마당", floors: [
-    { floor: "외부", rooms: "주차 공간 · 가운데 차량 통행 공간" },
-  ], color: "#6a8473", x: 5, z: 15.5, width: 54, depth: 13, height: .1, rotation: 0 },
+    { floor: "외부", rooms: "중앙 두 줄 주차 · 건물 앞·마당 앞쪽 주차 · 차량 통행로" },
+  ], color: "#6a8473", x: 5, z: 34.5, width: 54, depth: 51, height: .1, rotation: 0 },
 ] as const
 export type BuildingId = (typeof campusBuildings)[number]["id"]
 
@@ -38,39 +39,83 @@ export function createCampus() {
     parent.add(mesh)
     return mesh
   }
-  box(campus, -5.5, -.65, 3, 79, 1, 39, "#d9dedc").name = "site-base"
-  for (const b of campusBuildings) {
+  box(campus, -5.5, -.65, 24.5, 79, 1, 82, "#899577").name = "site-base"
+  for (const building of campusBuildings) {
+    // Preserve the photographed facade divisions while extending Love to the front setback.
+    const b = building.id === "love" ? { ...building, width: 25 } : building
     const group = new THREE.Group()
     group.name = b.id
     group.position.set(b.x, 0, b.z)
     group.rotation.y = b.rotation
+    group.scale.x = building.width / b.width
     campus.add(group)
     groups.set(b.id, group)
     const front = b.depth / 2
     if (b.id === "parking") {
-      box(group, 0, -.08, 0, b.width, .12, b.depth, "#cecfca")
-      // ponytail: parking bay counts are schematic until a measured parking plan is supplied.
-      for (const z of [2]) {
-        for (const x of [-18, 0, 18]) {
-          box(group, x, .01, z, 14, .08, 6, "#9eaf92")
-          for (let dx = -7; dx <= 7; dx += 3.5) box(group, x + dx, .07, z, .13, .04, 6, "#f3f1e7")
-          for (const dz of [-3, 3]) box(group, x, .07, z + dz, 14, .04, .13, "#f3f1e7")
-          for (let dx = -6; dx < 7; dx += 1) box(group, x + dx, .06, z, .035, .02, 6, "#d1d5c6")
-        }
+      // ponytail: aerial-image proportions, not surveyed boundaries or certified parking dimensions.
+      const footprint = new THREE.Shape()
+      const corners = [[-27, -25.5], [27, -25.5], [27, 19.5], [21, 25.5], [-27, 25.5]]
+      corners.forEach(([x, z], i) => i ? footprint.lineTo(x, -z) : footprint.moveTo(x, -z))
+      footprint.closePath()
+      const paving = new THREE.Mesh(new THREE.ShapeGeometry(footprint), new THREE.MeshStandardMaterial({ color: "#c9c8ba", roughness: 1 }))
+      paving.rotation.x = -Math.PI / 2
+      paving.position.y = -.01
+      paving.receiveShadow = true
+      paving.name = "parking-paved-boundary"
+      group.add(paving)
+      // The central paired rows and the building-side row leave continuous driving aisles.
+      for (const [name, x, z, width, depth, bays] of [
+        ["central", -2, -1, 36, 12, 12],
+        ["building", 10, -19, 30, 6, 10],
+        ["front", -3, 19, 42, 6, 14],
+      ] as const) {
+        box(group, x, .025, z, width, .05, depth, "#8c9b7c").name = `parking-${name}-pavers`
+        for (let offset = -width / 2; offset <= width / 2; offset += width / bays)
+          box(group, x + offset, .065, z, .16, .03, depth, "#fffdf1").name = `parking-${name}-bay-line`
+        for (let dz = -depth / 2; dz <= depth / 2; dz += 6)
+          box(group, x, .065, z + dz, width, .03, .16, "#fffdf1")
+        for (let dx = -width / 2 + .5; dx < width / 2; dx += .75)
+          box(group, x + dx, .058, z, .035, .018, depth, "#bcc0a9")
       }
+      box(group, -6.5, .08, -19, 3, .04, 6, "#3b88a7").name = "parking-accessible-bay"
+      for (const dx of [-1.5, 1.5]) box(group, -6.5 + dx, .11, -19, .13, .025, 6, "#f4f2e9")
+      // Road-side apron is kept open for entry; the far corner follows the clipped site boundary.
+      box(group, 25, .005, -10, 4, .025, 10, "#c9c8ba").name = "parking-entry"
       group.traverse(object => { object.userData.buildingId = b.id })
       continue
     }
     if (b.id === "container") {
-      // ponytail: editable shell; openings and dimensions await a measured container reference.
-      box(group, 0, .08, 0, b.width, .16, b.depth, "#6f8282").name = "container-floor"
-      box(group, 0, b.height + .1, 0, b.width + .2, .2, b.depth + .2, "#6f8282").name = "container-roof"
-      box(group, 0, b.height / 2, -front, b.width, b.height, .12, "#aab9b6").name = "container-wall-back"
+      // ponytail: dimensions are estimated from the two supplied facade photographs; replace with measured sizes.
+      const concrete = "#aaa390", steel = "#293b41"
+      box(group, 0, .08, 0, b.width, .16, b.depth, steel).name = "container-floor"
+      box(group, 0, 3.2, 0, b.width, .22, b.depth, steel).name = "container-upper-floor"
+      box(group, 0, b.height + .1, 0, b.width + .2, .2, b.depth + .2, steel).name = "container-roof"
+      box(group, 0, b.height / 2, -front, b.width, b.height, .12, concrete).name = "container-wall-back"
       for (const [side, x] of [["left", -b.width / 2], ["right", b.width / 2]] as const)
-        box(group, x, b.height / 2, 0, .12, b.height, b.depth, "#aab9b6").name = `container-wall-${side}`
-      box(group, 0, b.height / 2, front, b.width, b.height, .12, "#aab9b6").name = "container-wall-front"
-      for (let x = -2; x <= 2; x += .4) box(group, x, b.height / 2, front + .07, .045, b.height - .1, .06, "#819594").name = `container-rib-${x.toFixed(1)}`
-      box(group, 1, 1.2, front + .15, 1.15, 2.4, .12, "#546c71").name = "container-door"
+        box(group, x, b.height / 2, 0, .12, b.height, b.depth, concrete).name = `container-wall-${side}`
+      box(group, 0, b.height / 2, front, b.width, b.height, .12, concrete).name = "container-wall-front"
+      for (const level of [0, 1]) {
+        const y = level * 3.2
+        box(group, -.45, y + 1.65, front + .12, 3.2, 1.85, .14, "#e2e1d7").name = `container-window-frame-${level}`
+        box(group, -.45, y + 1.65, front + .21, 2.94, 1.6, .08, "#45636f").name = `container-window-glass-${level}`
+        box(group, -.45, y + 1.65, front + .27, .09, 1.6, .04, "#e2e1d7")
+        for (let panelX = -3; panelX <= 3; panelX += 1) {
+          box(group, panelX, y + 1.6, front + .07, .018, 3.05, .025, "#898577")
+        }
+        for (const panelY of [.55, 2.8]) box(group, 0, y + panelY, front + .075, 6, .02, .025, "#898577")
+        box(group, 2.35, y + 1.5, front + .09, 1.3, 3, .1, steel).name = `container-dark-panel-${level}`
+      }
+      for (const y of [4.25, 4.8, 5.35]) box(group, -.45, y, front + .4, 3.2, .07, .07, steel).name = `container-window-guard-${y}`
+      box(group, 2.25, 1.2, front + .19, 1.2, 2.4, .12, steel).name = "container-door"
+      box(group, 3.05, 4.4, 1, .14, 2.4, 1.15, steel).name = "container-upper-door"
+      box(group, 3.75, 3.2, 1, 1.5, .15, 1.2, steel).name = "container-stair-landing"
+      for (let step = 0; step < 12; step++) {
+        box(group, 3.75, (step + 1) * 3.2 / 12, 5 - step * .3, 1.4, .12, .33, steel).name = `container-stair-step-${step + 1}`
+        if (step % 3 === 0) box(group, 4.45, (step + 1) * 3.2 / 12 + .5, 5 - step * .3, .06, 1, .06, steel)
+      }
+      const rail = box(group, 4.45, 2.7, 3.3, .07, .07, 4.65, steel)
+      rail.rotation.x = Math.atan(3.2 / 3.6)
+      rail.name = "container-stair-handrail"
       group.traverse(object => { object.userData.buildingId = b.id })
       continue
     }
@@ -111,7 +156,20 @@ export function createCampus() {
     if (b.id === "hope") {
       const cafe = box(group, -3.2, 1.45, front + .42, 5.3, 2.9, .2, "#3d6570")
       cafe.name = "hope-cafe"
-      for (let x = -5.8; x <= -.6; x += 1.3) box(group, x, 1.45, front + .55, .09, 2.9, .1, "#e4e4db")
+      for (let x = -5.8; x <= -.6; x += 1.3) box(group, x, 1.45, front + .55, .09, 2.9, .1, "#263b40")
+      box(group, -6.1, 1.45, 1, .18, 2.9, 11, "#3d6570").name = "koinonia-cafe-side-glazing"
+      for (let z = -4.5; z <= 6.5; z += 1.1) box(group, -6.23, 1.45, z, .1, 2.9, .07, "#263b40")
+      box(group, -6.7, .02, 1, 1.1, .05, 11, "#638053").name = "koinonia-cafe-turf"
+      for (const [x, z] of [[-12, 4], [-9, 7]] as const) {
+        box(group, x, .95, z, 2.2, .14, 1.5, "#6f6656").name = "cafe-picnic-table"
+        for (const dz of [-1, 1]) {
+          box(group, x, .5, z + dz, 2.5, .12, .4, "#6f6656")
+          for (const dx of [-.8, .8]) box(group, x + dx, .3, z + dz, .12, .6, .12, "#354240")
+        }
+        for (const dx of [-.8, .8]) box(group, x + dx, .48, z, .12, .95, .12, "#354240")
+      }
+      box(group, -7.1, 1.2, 5.4, .12, 2.4, .8, "#a34245").name = "koinonia-cafe-signboard"
+
     }
     if (b.id !== "faith") {
       box(group, 1, 1.4, front + .42, 5, 2.8, .2, "#3d6570")
@@ -124,13 +182,37 @@ export function createCampus() {
     }
     group.traverse(object => { object.userData.buildingId = b.id })
   }
-  // Landscaping is schematic; it is not a navigable path or a surveyed boundary.
-  for (const x of [-42, 32]) {
-    box(campus, x, 1, 21, .3, 2, .3, "#786854")
-    const tree = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7, 1), new THREE.MeshStandardMaterial({ color: "#668b69", roughness: 1 }))
-    tree.position.set(x, 3, 21)
-    tree.castShadow = true
-    campus.add(tree)
-  }
+  const landscape = new THREE.Group()
+  landscape.name = "landscape"
+  campus.add(landscape)
+  box(landscape, 39, -.09, 24, 8, .12, 82, "#686e6b").name = "boundary-road"
+  box(landscape, 34.5, -.02, 24, 1, .12, 82, "#c0beb1").name = "road-sidewalk"
+  for (const z of [-10, 0, 10, 30, 40, 50, 60]) box(landscape, 39, -.018, z, .12, .025, 4, "#dedcc5")
+  box(landscape, -33, -.06, 57, 20, .1, 8, "#c9c8ba").name = "front-open-ground"
+  box(landscape, -22.8, -.015, 28, 1.1, .15, 35, "#bfbeaa").name = "courtyard-edge"
+  const treePositions = [
+    ...[-38, -28, -18, -8, 2, 12, 22, 30].map(x => [x, 63]),
+    ...[-10, 0, 32, 42, 52].map(z => [33, z]),
+    ...[-12, 0, 12, 25, 38, 52].map(z => [-44, z]),
+    ...[-34, -20, -6, 8, 22, 33].map(x => [x, -17]),
+  ]
+  const crownGeometry = new THREE.IcosahedronGeometry(1, 1)
+  const leafMaterials = ["#526e47", "#6b8052", "#789060"].map(color => new THREE.MeshStandardMaterial({ color, roughness: 1 }))
+  treePositions.forEach(([x, z], i) => {
+    const tree = new THREE.Group()
+    tree.name = `landscape-tree-${i + 1}`
+    tree.position.set(x, 0, z)
+    landscape.add(tree)
+    const height = 3.6 + (i % 4) * .4
+    box(tree, 0, height / 2, 0, .25, height, .25, "#796b51")
+    for (const [dx, dy, dz, scale] of [[0, 0, 0, 1.8], [-.8, -.4, .3, 1.3], [.7, -.3, -.4, 1.45]]) {
+      const crown = new THREE.Mesh(crownGeometry, leafMaterials[i % 3])
+      crown.position.set(dx, height + dy, dz)
+      crown.scale.set(scale, scale * 1.15, scale)
+      crown.castShadow = true
+      tree.add(crown)
+    }
+    box(tree, 0, .18, 0, 1.9, .36, 1.6, "#72805b").name = "shrub-bed"
+  })
   return { campus, groups }
 }
