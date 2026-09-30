@@ -46,9 +46,9 @@ export function PopupForm({ popup, compact = false }: PopupFormProps) {
   return (
     <form
       action={popup ? updatePopup.bind(null, popup.id) : createPopup}
-      className={compact ? "grid gap-4" : "mt-8 rounded-lg border border-border bg-white p-6 shadow-sm"}
+      className={compact ? "@container grid gap-4" : "@container mt-8 rounded-lg border border-border bg-white p-6 shadow-sm"}
     >
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(220px,1fr)]">
+      <div className="grid gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(220px,1fr)]">
         <label className="grid gap-2 text-sm font-medium text-foreground">
           제목
           <input
@@ -71,7 +71,7 @@ export function PopupForm({ popup, compact = false }: PopupFormProps) {
         </label>
       </div>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+      <div className="mt-4 grid gap-4 @md:grid-cols-3">
         <label className="grid gap-2 text-sm font-medium text-foreground">
           너비(px)
           <input
@@ -94,7 +94,7 @@ export function PopupForm({ popup, compact = false }: PopupFormProps) {
             className="h-11 rounded-md border border-border bg-white px-3 outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/40"
           />
         </label>
-        <label className="mt-7 flex h-11 items-center gap-2 rounded-md border border-border px-3 text-sm text-foreground">
+        <label className="flex h-11 items-center gap-2 whitespace-nowrap rounded-md border border-border px-3 text-sm text-foreground @md:mt-7">
           <input type="checkbox" name="active" defaultChecked={popup?.active ?? true} className="size-4" />
           바로 노출
         </label>

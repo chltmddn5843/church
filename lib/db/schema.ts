@@ -104,14 +104,28 @@ export const userGroups = sqliteTable("user_groups", {
   group: text("group").notNull(),
 }, (table) => [primaryKey({ columns: [table.userId, table.group] })])
 
+export const galleryAlbums = sqliteTable("gallery_albums", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").notNull().default("교회"),
+  legacyId: integer("legacyId").unique(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
+}, (table) => [index("gallery_albums_category_created_idx").on(table.category, table.createdAt)])
+
+// Photos keep their own title/category copies so per-photo views (e.g. 전체 수료자) keep working.
 export const gallery = sqliteTable("gallery", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+  albumId: integer("albumId").references(() => galleryAlbums.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   imageUrl: text("imageUrl").notNull(),
   description: text("description"),
   category: text("category").notNull().default("교회"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
-}, (table) => [index("gallery_category_created_idx").on(table.category, table.createdAt)])
+}, (table) => [
+  index("gallery_category_created_idx").on(table.category, table.createdAt),
+  index("gallery_album_idx").on(table.albumId),
+])
 
 export const popups = sqliteTable("popups", {
   id: integer("id").primaryKey({ autoIncrement: true }),

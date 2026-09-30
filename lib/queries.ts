@@ -1,6 +1,6 @@
 import "server-only"
 import { getDb } from "@/lib/db"
-import { sermons, posts, gallery, popups, attachments, offeringReports } from "@/lib/db/schema"
+import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports } from "@/lib/db/schema"
 import { and, asc, count, desc, eq, gt, inArray, like, lt, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
@@ -114,17 +114,44 @@ export async function getLegacyPost(board: number, id: number) {
   return getDb().select({ id: posts.id }).from(posts).where(and(eq(posts.legacyBoard, board), eq(posts.legacyId, id))).get()
 }
 
-export async function getGallery(limit?: number, offset?: number, category?: string) {
-  const db = getDb()
-  const q = db.select().from(gallery).where(category ? eq(gallery.category, category) : undefined).orderBy(desc(gallery.createdAt))
+const albumFields = {
+  id: galleryAlbums.id,
+  title: galleryAlbums.title,
+  category: galleryAlbums.category,
+  createdAt: galleryAlbums.createdAt,
+  // Spelled out: inside select(), drizzle prints columns unqualified, so "id" would bind to the subquery's gallery.id.
+  coverUrl: sql<string | null>`(SELECT p."imageUrl" FROM "gallery" p WHERE p."albumId" = "gallery_albums"."id" ORDER BY p."id" LIMIT 1)`,
+  photoCount: sql<number>`(SELECT count(*) FROM "gallery" p WHERE p."albumId" = "gallery_albums"."id")`,
+}
+
+export async function getGalleryAlbums(limit?: number, offset?: number, category?: string) {
+  const q = getDb().select(albumFields).from(galleryAlbums).where(category ? eq(galleryAlbums.category, category) : undefined).orderBy(desc(galleryAlbums.createdAt), desc(galleryAlbums.id))
   if (limit) q.limit(limit)
   if (offset) q.offset(offset)
   return q
 }
 
-export async function getGalleryCount(category?: string) {
-  const result = await getDb().select({ value: count() }).from(gallery).where(category ? eq(gallery.category, category) : undefined).get()
+export async function getGalleryAlbumCount(category?: string) {
+  const result = await getDb().select({ value: count() }).from(galleryAlbums).where(category ? eq(galleryAlbums.category, category) : undefined).get()
   return result?.value ?? 0
+}
+
+export async function getGalleryAlbum(id: number) {
+  if (!Number.isSafeInteger(id)) return null
+  const db = getDb()
+  const album = await db.select().from(galleryAlbums).where(eq(galleryAlbums.id, id)).get()
+  if (!album) return null
+  const [photos, prev, next] = await Promise.all([
+    db.select({ id: gallery.id, imageUrl: gallery.imageUrl }).from(gallery).where(eq(gallery.albumId, id)).orderBy(asc(gallery.id)),
+    db.select({ id: galleryAlbums.id, title: galleryAlbums.title }).from(galleryAlbums).where(lt(galleryAlbums.createdAt, album.createdAt)).orderBy(desc(galleryAlbums.createdAt)).limit(1).get(),
+    db.select({ id: galleryAlbums.id, title: galleryAlbums.title }).from(galleryAlbums).where(gt(galleryAlbums.createdAt, album.createdAt)).orderBy(asc(galleryAlbums.createdAt)).limit(1).get(),
+  ])
+  return { ...album, photos, prev, next }
+}
+
+export async function getLegacyGalleryAlbum(legacyId: number) {
+  if (!Number.isSafeInteger(legacyId)) return null
+  return getDb().select({ id: galleryAlbums.id }).from(galleryAlbums).where(eq(galleryAlbums.legacyId, legacyId)).get()
 }
 
 export async function getGalleryByCategory(category: string, limit?: number) {

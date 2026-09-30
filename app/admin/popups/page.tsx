@@ -33,7 +33,8 @@ export default async function AdminPopupsPage() {
             {items.map((item) => (
               <article key={item.id} className="overflow-hidden rounded-lg border border-border bg-white shadow-sm">
                 <div className="grid gap-0 lg:grid-cols-[240px_minmax(0,1fr)]">
-                  <div className="relative min-h-[220px] bg-muted">
+                  {/* Fixed-height box at the top: the column stretches when "수정하기" opens, the image shouldn't. */}
+                  <div className="bg-muted"><div className="relative h-80">
                     {item.imageUrl ? (
                       <Image src={item.imageUrl} alt={item.title} fill className="object-contain p-4" />
                     ) : (
@@ -42,7 +43,7 @@ export default async function AdminPopupsPage() {
                     <span className={`absolute left-3 top-3 rounded-md px-2 py-1 text-xs font-medium ${item.active ? "bg-primary text-white" : "bg-muted-foreground text-white"}`}>
                       {item.active ? "노출 중" : "숨김"}
                     </span>
-                  </div>
+                  </div></div>
                   <div className="p-5">
                     <div className="mb-4">
                       <h3 className="truncate text-lg font-semibold text-foreground">{item.title}</h3>

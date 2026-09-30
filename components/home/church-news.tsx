@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
-import { getGallery, getPosts } from "@/lib/queries"
+import { getGalleryAlbums, getPosts } from "@/lib/queries"
 import { AlbumCarousel } from "@/components/home/album-carousel"
 
 const NEWS_COUNT = 6
@@ -23,7 +23,7 @@ const moreLink =
   "flex min-h-11 items-center gap-0.5 text-sm font-semibold text-primary transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 
 export async function ChurchNews() {
-  const [posts, photos] = await Promise.all([getPosts(undefined, NEWS_COUNT), getGallery(ALBUM_COUNT)])
+  const [posts, albums] = await Promise.all([getPosts(undefined, NEWS_COUNT), getGalleryAlbums(ALBUM_COUNT)])
 
   return (
     <section className="py-20 md:py-28">
@@ -62,7 +62,7 @@ export async function ChurchNews() {
 
         <div>
           <AlbumCarousel
-            items={photos.map((p) => ({ id: p.id, title: p.title, imageUrl: p.imageUrl, date: ymd(p.createdAt).replaceAll("-", ".") }))}
+            items={albums.flatMap((a) => (a.coverUrl ? [{ id: a.id, title: a.title, imageUrl: a.coverUrl, date: ymd(a.createdAt).replaceAll("-", ".") }] : []))}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Album</p>
             <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">교회 앨범</h2>

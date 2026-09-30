@@ -40,22 +40,21 @@ function legacyFiles(html) {
   return files
 }
 
-async function copyFiles(boardId, id, date, files) {
-  const statements = []
+async function copyFiles(prefix, files) {
+  const stored = []
   for (const [n, file] of files.entries()) {
     const response = await fetch(file.url)
     if (!response.ok) { console.warn(`skip ${file.url}: ${response.status}`); continue }
     const contentType = (response.headers.get("content-type") || "application/octet-stream").split(";")[0]
     const bytes = Buffer.from(await response.arrayBuffer())
     const ext = extensions[contentType] || file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "bin"
-    const key = `attachments/legacy/${boardId}/${id}/${n + 1}.${ext}`
+    const key = `${prefix}/${n + 1}.${ext}`
     const localPath = `${fileDir}/${key.replaceAll("/", "_")}`
     await writeFile(localPath, bytes)
     uploads.push({ key, localPath, contentType })
-    const url = `/api/uploads/${key}`
-    statements.push(`INSERT INTO attachments (postId,name,url,contentType,size,createdAt) SELECT id,${quote(file.name)},${quote(url)},${quote(contentType)},${bytes.length},${date} FROM posts WHERE legacyBoard=${boardId} AND legacyId=${id} AND NOT EXISTS (SELECT 1 FROM attachments WHERE url=${quote(url)});`)
+    stored.push({ n: n + 1, name: file.name, url: `/api/uploads/${key}`, contentType, size: bytes.length })
   }
-  return statements
+  return stored
 }
 
 async function get(path) {
@@ -111,17 +110,44 @@ async function importBoard([boardId, [category, visibility]]) {
       const date = `unixepoch(${quote(decode(between(html, '<div class="document-regdate">', "</div>")))},'-9 hours')`
       return [
         `INSERT OR IGNORE INTO posts (title,content,category,authorName,pinned,visibility,legacyBoard,legacyId,createdAt,updatedAt) VALUES (${quote(title)},${quote(content)},${quote(category)},'관리자',0,${quote(visibility)},${boardId},${id},${date},${date});`,
-        ...(await copyFiles(boardId, id, date, files)),
+        ...(await copyFiles(`attachments/legacy/${boardId}/${id}`, files)).map(file => `INSERT INTO attachments (postId,name,url,contentType,size,createdAt) SELECT id,${quote(file.name)},${quote(file.url)},${quote(file.contentType)},${file.size},${date} FROM posts WHERE legacyBoard=${boardId} AND legacyId=${id} AND NOT EXISTS (SELECT 1 FROM attachments WHERE url=${quote(file.url)});`),
       ]
     }))
     statements.push(...records.filter(Boolean).flat())
   }
   return statements
 }
+// Old gallery posts become gallery_albums rows (keyed by legacyId); their photos keep the old order via insert order.
+async function importGallery() {
+  const statements = []
+  const seen = new Set()
+  for (let page = 1; page <= maxPages; page++) {
+    let index
+    try { index = await get(`/Board/Index/62?page=${page}`) } catch { break }
+    const fresh = [...new Set([...index.matchAll(/\/Board\/Detail\/62\/(\d+)/g)].map(match => Number(match[1])))].filter(id => !seen.has(id))
+    if (!fresh.length) break
+    const records = await Promise.all(fresh.map(async (id) => {
+      seen.add(id)
+      let html
+      try { html = await get(`/Board/Detail/62/${id}`) } catch { return [] }
+      const title = decode(between(html, '<div class="document-title">', "</div>"))
+      const date = `unixepoch(${quote(decode(between(html, '<div class="document-regdate">', "</div>")))},'-9 hours')`
+      if (!title) return []
+      return [
+        `INSERT OR IGNORE INTO gallery_albums (title,category,legacyId,createdAt) VALUES (${quote(title)},'교회',${id},${date});`,
+        ...(await copyFiles(`gallery/legacy/${id}`, legacyFiles(html))).map(file => `INSERT INTO gallery (albumId,title,imageUrl,category,createdAt) SELECT id,${quote(title)},${quote(file.url)},'교회',${date} FROM gallery_albums WHERE legacyId=${id} AND NOT EXISTS (SELECT 1 FROM gallery WHERE imageUrl=${quote(file.url)});`),
+      ]
+    }))
+    statements.push(...records.flat())
+  }
+  return statements
+}
+
 await mkdir(fileDir, { recursive: true })
 const selectedBoards = onlyBoard ? [...boards].filter(([id]) => id === onlyBoard) : [...boards]
-if (!selectedBoards.length) throw new Error(`Unknown board: ${onlyBoard}`)
-sql.push(...(await Promise.all(selectedBoards.map(importBoard))).flat())
+const withGallery = !onlyBoard || onlyBoard === 62
+if (!selectedBoards.length && !withGallery) throw new Error(`Unknown board: ${onlyBoard}`)
+sql.push(...(await Promise.all([...selectedBoards.map(importBoard), ...(withGallery ? [importGallery()] : [])])).flat())
 
 await writeFile(output, `${sql.join("\n")}\n`)
 console.log(`Generated ${sql.length - 1} statements and ${uploads.length} files: ${output}, ${fileDir}`)

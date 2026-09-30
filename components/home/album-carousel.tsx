@@ -58,7 +58,7 @@ export function AlbumCarousel({ items, children }: { items: Photo[]; children: R
         >
           {items.map((p) => (
             <li key={p.id} className="w-[72%] shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] md:w-[calc((100%-2.5rem)/3)]">
-              <Link href="/gallery" className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={`/gallery/${p.id}`} className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
                   <Image
                     src={p.imageUrl}

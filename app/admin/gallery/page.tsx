@@ -1,10 +1,10 @@
 import { ExternalLink } from "lucide-react"
-import { createGalleryItem, deleteGalleryItem } from "@/app/actions/gallery"
+import { createGalleryAlbum, deleteGalleryAlbum } from "@/app/actions/gallery"
 import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button"
 import { SubmitButton } from "@/components/admin/submit-button"
 import { Button } from "@/components/ui/button"
 import { Pagination } from "@/components/pagination"
-import { getGallery, getGalleryCount } from "@/lib/queries"
+import { getGalleryAlbumCount, getGalleryAlbums } from "@/lib/queries"
 
 const categories = ["교회", "전체 수료자", "새가족반", "양육반", "제자반", "사역반"]
 const PAGE_SIZE = 24
@@ -17,10 +17,10 @@ export default async function AdminGalleryPage({
 }) {
   const { page: pageParam, category: categoryParam } = await searchParams
   const category = categories.find((c) => c === categoryParam)
-  const total = await getGalleryCount(category)
+  const total = await getGalleryAlbumCount(category)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const page = Math.min(totalPages, Math.max(1, Number(pageParam) || 1))
-  const items = await getGallery(PAGE_SIZE, (page - 1) * PAGE_SIZE, category)
+  const items = await getGalleryAlbums(PAGE_SIZE, (page - 1) * PAGE_SIZE, category)
 
   function hrefFor(p: number) {
     const params = new URLSearchParams()
@@ -35,12 +35,12 @@ export default async function AdminGalleryPage({
       <div className="border-b border-border pb-6">
         <p className="text-sm font-semibold text-primary">GALLERY</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">갤러리 관리</h1>
-        <p className="mt-2 text-sm text-muted-foreground">사진을 등록하고, 분류별로 확인하며 정리합니다.</p>
+        <p className="mt-2 text-sm text-muted-foreground">행사별로 사진을 묶어 앨범으로 등록하고 정리합니다.</p>
       </div>
 
-      <form action={createGalleryItem} className="mt-8 grid gap-4 border border-border bg-white p-6 shadow-sm md:grid-cols-2">
+      <form action={createGalleryAlbum} className="mt-8 grid gap-4 border border-border bg-white p-6 shadow-sm md:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium">
-          사진 제목
+          앨범 제목
           <input name="title" required className={fieldClass} />
         </label>
         <label className="grid gap-2 text-sm font-medium">
@@ -50,22 +50,22 @@ export default async function AdminGalleryPage({
           </select>
         </label>
         <label className="grid gap-2 text-sm font-medium md:col-span-2">
-          이미지 <span className="font-normal text-muted-foreground">JPG, PNG, WEBP, GIF</span>
-          <input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required className="border border-border p-3" />
+          사진 <span className="font-normal text-muted-foreground">여러 장 선택 가능 · 선택한 순서대로 표시 · JPG, PNG, WEBP, GIF · 장당 20MB, 합계 100MB 이하</span>
+          <input name="images" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" required className="border border-border p-3" />
         </label>
         <label className="grid gap-2 text-sm font-medium md:col-span-2">
           설명 <span className="font-normal text-muted-foreground">선택</span>
           <textarea name="description" rows={3} className="border border-border p-3 outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/40" />
         </label>
-        <SubmitButton className="h-10 w-fit px-4" pendingLabel="업로드 중...">사진 등록</SubmitButton>
+        <SubmitButton className="h-10 w-fit px-4" pendingLabel="업로드 중...">앨범 등록</SubmitButton>
       </form>
 
       <section className="mt-10">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-foreground">등록된 사진</h2>
+            <h2 className="text-lg font-bold text-foreground">등록된 앨범</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {category ? `${category} ` : "전체 "}{total.toLocaleString("ko-KR")}장
+              {category ? `${category} ` : "전체 "}{total.toLocaleString("ko-KR")}개
               {totalPages > 1 && ` · ${page} / ${totalPages} 페이지`}
             </p>
           </div>
@@ -80,23 +80,22 @@ export default async function AdminGalleryPage({
         </div>
 
         {items.length === 0 ? (
-          <p className="border border-border py-16 text-center text-muted-foreground">등록된 사진이 없습니다.</p>
+          <p className="border border-border py-16 text-center text-muted-foreground">등록된 앨범이 없습니다.</p>
         ) : (
           <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
             {items.map((item) => (
               <li key={item.id} className="flex flex-col border border-border bg-white shadow-sm">
-                <a href={item.imageUrl} target="_blank" rel="noreferrer" aria-label={`${item.title} 원본 보기`} className="group relative block aspect-[4/3] overflow-hidden bg-muted">
+                <a href={`/gallery/${item.id}`} target="_blank" rel="noreferrer" aria-label={`${item.title} 앨범 보기`} className="group relative block aspect-[4/3] overflow-hidden bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.imageUrl} alt="" loading="lazy" className="size-full object-cover transition group-hover:opacity-90" />
+                  {item.coverUrl && <img src={item.coverUrl} alt="" loading="lazy" className="size-full object-cover transition group-hover:opacity-90" />}
                   <ExternalLink aria-hidden className="absolute right-2 top-2 size-7 bg-black/50 p-1.5 text-white opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100" />
                 </a>
                 <div className="flex flex-1 flex-col gap-1 p-3">
                   <p className="line-clamp-2 font-semibold leading-snug" title={item.title}>{item.title}</p>
-                  <p className="text-xs text-muted-foreground">{item.category} · {item.createdAt.toLocaleDateString("ko-KR")}</p>
-                  {item.description && <p className="line-clamp-2 text-xs text-muted-foreground" title={item.description}>{item.description}</p>}
-                  <form action={deleteGalleryItem.bind(null, item.id)} className="mt-auto flex justify-end pt-2">
+                  <p className="text-xs text-muted-foreground">{item.category} · {item.createdAt.toLocaleDateString("ko-KR")} · 사진 {item.photoCount}장</p>
+                  <form action={deleteGalleryAlbum.bind(null, item.id)} className="mt-auto flex justify-end pt-2">
                     <input type="hidden" name="returnTo" value={hrefFor(page)} />
-                    <ConfirmDeleteButton confirmMessage={`'${item.title}' 사진을 삭제하시겠습니까?`} />
+                    <ConfirmDeleteButton confirmMessage={`'${item.title}' 앨범과 사진 ${item.photoCount}장을 모두 삭제하시겠습니까?`} />
                   </form>
                 </div>
               </li>

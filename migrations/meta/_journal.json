@@ -71,6 +71,13 @@
       "when": 1790670750545,
       "tag": "0009_thin_northstar",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1790733417858,
+      "tag": "0010_gallery_albums",
+      "breakpoints": true
     }
   ]
 }
