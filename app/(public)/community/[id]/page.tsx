@@ -32,8 +32,8 @@ export default async function PostDetailPage({
   const { prev, next } = await getAdjacentPosts(post.id, post.category, post.createdAt)
 
   const isBulletin = post.category === "주보"
-  // 새가족반 lives on the 제자훈련 page, not in the community board list.
-  const listHref = post.category === "새가족반" ? "/discipleship#courses" : `/community?category=${encodeURIComponent(post.category)}`
+  // 새가족반 lives in the 제자훈련 page's 수료자 사진 section, not in the community board list.
+  const listHref = post.category === "새가족반" ? "/discipleship#graduates" : `/community?category=${encodeURIComponent(post.category)}`
   const bulletinPdf = post.attachments.find((file) => file.contentType === "application/pdf")
   const images = bulletinPdf ? [] : post.attachments.filter((file) => file.contentType.startsWith("image/"))
   // 주보 pages through its images in a viewer; every other board shows them in the post body (e.g. notice posters).

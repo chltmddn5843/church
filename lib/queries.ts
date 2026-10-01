@@ -154,13 +154,6 @@ export async function getLegacyGalleryAlbum(legacyId: number) {
   return getDb().select({ id: galleryAlbums.id }).from(galleryAlbums).where(eq(galleryAlbums.legacyId, legacyId)).get()
 }
 
-export async function getGalleryByCategory(category: string, limit?: number) {
-  const db = getDb()
-  const q = db.select().from(gallery).where(eq(gallery.category, category)).orderBy(desc(gallery.createdAt))
-  if (limit) return q.limit(limit)
-  return q
-}
-
 export async function getActivePopups() {
   const db = getDb()
   try {

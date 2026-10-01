@@ -1,0 +1,18 @@
+.map{position:relative;width:100%;height:100%;background:radial-gradient(ellipse at center,#fff,#e8eff2);color:#243f50;overflow:hidden;font-size:16px}
+.canvas{position:absolute;inset:0}
+.canvas canvas{display:block;touch-action:none}
+.marker{position:absolute;transform:translate(-50%,calc(-100% - 9px));background:white;border:1px solid #9fb1bd;box-shadow:0 4px 14px #243f501f;padding:7px 12px;min-height:40px;white-space:nowrap;font-size:14px;font-weight:700;color:#243f50;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
+.marker::before,.marker::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:8px solid transparent;border-bottom:0}
+.marker::before{border-top-color:#9fb1bd}
+.marker::after{margin-top:-1px;border-top-color:white;transition:border-top-color .15s}
+.marker:hover{border-color:var(--primary);color:var(--primary)}
+.marker:hover::before{border-top-color:var(--primary)}
+.marker[aria-pressed=true]{z-index:5;background:var(--primary);border-color:var(--primary);color:white}
+.marker[aria-pressed=true]::before,.marker[aria-pressed=true]::after{border-top-color:var(--primary)}
+.tools{position:absolute;right:12px;bottom:12px;display:flex;gap:6px;z-index:6}
+.tools button{display:grid;place-items:center;background:white;border:1px solid #bdcbd4;min-width:44px;min-height:44px;padding:0 10px;font-size:14px;cursor:pointer}
+.note{position:absolute;top:12px;left:12px;right:12px;color:#546c7b;font-size:12px;line-height:1.6;pointer-events:none}
+.status{position:absolute;top:45%;left:20px;right:20px;text-align:center;color:#546c7b}
+.map button:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.map button:disabled{opacity:.4;cursor:default}
+@media(max-width:640px){.marker{font-size:12px;padding:5px 8px;min-height:32px}.note{font-size:11px}}

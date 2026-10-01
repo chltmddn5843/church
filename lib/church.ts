@@ -48,7 +48,7 @@ export const church = {
         { title: "양육반", href: "/discipleship#courses" },
         { title: "제자반", href: "/discipleship#courses" },
         { title: "사역반", href: "/discipleship#courses" },
-        { title: "수료자 명단", href: "/discipleship#graduates" },
+        { title: "수료자 사진", href: "/discipleship#graduates" },
       ],
     },
     {

@@ -2,10 +2,9 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { BookOpen, GraduationCap, Sprout, Users } from "lucide-react"
-import { GalleryGrid } from "@/components/gallery-grid"
 import { PageBanner } from "@/components/page-banner"
 import { SectionHeading } from "@/components/section-heading"
-import { getGalleryByCategory, getPostThumbnails, getPosts } from "@/lib/queries"
+import { getGalleryAlbums, getPostThumbnails, getPosts } from "@/lib/queries"
 import { getSessionUser } from "@/lib/session"
 
 export const metadata: Metadata = {
@@ -46,8 +45,13 @@ const courses = [
 
 export default async function DiscipleshipPage() {
   // 새가족반 posts are members-only; getPosts already hides them from guests.
-  const [graduates, newFamily, user] = await Promise.all([getGalleryByCategory("전체 수료자"), getPosts("새가족반"), getSessionUser()])
+  const [albums, newFamily, user] = await Promise.all([getGalleryAlbums(undefined, undefined, "전체 수료자"), getPosts("새가족반"), getSessionUser()])
   const thumbnails = await getPostThumbnails(newFamily.map((post) => post.id))
+  // 새가족반 posts and 전체 수료자 albums share one newest-first list.
+  const graduates = [
+    ...newFamily.map((post) => ({ key: `post-${post.id}`, href: `/community/${post.id}`, title: post.title, cover: thumbnails.get(post.id), createdAt: post.createdAt })),
+    ...albums.map((album) => ({ key: `album-${album.id}`, href: `/gallery/${album.id}`, title: album.title, cover: album.coverUrl, createdAt: album.createdAt })),
+  ].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
 
   return (
     <>
@@ -95,55 +99,48 @@ export default async function DiscipleshipPage() {
               </div>
             ))}
           </div>
-
-          <div className="mt-16">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">New Family Class</p>
-            <h3 className="mt-1 text-xl font-bold text-foreground md:text-2xl">새가족반 수료</h3>
-            {newFamily.length > 0 ? (
-              <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {newFamily.map((post) => (
-                  <li key={post.id}>
-                    <Link href={`/community/${post.id}`} className="group block border border-border bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                      <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
-                        {thumbnails.get(post.id) && (
-                          // eslint-disable-next-line @next/next/no-img-element -- R2 file of unknown size, images are unoptimized anyway
-                          <img src={thumbnails.get(post.id)} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />
-                        )}
-                      </span>
-                      <span className="block p-4">
-                        <span className="block font-semibold text-foreground transition-colors group-hover:text-primary">{post.title}</span>
-                        <time dateTime={new Date(post.createdAt).toISOString()} className="mt-1 block text-sm tabular-nums text-muted-foreground">
-                          {new Date(post.createdAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
-                        </time>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-6 border border-border bg-card px-5 py-8 text-center text-muted-foreground">
-                {user ? (
-                  "승인된 회원에게만 공개되는 게시판이에요."
-                ) : (
-                  <>
-                    회원에게만 공개되는 게시판이에요.{" "}
-                    <Link href="/sign-in" className="inline-flex min-h-8 items-center font-semibold text-primary hover:underline">
-                      로그인하고 보기
-                    </Link>
-                  </>
-                )}
-              </p>
-            )}
-          </div>
         </div>
       </section>
 
       <section id="graduates" className="scroll-mt-24 py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SectionHeading eyebrow="Graduates" title="전체 수료자 사진" description="새가족반, 양육반, 제자반, 사역반 수료 사진을 통합해 볼 수 있습니다." />
-          <div className="mt-10">
-            <GalleryGrid items={graduates} />
-          </div>
+          {newFamily.length === 0 && (
+            <p className="mt-6 text-sm text-muted-foreground">
+              {user ? (
+                "새가족반 수료 사진은 승인된 회원에게만 공개돼요."
+              ) : (
+                <>
+                  새가족반 수료 사진은 회원에게만 공개돼요.{" "}
+                  <Link href="/sign-in" className="inline-flex min-h-6 items-center font-semibold text-primary hover:underline">
+                    로그인하고 보기
+                  </Link>
+                </>
+              )}
+            </p>
+          )}
+          {graduates.length === 0 ? (
+            <p className="mt-10 border-y border-border py-16 text-center text-muted-foreground">등록된 사진이 없습니다.</p>
+          ) : (
+            <ul className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
+              {graduates.map((item) => (
+                <li key={item.key}>
+                  <Link href={item.href} className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
+                      {item.cover && (
+                        // eslint-disable-next-line @next/next/no-img-element -- R2 file of unknown size, images are unoptimized anyway
+                        <img src={item.cover} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />
+                      )}
+                    </span>
+                    <span className="mt-3 line-clamp-2 break-keep font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">{item.title}</span>
+                    <time dateTime={new Date(item.createdAt).toISOString()} className="mt-1 block text-sm tabular-nums text-muted-foreground">
+                      {new Date(item.createdAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
+                    </time>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
     </>
