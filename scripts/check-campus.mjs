@@ -243,7 +243,7 @@ assert.ok(Math.abs(hope.max.x - hopeWing.min.x - 24.65) < .01, "Facade redistrib
 const buildingStops = groups.get("parking").children.filter(o => o.name === "parking-building-wheel-stop")
 assert.equal(buildingStops.length, 5, "Fill the right-hand parking strip with five ordinary bays")
 const accessibleBay = new Box3().setFromObject(loaded.getObjectByName("parking-accessible-bay"))
-assert.ok(Math.abs(accessibleBay.max.x - buildingRow.min.x) < .01, "Accessible bay must sit immediately left of the remaining ordinary bays")
+assert.ok(Math.abs(buildingRow.min.x - accessibleBay.max.x - 6) < .01, "Leave exactly two bays between accessible and existing ordinary parking")
 const accessibleSymbol = new Box3().setFromObject(loaded.getObjectByName("parking-accessible-symbol"))
 assert.ok(accessibleSymbol.min.x > accessibleBay.min.x && accessibleSymbol.max.x < accessibleBay.max.x, "Accessible symbol must move with the bay")
 for (const x of [0, 3]) {
@@ -251,14 +251,14 @@ for (const x of [0, 3]) {
  assert.equal(clearedRay.intersectObject(loaded, true)[0]?.object.name, "parking-paved-boundary", "Deleted parking bays must leave plain paving")
 }
 
-const loveFacing = new Box3().setFromObject(loaded.getObjectByName("parking-love-facing-pavers"))
-const loveFacingStops = []
-loaded.getObjectByName("parking").traverse(o => { if (o.name.startsWith("parking-love-facing-wheel-stop")) loveFacingStops.push(o) })
-assert.equal(loveFacingStops.length, 2)
-assert.ok(loveFacing.max.x < accessibleBay.min.x, "New bays must fit left of the accessible bay")
-assert.ok(loveFacing.min.z === buildingRow.min.z && loveFacing.max.z === buildingRow.max.z, "New bays must remain within the existing row depth")
-for (const stop of loveFacingStops) {
+const infill = new Box3().setFromObject(loaded.getObjectByName("parking-infill-pavers"))
+const infillStops = []
+loaded.getObjectByName("parking").traverse(o => { if (o.name.startsWith("parking-infill-wheel-stop")) infillStops.push(o) })
+assert.equal(infillStops.length, 2)
+assert.ok(Math.abs(infill.min.x - accessibleBay.max.x) < .01 && Math.abs(infill.max.x - buildingRow.min.x) < .01, "New bays must connect accessible and existing ordinary parking")
+assert.ok(infill.min.z === buildingRow.min.z && infill.max.z === buildingRow.max.z, "New bays must remain within the existing row depth")
+for (const stop of infillStops) {
  const bounds = new Box3().setFromObject(stop)
- assert.ok(bounds.max.x < loveFacing.getCenter(new Vector3()).x, "Wheel stops must face Love on the left")
+ assert.ok(bounds.max.z < infill.getCenter(new Vector3()).z, "Wheel stops must match the existing row direction")
 }
 assert.ok(Math.abs(buildingRow.max.x - 30) < .01, "Existing right-hand bays must stay in place")

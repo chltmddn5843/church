@@ -148,9 +148,8 @@ export function createCampus() {
         ["central", -2, -1, 36, 12, 12],
         ["building", 17.5, -19, 15, 6, 5],
         ["hope-front", -15.5, -19, 9, 6, 3],
-        ["love-facing", 3, -19, 6, 6, 2],
+        ["infill", 7, -19, 6, 6, 2],
       ] as const) {
-        const firstPart = group.children.length
         box(group, x, .025, z, width, .05, depth, "#a5aca2").name = `parking-${name}-pavers`
         for (let offset = -width / 2; offset <= width / 2; offset += width / bays)
           box(group, x + offset, .065, z, .16, .03, depth, "#fffdf1").name = `parking-${name}-bay-line`
@@ -165,16 +164,10 @@ export function createCampus() {
         }
         for (let dx = -width / 2 + .5; dx < width / 2; dx += .75)
           box(group, x + dx, .058, z, .035, .018, depth, "#bcc0a9")
-        if (name === "love-facing") {
-          for (const part of group.children.slice(firstPart)) {
-            const dx = part.position.x - x, dz = part.position.z - z
-            part.position.set(x + dz, part.position.y, z - dx)
-            part.rotation.y = Math.PI / 2
-          }
-        }
+
       }
-      box(group, 8.5, .08, -19, 3, .04, 6, "#3b88a7").name = "parking-accessible-bay"
-      for (const dx of [-1.5, 1.5]) box(group, 8.5 + dx, .11, -19, .13, .025, 6, "#f4f2e9")
+      box(group, 2.5, .08, -19, 3, .04, 6, "#3b88a7").name = "parking-accessible-bay"
+      for (const dx of [-1.5, 1.5]) box(group, 2.5 + dx, .11, -19, .13, .025, 6, "#f4f2e9")
       // Satellite image: the open outer apron is unpaved, not another row of marked bays.
       const dirtShape = new THREE.Shape()
       const dirtCorners = [[-22, 13], [20, 13], [20, -9], [26.5, -9], [26.5, 19.5], [21, 25], [-22, 25]]
@@ -188,7 +181,7 @@ export function createCampus() {
       group.add(dirtSurface)
       const accessibleMark = new THREE.Group()
       accessibleMark.name = "parking-accessible-symbol"
-      accessibleMark.position.set(8.5, .14, -19)
+      accessibleMark.position.set(2.5, .14, -19)
       group.add(accessibleMark)
       const wheel = new THREE.Mesh(new THREE.TorusGeometry(.6, .07, 6, 24, Math.PI * 1.7), new THREE.MeshStandardMaterial({ color: "#ffffff" }))
       wheel.rotation.x = -Math.PI / 2
