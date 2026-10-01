@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { ArrowLeft, Calendar, ChevronDown, ChevronUp, ImageIcon, List } from "lucide-react"
 import { getGalleryAlbum } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
+import cloudflareLoader from "@/lib/image-loader"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const album = await getGalleryAlbum(Number((await params).id))
@@ -44,7 +45,7 @@ export default async function GalleryAlbumPage({ params }: { params: Promise<{ i
         <div className="mt-8 space-y-4">
           {album.photos.map((photo, i) => (
             // eslint-disable-next-line @next/next/no-img-element -- R2 files of unknown size, images are unoptimized anyway
-            <img key={photo.id} src={photo.imageUrl} alt={`${album.title} 사진 ${i + 1}`} loading={i < 2 ? "eager" : "lazy"} className="mx-auto h-auto w-full bg-muted" />
+            <img key={photo.id} src={cloudflareLoader({ src: photo.imageUrl, width: 1600 })} alt={`${album.title} 사진 ${i + 1}`} loading={i < 2 ? "eager" : "lazy"} className="mx-auto h-auto w-full bg-muted" />
           ))}
         </div>
 

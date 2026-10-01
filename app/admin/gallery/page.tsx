@@ -5,6 +5,7 @@ import { SubmitButton } from "@/components/admin/submit-button"
 import { Button } from "@/components/ui/button"
 import { Pagination } from "@/components/pagination"
 import { getGalleryAlbumCount, getGalleryAlbums } from "@/lib/queries"
+import cloudflareLoader from "@/lib/image-loader"
 
 const categories = ["교회", "전체 수료자", "새가족반", "양육반", "제자반", "사역반"]
 const PAGE_SIZE = 24
@@ -87,7 +88,7 @@ export default async function AdminGalleryPage({
               <li key={item.id} className="flex flex-col border border-border bg-white shadow-sm">
                 <a href={`/gallery/${item.id}`} target="_blank" rel="noreferrer" aria-label={`${item.title} 앨범 보기`} className="group relative block aspect-[4/3] overflow-hidden bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {item.coverUrl && <img src={item.coverUrl} alt="" loading="lazy" className="size-full object-cover transition group-hover:opacity-90" />}
+                  {item.coverUrl && <img src={cloudflareLoader({ src: item.coverUrl, width: 400 })} alt="" loading="lazy" className="size-full object-cover transition group-hover:opacity-90" />}
                   <ExternalLink aria-hidden className="absolute right-2 top-2 size-7 bg-black/50 p-1.5 text-white opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100" />
                 </a>
                 <div className="flex flex-1 flex-col gap-1 p-3">

@@ -8,6 +8,7 @@ import { after } from "next/server"
 import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
 import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
 import { cn } from "@/lib/utils"
+import cloudflareLoader from "@/lib/image-loader"
 
 export async function generateMetadata({
   params,
@@ -73,8 +74,8 @@ export default async function PostDetailPage({
         {inlineImages.length > 0 && (
           <div className="mt-8 space-y-6">
             {inlineImages.map((file) => (
-              // eslint-disable-next-line @next/next/no-img-element -- R2 files of unknown size, images are unoptimized anyway
-              <img key={file.id} src={file.url} alt={file.name.replace(/\.[^.]+$/, "")} loading="lazy" className="mx-auto h-auto w-full max-w-3xl border border-border" />
+              // eslint-disable-next-line @next/next/no-img-element -- R2 files of unknown size; resized by Cloudflare
+              <img key={file.id} src={cloudflareLoader({ src: file.url, width: 1600 })} alt={file.name.replace(/\.[^.]+$/, "")} loading="lazy" className="mx-auto h-auto w-full max-w-3xl border border-border" />
             ))}
           </div>
         )}

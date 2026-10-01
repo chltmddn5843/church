@@ -7,6 +7,7 @@ import { Pagination } from "@/components/pagination"
 import { Button } from "@/components/ui/button"
 import { getDb } from "@/lib/db"
 import { attachments, gallery, popups, posts } from "@/lib/db/schema"
+import cloudflareLoader from "@/lib/image-loader"
 
 const PAGE_SIZE = 30
 const types = ["게시글 첨부", "갤러리", "팝업"] as const
@@ -87,7 +88,7 @@ export default async function AdminAttachmentsPage({ searchParams }: { searchPar
                   <a href={file.url} target="_blank" rel="noreferrer" aria-label={`${file.name} 새 창에서 열기`} className="flex size-14 items-center justify-center overflow-hidden border border-border bg-muted text-muted-foreground">
                     {file.contentType.startsWith("image/") ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={file.url} alt="" loading="lazy" className="size-full object-cover" />
+                      <img src={cloudflareLoader({ src: file.url, width: 160 })} alt="" loading="lazy" className="size-full object-cover" />
                     ) : file.contentType.startsWith("audio/") ? (
                       <Music aria-hidden className="size-5" />
                     ) : (
