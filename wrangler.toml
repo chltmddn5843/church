@@ -33,3 +33,7 @@ migrations_dir = "migrations"
 [[r2_buckets]]
 binding = "POPUP_IMAGES"
 bucket_name = "church"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
