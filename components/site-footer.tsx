@@ -11,7 +11,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-3">
           {/* Church identity */}
           <div>
-            <Image src="/images/wd-footer-logo.png" alt={`${church.name} 로고`} width={310} height={40} className="h-10 w-auto brightness-0 invert" />
+            <Image src="/images/wd-footer-logo-2.png" alt={`${church.name} 로고`} width={312} height={40} className="h-10 w-auto" />
             <p className="mt-4 text-sm leading-relaxed opacity-80">
               {church.denomination}
               <br />
