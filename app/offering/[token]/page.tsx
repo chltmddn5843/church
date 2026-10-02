@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { CalendarDays, ChevronLeft, ChevronRight, Church, History, Smartphone } from "lucide-react"
 import { getActiveOfferingReportByToken, getActiveOfferingWeeks } from "@/lib/queries"
+import { splitOfferingContent } from "@/lib/offering"
 
 export const dynamic = "force-dynamic"
 
@@ -15,26 +16,6 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
     robots: { index: false, follow: false, nocache: true },
     appleWebApp: { capable: true, title: "헌금 현황", statusBarStyle: "black-translucent" },
   }
-}
-
-function splitOfferingContent(content: string) {
-  const sections: { title: string; lines: string[] }[] = []
-  let current: { title: string; lines: string[] } | null = null
-
-  for (const rawLine of content.split(/\r?\n/)) {
-    const line = rawLine.trim()
-    if (!line) continue
-
-    const looksLikeHeader = !/\d/.test(line) && line.length <= 24
-    if (!current || looksLikeHeader) {
-      current = { title: line, lines: [] }
-      sections.push(current)
-    } else {
-      current.lines.push(line)
-    }
-  }
-
-  return sections
 }
 
 export default async function OfferingReportPage({
