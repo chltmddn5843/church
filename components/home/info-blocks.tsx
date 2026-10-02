@@ -2,10 +2,10 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { BookOpen, Church, Clock, FileText, HandHeart, Images, MapPin, UserPlus } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
-import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
+import { BookOpen, Church, Clock, FileText, HandHeart, Images, List, MapPin, UserPlus, X } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { BulletinViewer, toolbarButtonClass } from "@/components/bulletin-viewer"
+import { cn } from "@/lib/utils"
 
 type Bulletin = {
   id: number
@@ -32,6 +32,7 @@ const labelClass = "break-keep text-sm font-semibold md:text-base"
 
 export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
   const [open, setOpen] = useState(false)
+  const hasBulletin = bulletin && (bulletin.pdf || bulletin.images.length > 0)
 
   return (
     <nav aria-label="바로가기" className="relative z-10 mx-auto -mt-20 max-w-6xl px-4 md:-mt-24 lg:max-w-[1360px] lg:px-6">
@@ -53,32 +54,36 @@ export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
       </ul>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="flex h-[92vh] w-[calc(100%-1.5rem)] max-w-[calc(100%-1.5rem)] flex-col overflow-hidden sm:max-w-2xl md:max-w-4xl lg:max-w-5xl">
-          <DialogHeader className="shrink-0">
-            <DialogTitle className="flex items-center gap-2 font-serif text-xl font-semibold">
-              <FileText className="size-5" aria-hidden />
-              {bulletin?.title ?? "주보"}
-            </DialogTitle>
-          </DialogHeader>
-          {bulletin && (bulletin.pdf || bulletin.images.length > 0) ? (
-            <div className="min-h-0 flex-1">
-              {bulletin.pdf ? (
-                <BulletinPdfViewer url={bulletin.pdf.url} title={bulletin.pdf.name} className="h-full" heightClassName="flex-1 min-h-0" />
-              ) : (
-                <BulletinImageViewer images={bulletin.images} title={bulletin.title} className="h-full" heightClassName="flex-1 min-h-0" />
-              )}
-            </div>
-          ) : (
-            <p className="py-10 text-center text-sm text-muted-foreground">등록된 주보가 아직 없어요.</p>
-          )}
-          <Link
-            href="/community?category=주보"
-            onClick={() => setOpen(false)}
-            className="shrink-0 text-center text-sm font-medium text-primary hover:underline"
+        {hasBulletin ? (
+          // Full screen so the bulletin gets every pixel; the viewer's own toolbar doubles as the dialog header.
+          <DialogContent
+            showCloseButton={false}
+            className="inset-0 flex h-dvh w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none p-0 ring-0 sm:max-w-none"
           >
-            지난 주보 전체 보기 →
-          </Link>
-        </DialogContent>
+            <DialogTitle className="sr-only">{bulletin.title}</DialogTitle>
+            <BulletinViewer title={bulletin.title} pdf={bulletin.pdf} images={bulletin.images} className="min-h-0 flex-1">
+              <Link href="/community?category=주보" onClick={() => setOpen(false)} aria-label="지난 주보 전체 보기" className={toolbarButtonClass}>
+                <List className="size-4" aria-hidden /> <span className="hidden sm:inline">지난 주보</span>
+              </Link>
+              <DialogClose aria-label="닫기" className={cn(toolbarButtonClass, "sm:w-9 sm:px-0")}>
+                <X className="size-5" aria-hidden />
+              </DialogClose>
+            </BulletinViewer>
+          </DialogContent>
+        ) : (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 font-serif text-xl font-semibold">
+                <FileText className="size-5" aria-hidden />
+                주보
+              </DialogTitle>
+            </DialogHeader>
+            <p className="py-6 text-center text-sm text-muted-foreground">등록된 주보가 아직 없어요.</p>
+            <Link href="/community?category=주보" onClick={() => setOpen(false)} className="text-center text-sm font-medium text-primary hover:underline">
+              지난 주보 전체 보기 →
+            </Link>
+          </DialogContent>
+        )}
       </Dialog>
     </nav>
   )

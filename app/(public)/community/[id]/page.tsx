@@ -5,8 +5,7 @@ import { getAdjacentPosts, getPost, incrementPostView } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, ChevronDown, ChevronUp, Download, List, User } from "lucide-react"
 import { after } from "next/server"
-import { BulletinPdfViewer } from "@/components/bulletin-pdf-viewer-loader"
-import { BulletinImageViewer } from "@/components/bulletin-image-viewer"
+import { BulletinViewer } from "@/components/bulletin-viewer"
 import { cn } from "@/lib/utils"
 import cloudflareLoader from "@/lib/image-loader"
 
@@ -79,8 +78,9 @@ export default async function PostDetailPage({
             ))}
           </div>
         )}
-        {bulletinPdf && <BulletinPdfViewer url={bulletinPdf.url} title={bulletinPdf.name} />}
-        {bulletinImages.length > 0 && <BulletinImageViewer images={bulletinImages} title={post.title} />}
+        {(bulletinPdf || bulletinImages.length > 0) && (
+          <BulletinViewer title={post.title} pdf={bulletinPdf ?? null} images={bulletinImages} className="mt-8 h-[80vh] border border-border shadow-sm" />
+        )}
         {otherAttachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{otherAttachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
 
         {(next || prev) && (
