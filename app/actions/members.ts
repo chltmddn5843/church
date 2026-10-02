@@ -16,6 +16,15 @@ export async function setMemberRole(userId: string, role: "pending" | "member" |
   redirect("/admin/members?saved=member")
 }
 
+// 거절 = 승인 대기 계정 삭제. session/account/userGroups는 FK cascade로 함께 지워진다.
+export async function rejectMember(userId: string) {
+  await requireAdmin()
+  if (!userId) throw new Error("올바른 회원 정보가 아닙니다.")
+  await getDb().delete(user).where(and(eq(user.id, userId), eq(user.role, "pending")))
+  revalidatePath("/admin/members")
+  redirect("/admin/members?saved=rejected")
+}
+
 export async function setMemberGroup(userId: string, group: "offering", enabled: boolean) {
   await requireAdmin()
   if (!userId || !(["offering"] as const).includes(group) || typeof enabled !== "boolean") throw new Error("올바른 그룹 정보가 아닙니다.")

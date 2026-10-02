@@ -9,6 +9,7 @@ const messages: Record<string, string> = {
   updated: "수정되었습니다.",
   deleted: "삭제되었습니다.",
   member: "회원 승인 상태가 변경되었습니다.",
+  rejected: "가입을 거절했습니다.",
   group: "회원 자료 권한이 변경되었습니다.",
   popup: "팝업 설정이 저장되었습니다.",
   offering: "헌금 현황이 저장되었습니다.",

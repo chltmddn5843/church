@@ -1,5 +1,6 @@
 import { desc } from "drizzle-orm"
-import { setMemberGroup, setMemberRole } from "@/app/actions/members"
+import { rejectMember, setMemberGroup, setMemberRole } from "@/app/actions/members"
+import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button"
 import { Button } from "@/components/ui/button"
 import { requireAdmin } from "@/lib/admin"
 import { getDb } from "@/lib/db"
@@ -69,6 +70,11 @@ export default async function AdminMembersPage() {
                         {member.role !== "admin" && (
                           <form action={setMemberRole.bind(null, member.id, "admin")}>
                             <Button type="submit" size="sm">관리자 지정</Button>
+                          </form>
+                        )}
+                        {member.role === "pending" && (
+                          <form action={rejectMember.bind(null, member.id)}>
+                            <ConfirmDeleteButton label="거절" confirmMessage={`'${member.name}' 님의 가입을 거절하고 계정을 삭제하시겠습니까?`} />
                           </form>
                         )}
                         {member.role !== "pending" && (

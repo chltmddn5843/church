@@ -39,7 +39,7 @@ export async function createPost(formData: FormData) {
       category: String(formData.get("category") || "교회소식"),
       pinned: formData.get("pinned") === "on",
       authorId: admin.id,
-      authorName: admin.name || "관리자",
+      authorName: "관리자",
     })
     .returning({ id: posts.id })
     .get()
