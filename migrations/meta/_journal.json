@@ -78,6 +78,20 @@
       "when": 1790733417858,
       "tag": "0010_gallery_albums",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1790924906202,
+      "tag": "0011_history_events",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1790925242669,
+      "tag": "0012_offering_weekly",
+      "breakpoints": true
     }
   ]
 }

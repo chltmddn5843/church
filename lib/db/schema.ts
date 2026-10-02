@@ -143,11 +143,12 @@ export const offeringReports = sqliteTable("offering_reports", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   content: text("content").notNull(),
-  accessToken: text("accessToken").notNull().unique(),
+  // Every weekly report shares the one distributed link; ?week=<id> opens a past week.
+  accessToken: text("accessToken").notNull(),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(now),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
-})
+}, (table) => [index("offering_reports_token_idx").on(table.accessToken)])
 
 export const contentPages = sqliteTable("content_pages", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -171,3 +172,10 @@ export const appCache = sqliteTable("app_cache", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
 })
+
+// 교회발자취. date is display text ("1963. 06. 16" or "1970. 01."), which also sorts chronologically.
+export const historyEvents = sqliteTable("history_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  date: text("date").notNull(),
+  event: text("event").notNull(),
+}, (table) => [index("history_events_date_idx").on(table.date)])

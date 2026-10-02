@@ -7,6 +7,7 @@ import {
   Bell,
   BookOpen,
   FileText,
+  History,
   Home,
   ImageIcon,
   LayoutDashboard,
@@ -31,6 +32,7 @@ const links = [
   { href: "/admin/attachments", label: "첨부파일 관리", icon: Paperclip },
   { href: "/admin/statistics", label: "조회수 통계", icon: BarChart3 },
   { href: "/admin/pages", label: "소개 페이지 관리", icon: FileText },
+  { href: "/admin/history", label: "교회발자취 관리", icon: History },
   { href: "/admin/members", label: "회원 승인 관리", icon: Users },
 ]
 

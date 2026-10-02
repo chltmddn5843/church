@@ -168,25 +168,32 @@ export async function getActivePopups() {
   }
 }
 
-export async function getActiveOfferingReportByToken(token: string) {
+/** The week with that id, or the newest week when none is given. Hidden weeks never show. */
+export async function getActiveOfferingReportByToken(token: string, week?: number) {
   if (!token || token.length < 16) return null
+  const filters = [eq(offeringReports.accessToken, token), eq(offeringReports.active, true)]
+  if (week !== undefined) filters.push(eq(offeringReports.id, week))
   return (
     (await getDb()
       .select()
       .from(offeringReports)
-      .where(and(eq(offeringReports.accessToken, token), eq(offeringReports.active, true)))
+      .where(and(...filters))
+      .orderBy(desc(offeringReports.id))
       .limit(1)
       .get()) ?? null
   )
 }
 
-export async function getLatestOfferingReport() {
-  return (
-    (await getDb()
-      .select()
-      .from(offeringReports)
-      .orderBy(desc(offeringReports.updatedAt))
-      .limit(1)
-      .get()) ?? null
-  )
+/** Visible weeks behind one link, newest first, for the viewer's week list. */
+export async function getActiveOfferingWeeks(token: string) {
+  return getDb()
+    .select({ id: offeringReports.id, title: offeringReports.title, createdAt: offeringReports.createdAt })
+    .from(offeringReports)
+    .where(and(eq(offeringReports.accessToken, token), eq(offeringReports.active, true)))
+    .orderBy(desc(offeringReports.id))
+}
+
+// Newest week first. id, not updatedAt: correcting an old week must not make it "this week".
+export async function getOfferingReports() {
+  return getDb().select().from(offeringReports).orderBy(desc(offeringReports.id))
 }
