@@ -54,14 +54,14 @@ export function SiteHeader({ user }: { user: SessionUser }) {
       style={isHome ? { backgroundColor: `rgba(${PRIMARY_RGB}, ${0.25 + scrollProgress * 0.75})` } : undefined}
     >
       <div className="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-4 md:h-24 xl:px-10">
-        <Link href="/" className="flex items-center gap-2">
+        <Link prefetch={false} href="/" className="flex items-center gap-2">
           <Image src="/images/wd-logo.png" alt={`${church.name} 로고`} width={247} height={53} className="h-10 w-auto md:h-12 xl:h-[53px]" priority />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex xl:gap-2" aria-label="주 메뉴">
           {church.nav.map((item) => (
             <div key={item.title} className="group relative" onMouseLeave={() => setDismissed(null)} onFocus={() => setDismissed(null)}>
-              <Link
+              <Link prefetch={false}
                 href={item.href}
                 className="flex items-center gap-1 whitespace-nowrap px-3 py-2 text-base font-semibold text-white transition-colors hover:bg-ring hover:text-white xl:px-4 2xl:text-lg"
               >
@@ -70,7 +70,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
               </Link>
               <div className={cn("invisible absolute left-0 top-full w-full -translate-y-1 border border-accent/40 bg-popover/90 p-1 opacity-0 shadow-lg backdrop-blur-sm transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100", dismissed === item.title && "invisible! opacity-0!")}>
                 {item.children.map((child) => (
-                  <Link
+                  <Link prefetch={false}
                     key={child.title}
                     href={child.href}
                     target={child.href.startsWith("http") ? "_blank" : undefined}
@@ -93,7 +93,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
           {user ? (
             <>
               {user.role === "admin" && (
-                <Button render={<Link href="/admin" />} nativeButton={false} size="sm" className="hidden bg-white text-primary hover:bg-white/90 sm:inline-flex">
+                <Button render={<Link prefetch={false} href="/admin" />} nativeButton={false} size="sm" className="hidden bg-white text-primary hover:bg-white/90 sm:inline-flex">
                   관리자
                 </Button>
               )}
@@ -107,7 +107,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                 <DropdownMenuContent align="end">
                   {user.role === "admin" && (
                     <>
-                      <DropdownMenuItem render={<Link href="/admin" />}>관리자 페이지</DropdownMenuItem>
+                      <DropdownMenuItem render={<Link prefetch={false} href="/admin" />}>관리자 페이지</DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
@@ -117,10 +117,10 @@ export function SiteHeader({ user }: { user: SessionUser }) {
             </>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Button render={<Link href="/sign-in" />} nativeButton={false} variant="ghost" size="sm" className="text-white hover:bg-white/15 hover:text-white">
+              <Button render={<Link prefetch={false} href="/sign-in" />} nativeButton={false} variant="ghost" size="sm" className="text-white hover:bg-white/15 hover:text-white">
                 로그인
               </Button>
-              <Button render={<Link href="/sign-up" />} nativeButton={false} size="sm" className="bg-white text-primary hover:bg-white/90">
+              <Button render={<Link prefetch={false} href="/sign-up" />} nativeButton={false} size="sm" className="bg-white text-primary hover:bg-white/90">
                 회원가입
               </Button>
             </div>
@@ -135,12 +135,12 @@ export function SiteHeader({ user }: { user: SessionUser }) {
               <div className="mt-6 flex flex-col gap-1">
                 {church.nav.map((item) => (
                   <div key={item.title} className="border-b border-border pb-2">
-                    <Link href={item.href} onClick={() => setOpen(false)} className="block px-2 py-2 text-lg font-semibold text-foreground">
+                    <Link prefetch={false} href={item.href} onClick={() => setOpen(false)} className="block px-2 py-2 text-lg font-semibold text-foreground">
                       {item.title}
                     </Link>
                     <div className="ml-2 flex flex-col">
                       {item.children.map((child) => (
-                        <Link
+                        <Link prefetch={false}
                           key={child.title}
                           href={child.href}
                           target={child.href.startsWith("http") ? "_blank" : undefined}
@@ -158,7 +158,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                   {user ? (
                     <>
                       {user.role === "admin" && (
-                        <Button render={<Link href="/admin" />} nativeButton={false} variant="outline" onClick={() => setOpen(false)}>
+                        <Button render={<Link prefetch={false} href="/admin" />} nativeButton={false} variant="outline" onClick={() => setOpen(false)}>
                           관리자 페이지
                         </Button>
                       )}
@@ -166,10 +166,10 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                     </>
                   ) : (
                     <>
-                      <Button render={<Link href="/sign-in" />} nativeButton={false} variant="outline" onClick={() => setOpen(false)}>
+                      <Button render={<Link prefetch={false} href="/sign-in" />} nativeButton={false} variant="outline" onClick={() => setOpen(false)}>
                         로그인
                       </Button>
-                      <Button render={<Link href="/sign-up" />} nativeButton={false} onClick={() => setOpen(false)}>
+                      <Button render={<Link prefetch={false} href="/sign-up" />} nativeButton={false} onClick={() => setOpen(false)}>
                         회원가입
                       </Button>
                     </>
