@@ -129,6 +129,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Long unbroken strings in user-written posts (pasted URLs) otherwise widen the page on mobile. */
+    overflow-wrap: break-word;
   }
 }
 
