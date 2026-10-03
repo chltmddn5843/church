@@ -7,6 +7,11 @@ const nextConfig = {
   images: {
     loader: "custom",
     loaderFile: "./lib/image-loader.ts",
+    // Each distinct width is a separate billable Cloudflare transformation (free plan: 5,000 unique/month).
+    // Next's defaults offer 8 device widths up to 3840 for every photo; 3 buckets capped at 1920 cover
+    // phone/tablet/desktop. Bulletin pages pick their own wider widths in bulletin-viewer.tsx.
+    deviceSizes: [640, 1080, 1920],
+    imageSizes: [128, 256, 384],
   },
   experimental: {
     serverActions: {
