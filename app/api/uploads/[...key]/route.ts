@@ -14,9 +14,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ key
     return new NextResponse("Not found", { status: 404 })
   }
 
+  let cacheControl = "public, max-age=31536000, immutable"
   if (objectKey.startsWith("attachments/")) {
     const file = await getDb().select({ visibility: posts.visibility }).from(attachments).innerJoin(posts, eq(attachments.postId, posts.id)).where(eq(attachments.url, `/api/uploads/${objectKey}`)).get()
-    if (!file || !canAccess(file.visibility, await getViewerAccess())) return new NextResponse("Not found", { status: 404 })
+    if (!file || (file.visibility !== "public" && !canAccess(file.visibility, await getViewerAccess()))) return new NextResponse("Not found", { status: 404 })
+    // Public-post files are shared-cacheable (worker.ts edge cache, /cdn-cgi/image); member-only ones never are.
+    // ponytail: a post switched to member-only stays readable from caches for up to an hour.
+    cacheControl = file.visibility === "public" ? "public, max-age=3600" : "private, no-store"
   }
 
   const { env } = getCloudflareContext()
@@ -29,7 +33,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ key
   if (object.httpMetadata?.contentType) headers.set("content-type", object.httpMetadata.contentType)
   headers.set("content-length", String(object.size))
   headers.set("etag", object.httpEtag)
-  headers.set("cache-control", objectKey.startsWith("attachments/") ? "private, no-store" : "public, max-age=31536000, immutable")
+  headers.set("cache-control", cacheControl)
   headers.set("x-content-type-options", "nosniff")
   return new NextResponse(object.body, { headers })
 }

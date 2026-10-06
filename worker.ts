@@ -16,6 +16,7 @@ type Env = CloudflareEnv & { CF_VERSION_METADATA?: { id: string } }
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url)
+    if (request.method === "GET" && url.pathname.startsWith("/api/uploads/")) return cachedUpload(request, env, ctx)
     const cacheable =
       request.method === "GET" &&
       PUBLIC_PAGE.test(url.pathname) &&
@@ -45,6 +46,21 @@ const worker = {
 }
 
 export default worker
+
+// Worker responses skip the CDN cache, so a shared post's images (and /cdn-cgi/image fetching them)
+// re-ran Next + D1 on every view and tripped the CPU limit. The upload route marks only files anyone
+// may see as "public"; those are stored here for their own max-age, everything else passes through.
+async function cachedUpload(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  const cache = caches.default
+  const hit = await cache.match(request)
+  if (hit) return hit
+
+  const response: Response = await nextWorker.fetch(request, env, ctx)
+  if (response.status === 200 && response.headers.get("cache-control")?.startsWith("public") && !response.headers.has("set-cookie")) {
+    ctx.waitUntil(cache.put(request, response.clone()))
+  }
+  return response
+}
 
 // The edge copy is shared; browsers should still revalidate every visit like before.
 function withBrowserNoStore(response: Response) {

@@ -9,7 +9,7 @@ import cloudflareLoader from "@/lib/image-loader"
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const album = await getGalleryAlbum(Number((await params).id))
   if (!album) return { title: "앨범을 찾을 수 없습니다" }
-  return { title: album.title, openGraph: album.photos[0] ? { images: [album.photos[0].imageUrl] } : undefined }
+  return { title: album.title, openGraph: album.photos[0] ? { images: [cloudflareLoader({ src: album.photos[0].imageUrl, width: 1080 })] } : undefined }
 }
 
 export default async function GalleryAlbumPage({ params }: { params: Promise<{ id: string }> }) {

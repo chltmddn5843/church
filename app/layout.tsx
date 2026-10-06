@@ -12,6 +12,7 @@ const nanumGothic = Nanum_Gothic({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.wdchurch.com"),
   title: {
     default: "원당교회",
     template: "%s | 원당교회",
