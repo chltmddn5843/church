@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   description:
     "인천 검단구 원당교회 공식 홈페이지입니다. 예배 안내, 설교 말씀, 제자훈련, 다음세대, 교회 소식을 만나보세요.",
   keywords: ["원당교회", "인천교회", "검단교회", "예배", "설교", "제자훈련", "다음세대"],
+  // A static asset, not app/icon.svg: that route ran the Worker on every page view (61% of weekend invocations).
+  icons: { icon: { url: "/icon.svg", type: "image/svg+xml" } },
   openGraph: {
     title: "원당교회",
     description: "인천 검단구 원당교회 공식 홈페이지",

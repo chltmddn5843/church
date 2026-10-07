@@ -51,6 +51,9 @@ export default worker
 // re-ran Next + D1 on every view and tripped the CPU limit. The upload route marks only files anyone
 // may see as "public"; those are stored here for their own max-age, everything else passes through.
 async function cachedUpload(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  const path = new URL(request.url).pathname.slice("/api/uploads/".length)
+  if (/^(gallery|popups)\//.test(path)) return publicUpload(path, env)
+
   const cache = caches.default
   const hit = await cache.match(request)
   if (hit) return hit
@@ -60,6 +63,22 @@ async function cachedUpload(request: Request, env: Env, ctx: ExecutionContext): 
     ctx.waitUntil(cache.put(request, response.clone()))
   }
   return response
+}
+
+// gallery/ and popups/ are public, immutable files with no access check, so they skip Next
+// (booting it cost 180–340ms CPU per request). Mirrors app/api/uploads/[...key]/route.ts, which `next dev` still uses.
+async function publicUpload(path: string, env: Env): Promise<Response> {
+  const parts = path.split("/").map((part) => { try { return decodeURIComponent(part) } catch { return "" } })
+  const object = parts.some((part) => !part || part === "." || part === ".." || part.includes("/")) ? null : await env.POPUP_IMAGES.get(parts.join("/"))
+  if (!object) return new Response("Not found", { status: 404 })
+  const headers = new Headers({
+    "content-length": String(object.size),
+    etag: object.httpEtag,
+    "cache-control": "public, max-age=31536000, immutable",
+    "x-content-type-options": "nosniff",
+  })
+  if (object.httpMetadata?.contentType) headers.set("content-type", object.httpMetadata.contentType)
+  return new Response(object.body, { headers })
 }
 
 // The edge copy is shared; browsers should still revalidate every visit like before.
