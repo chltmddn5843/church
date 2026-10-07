@@ -3,14 +3,12 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// Wording supplied by the church (2026-10); each sentence is split into a bold lead and the rest, read as one line.
-// Photos are real church events chosen per message (gallery board 62). trimTop zooms in from the bottom
-// to cut the lyric screens at the top of sanctuary shots (portrait cards crop only the sides).
+// Wording supplied by the church (2026-10). Photos are real church events chosen per message (gallery board 62).
 const messages = [
-  { label: "비전", keyword: "하나님이 영광 받으시고,", line: "예수님이 주인 되시고, 성령님이 이끌어 가는 교회", image: "/images/vision/glory.jpg", trimTop: true },
-  { label: "사명", keyword: "예수님의 제자가 되어", line: "세상을 변화시키자", image: "/images/vision/serve-neighbors.jpg" },
-  { label: "교회역할", keyword: "복된 만남을 통해", line: "사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
-  { label: "시대적사명", keyword: "예배 회복과", line: "다음세대를 세우자", image: "/images/vision/anniversary-worship.jpg" },
+  { label: "비전", line: "하나님이 영광 받으시고, 예수님이 주인 되시고, 성령님이 이끌어 가는 교회", image: "/images/vision/vision.jpg" },
+  { label: "사명", line: "예수님의 제자가 되어 세상을 변화시키자", image: "/images/vision/serve-neighbors.jpg" },
+  { label: "교회역할", line: "복된 만남을 통해 사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
+  { label: "시대적사명", line: "예배 회복과 다음세대를 세우자", image: "/images/vision/anniversary-worship.jpg" },
 ]
 
 // Full-width 비전·사명 panels, shared by the home page and 교회소개.
@@ -36,25 +34,18 @@ export function MessageCards({ home = false }: { home?: boolean }) {
       </div>
 
       <ol className="grid gap-px bg-foreground sm:grid-cols-2 lg:grid-cols-4">
-        {messages.map((m, i) => (
+        {messages.map((m) => (
           <li key={m.label} className="group relative isolate flex min-h-[340px] flex-col overflow-hidden pt-28 text-white sm:min-h-[440px] sm:pt-36 md:min-h-[560px] md:pt-44">
             <Image
               src={m.image}
               alt=""
               fill
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-              className={cn(
-                "-z-10 object-cover transition-transform duration-700",
-                m.trimTop ? "origin-bottom scale-[1.35] motion-safe:group-hover:scale-[1.4]" : "motion-safe:group-hover:scale-105",
-              )}
+              className="-z-10 object-cover transition-transform duration-700 motion-safe:group-hover:scale-105"
             />
             <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
             <div className="mt-auto p-6 md:p-8">
-              <span aria-hidden className="text-sm font-bold tabular-nums tracking-[0.2em] text-brand-light">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <p className="mt-3 text-sm font-semibold text-white/85">{m.label}</p>
-              <h3 className="mt-2 break-keep text-3xl font-bold leading-tight lg:text-[1.9rem] xl:text-4xl">{m.keyword}</h3>
+              <h3 className="break-keep text-3xl font-bold leading-tight lg:text-[1.9rem] xl:text-4xl">{m.label}</h3>
               <p className="mt-3 break-keep text-base leading-relaxed text-white/90">{m.line}</p>
             </div>
           </li>
