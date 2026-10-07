@@ -169,10 +169,12 @@ export function AuthForm({ mode, emailEnabled, turnstileSiteKey }: { mode: "sign
       )}
 
       <p className="mt-6 border-t border-border pt-5 text-sm text-muted-foreground">
-        {isSignUp ? "이미 계정이 있으신가요? " : "아직 계정이 없으신가요? "}
+        {/* Old-site accounts weren't migrated; their sign-ins fail as "User not found". */}
+        {isSignUp ? "이미 계정이 있으신가요? " : "10월 1일 홈페이지 변경으로 기존 회원 계정이 없어졌습니다. 계속 이용하시려면 새로 "}
         <Link href={isSignUp ? "/sign-in" : "/sign-up"} className="inline-flex min-h-8 items-center font-semibold text-primary underline-offset-4 hover:underline">
           {isSignUp ? "로그인" : "회원가입"}
         </Link>
+        {!isSignUp && "을 해 주세요."}
       </p>
     </AuthShell>
   )
