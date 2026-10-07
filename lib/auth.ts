@@ -1,11 +1,20 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { captcha } from "better-auth/plugins"
+import { APIError } from "better-auth/api"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { authKvStorage } from "@/lib/auth-kv"
 import { getDb } from "@/lib/db"
 import { sendEmail } from "@/lib/email"
 import { runtimeEnv } from "@/lib/runtime-env"
+
+// Names show in the header and the admin member list; sign-up and the header's 이름 변경 both pass through here.
+function checkName<T extends { name?: string }>(user: T) {
+  if (user.name === undefined) return { data: user }
+  const name = user.name.trim()
+  if (!name || name.length > 30) throw new APIError("BAD_REQUEST", { message: "이름은 1~30자로 입력해 주세요." })
+  return { data: { ...user, name } }
+}
 
 function sendLater(promise: Promise<void>) {
   getCloudflareContext().ctx.waitUntil(promise.catch((error) => console.error("Failed to send auth email:", error)))
@@ -54,6 +63,12 @@ export function getAuth() {
           },
         }
       : {}),
+    databaseHooks: {
+      user: {
+        create: { before: async (user) => checkName(user) },
+        update: { before: async (user) => checkName(user) },
+      },
+    },
     user: {
       additionalFields: {
         role: {

@@ -37,7 +37,7 @@ export const church = {
         { title: "금요예배", href: "/sermons?category=금요예배" },
         { title: "새벽예배", href: "/sermons?category=새벽예배" },
         { title: "쉐키나찬양단 (1·2·3부 통합)", href: "/sermons?category=쉐키나찬양단" },
-        { title: "할렐루야찬양대", href: "/sermons?category=할렐루야찬양대" },
+        { title: "찬양대", href: "/sermons?category=찬양대" },
       ],
     },
     {

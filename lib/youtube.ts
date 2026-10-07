@@ -4,7 +4,7 @@ const PLAYLISTS: Record<string, string | null> = {
   "금요예배": "PL61Tjrp-GLP6Ub5td2fFjsd0LVHIpAj7A",
   "새벽예배": null,
   "쉐키나찬양단": "PL61Tjrp-GLP4HMfRHBvXU2jOMXVuF3O3I",
-  "할렐루야찬양대": "PL61Tjrp-GLP7khZV0uZfKGNjoE_UTn-rT",
+  "찬양대": "PL61Tjrp-GLP7khZV0uZfKGNjoE_UTn-rT",
 }
 
 function decode(value: string) {

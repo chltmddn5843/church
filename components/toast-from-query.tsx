@@ -19,6 +19,7 @@ const messages: Record<string, string> = {
 }
 
 const errors: Record<string, string> = {
+  upload: "첨부파일을 올리지 못해 글이 등록되지 않았습니다. 이미지(JPG·PNG·WEBP·GIF), PDF, MP3, M4A 파일만, 파일당 20MB 이하로 올려 주세요.",
   youtube: "YouTube 영상 주소를 확인해 주세요. 예: https://www.youtube.com/live/영상ID 또는 https://youtu.be/영상ID",
 }
 

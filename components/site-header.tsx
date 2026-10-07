@@ -13,7 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
 import { church } from "@/lib/church"
 import { cn } from "@/lib/utils"
@@ -25,6 +29,7 @@ const HOME_FADE_DISTANCE = 260
 
 export function SiteHeader({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false)
+  const [nameOpen, setNameOpen] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   // The header survives client navigation, so a clicked submenu would stay open (hover + focus-within) until the pointer leaves.
   const [dismissed, setDismissed] = useState<string | null>(null)
@@ -111,6 +116,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                       <DropdownMenuSeparator />
                     </>
                   )}
+                  <DropdownMenuItem onClick={() => setNameOpen(true)}>이름 변경</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>로그아웃</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -162,6 +168,7 @@ export function SiteHeader({ user }: { user: SessionUser }) {
                           관리자 페이지
                         </Button>
                       )}
+                      <Button variant="outline" onClick={() => { setOpen(false); setNameOpen(true) }}>이름 변경</Button>
                       <Button onClick={handleSignOut}>로그아웃</Button>
                     </>
                   ) : (
@@ -180,6 +187,43 @@ export function SiteHeader({ user }: { user: SessionUser }) {
           </Sheet>
         </div>
       </div>
+      {user && <NameDialog key={user.name} name={user.name} open={nameOpen} onOpenChange={setNameOpen} />}
     </header>
+  )
+}
+
+function NameDialog({ name, open, onOpenChange }: { name: string; open: boolean; onOpenChange: (open: boolean) => void }) {
+  const [value, setValue] = useState(name)
+  const [pending, setPending] = useState(false)
+  const router = useRouter()
+
+  async function save(event: React.FormEvent) {
+    event.preventDefault()
+    setPending(true)
+    const { error } = await authClient.updateUser({ name: value.trim() })
+    setPending(false)
+    if (error) return toast.error(error.message || "이름을 바꾸지 못했습니다.")
+    toast.success("이름을 변경했습니다.")
+    onOpenChange(false)
+    router.refresh()
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="text-foreground">
+        <form onSubmit={save} className="grid gap-4">
+          <DialogHeader>
+            <DialogTitle>이름 변경</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-2">
+            <Label htmlFor="profile-name">이름</Label>
+            <Input id="profile-name" value={value} onChange={(e) => setValue(e.target.value)} required maxLength={30} autoComplete="name" className="h-11" />
+          </div>
+          <DialogFooter>
+            <Button type="submit" disabled={pending || !value.trim() || value.trim() === name}>{pending ? "저장 중..." : "저장"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

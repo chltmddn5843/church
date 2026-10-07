@@ -3,14 +3,14 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// From the church's own 비전·사명 page (wdchurch.com/Page/Index/14), cut to a keyword and one line each.
+// Wording supplied by the church (2026-10); each sentence is split into a bold lead and the rest, read as one line.
 // Photos are real church events chosen per message (gallery board 62). trimTop zooms in from the bottom
 // to cut the lyric screens at the top of sanctuary shots (portrait cards crop only the sides).
 const messages = [
-  { label: "비전", keyword: "하나님께 영광", line: "예수님이 주인 되시고 성령님이 이끄시는 교회", image: "/images/vision/glory.jpg", trimTop: true },
-  { label: "우리의 사명", keyword: "제자 되어 세상으로", line: "예수님을 닮아 이웃과 세상을 변화시킵니다", image: "/images/vision/serve-neighbors.jpg" },
-  { label: "시대적 사명", keyword: "예배와 다음 세대", line: "예배를 회복하고 다음 세대를 세웁니다", image: "/images/vision/anniversary-worship.jpg" },
-  { label: "교회의 역할", keyword: "복된 만남", line: "사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
+  { label: "비전", keyword: "하나님이 영광 받으시고,", line: "예수님이 주인 되시고, 성령님이 이끌어 가는 교회", image: "/images/vision/glory.jpg", trimTop: true },
+  { label: "사명", keyword: "예수님의 제자가 되어", line: "세상을 변화시키자", image: "/images/vision/serve-neighbors.jpg" },
+  { label: "교회역할", keyword: "복된 만남을 통해", line: "사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
+  { label: "시대적사명", keyword: "예배 회복과", line: "다음세대를 세우자", image: "/images/vision/anniversary-worship.jpg" },
 ]
 
 // Full-width 비전·사명 panels, shared by the home page and 교회소개.

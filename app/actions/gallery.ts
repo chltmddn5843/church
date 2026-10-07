@@ -6,7 +6,7 @@ import { gallery, galleryAlbums } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { deleteUpload, uploadFile } from "@/lib/uploads"
+import { deleteUpload, UploadError, uploadFile } from "@/lib/uploads"
 
 const CATEGORIES = new Set(["교회", "전체 수료자", "새가족반", "양육반", "제자반", "사역반"])
 
@@ -42,6 +42,7 @@ export async function createGalleryAlbum(formData: FormData) {
       await db.delete(galleryAlbums).where(eq(galleryAlbums.id, albumId))
     }
     await Promise.all(uploaded.map(deleteUpload))
+    if (error instanceof UploadError) redirect("/admin/gallery?error=upload")
     throw error
   }
   revalidateGallery()

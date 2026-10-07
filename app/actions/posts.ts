@@ -6,7 +6,7 @@ import { attachments, posts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { deleteUpload, uploadFile } from "@/lib/uploads"
+import { deleteUpload, UploadError, uploadFile } from "@/lib/uploads"
 
 const VISIBILITIES = new Set(["public", "member", "offering"])
 
@@ -54,13 +54,15 @@ export async function createPost(formData: FormData) {
         postId: post.id,
         name: file.name,
         url: item.url,
-        contentType: file.type,
+        contentType: item.contentType,
         size: file.size,
       })
     }
   } catch (error) {
     await Promise.all(uploaded.map(deleteUpload))
     await db.delete(posts).where(eq(posts.id, post.id))
+    // Production hides thrown messages behind the generic error page, so a rejected file comes back as a toast instead.
+    if (error instanceof UploadError) redirect(safeReturnTo(formData, "error=upload"))
     throw error
   }
 

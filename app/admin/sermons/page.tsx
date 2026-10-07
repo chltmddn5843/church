@@ -3,7 +3,7 @@ import { getSermons, getSermonsCount } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
 import { Pagination } from "@/components/pagination"
 
-const categories = ["주일예배", "금요예배", "새벽예배", "쉐키나찬양단", "할렐루야찬양대"]
+const categories = ["주일예배", "금요예배", "새벽예배", "쉐키나찬양단", "찬양대"]
 const PAGE_SIZE = 20
 
 export default async function AdminSermonsPage({
