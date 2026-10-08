@@ -1,54 +1,231 @@
 # 원당교회 웹사이트
 
-Next.js 16과 OpenNext를 사용하는 Cloudflare Workers 애플리케이션입니다. SSR, 인증,
-Server Actions를 사용하므로 Cloudflare Pages의 정적 출력으로 배포하지 않습니다.
+https://www.wdchurch.com — 외주 제작사 호스팅에서 돌던 교회 홈페이지를 직접 만든 Next.js
+애플리케이션으로 옮긴 프로젝트입니다. 이 문서는 실행 방법과 함께, 2026년 7월부터 10월까지의
+개발 흐름, 겪은 문제와 해결 방식, 그 과정에서 배운 점을 정리합니다.
+운영 절차(백업·복구·롤백)는 [OPERATIONS.md](OPERATIONS.md)에 있습니다.
 
-회원 계정, 비밀번호 해시, 관리자 역할과 게시글은 Cloudflare D1을 최종 원본으로
-사용합니다. `AUTH_KV`는 Better Auth 세션과 반복 조회 캐시를 저장합니다. KV는 최종
-일관성 방식이므로 관리자 권한 판정에는 사용하지 않습니다.
+## 한눈에 보기
 
-## 필수 환경 변수
+| 항목 | 내용 |
+|---|---|
+| 런타임 | Cloudflare Workers (Next.js 16 + OpenNext), 서울 리전 고정 없음, 전 세계 엣지 |
+| 데이터 | D1(SQLite) — 회원·게시글·사진첩·주보·헌금 내역 / R2 — 업로드 파일 / KV — 세션 캐시 |
+| 인증 | Better Auth(이메일+비밀번호), 관리자 승인제, Turnstile, D1 기반 rate limit |
+| ORM·마이그레이션 | Drizzle ORM, `drizzle-kit generate` → `wrangler d1 migrations apply` (0000~0013) |
+| 배포 | `npm run cf-deploy` 한 줄 = lint → 타입체크 → 빌드 → D1 마이그레이션 → Worker 배포 |
+| 비용 | Workers Paid $5/월 하나. D1·R2·KV·이미지 변환은 포함 한도 안 |
+| 규모 | 커밋 109개, 주말 이틀 Worker 호출 약 4만 건(이전 후 첫 주말) |
 
-- `BETTER_AUTH_SECRET`: 최소 32자의 무작위 비밀값
-- `BETTER_AUTH_URL`: 실제 서비스 원본 URL(예: `https://church.example.com`)
+## 개발 흐름
 
-`wrangler.toml`의 `AUTH_KV` 바인딩은 첫 배포 시 Wrangler가 자동 생성합니다. Git 연동
-배포에서는 Cloudflare 대시보드에서 생성된 KV가 Worker의 `AUTH_KV`에 연결됐는지
-확인하세요.
+### 1단계 — 뼈대와 첫 배포 삽질 (7/15 ~ 7/29)
 
-비밀값은 저장소나 일반 텍스트 변수로 커밋하지 말고 Cloudflare Workers의
-Secrets에서 관리합니다. 미리보기 환경과 프로덕션 환경에 각각 설정해야 합니다.
+- v0로 화면 뼈대를 만들고 공개 페이지(소개·예배·설교·커뮤니티·사진첩)와 관리자 화면을 붙였습니다.
+- 처음엔 **Postgres(`pg`)** 를 쓰려 했고, Cloudflare 배포 단계에서 막혔습니다.
+  - OpenNext 번들이 `pg-cloudflare`를 못 찾음 → 의존성 추가로 넘김(`b6c1209`)
+  - `package-lock.json`과 `pnpm-lock.yaml`이 섞여 CI 설치가 매번 다르게 깨짐 → npm 하나로 통일
+  - Pages로 배포하려다 SSR·Server Actions가 안 돌아 Workers로 전환, `wrangler.toml`의 `assets` 설정을 여러 번 고침
+- 7/27 `pg`를 걷어내고 **D1 + Drizzle**로 갈아탔습니다(`902aa6c`). 이후 배포 문제가 거의 사라졌습니다.
 
-## D1 데이터베이스 준비
+### 2단계 — 회원·운영 체계와 기존 콘텐츠 이관 (8/6 ~ 8/26)
 
-```bash
-npm run db:migrate
+- 가입하면 `pending`, 관리자가 승인해야 `member`가 되는 구조. 첫 관리자는 `/setup/admin`에서 1회용 키로만 승격(`3712803`).
+- 게시글마다 `visibility`(`public` / `member` / `offering` 같은 그룹)를 두고 `canAccess()` 한 곳에서 판정.
+- GitHub Actions에 `npm run check`(lint + tsc + 빌드)를 걸어 깨진 코드가 main에 못 들어가게 했습니다.
+- **기존 사이트 크롤링 이관 스크립트** `scripts/import-legacy.mjs`(`d89d09d`) — 아래 "데이터 파이프라인" 참고.
+
+### 3단계 — 피드백 반영과 화면 다듬기 (8/21 ~ 9/28)
+
+- 교회 측 피드백을 몇 차례 받아 반영(`feedback_version`, `feedback_v2`).
+- 주보 PDF를 `<iframe>`으로 띄웠더니 카카오톡·인스타 인앱 브라우저에서 안 열림 → `react-pdf`(canvas 렌더)로 교체(`908e275`), 이후 확대/축소가 되는 전체화면 뷰어로 통합(`cb87f69`).
+- AI 생성 이미지를 실제 예배 사진으로 교체, 예배 시간·주보를 상단 바로가기로 이동.
+- YouTube 설교·실시간 예배 연동: API 키가 없거나 실패하면 RSS로 폴백.
+
+### 4단계 — 도메인 전환과 데이터 구조 확장 (9/29 ~ 10/2)
+
+- 사진첩을 "사진 낱장"에서 **앨범(게시글) 구조**로 바꾸고 옛 갤러리를 앨범 단위로 가져왔습니다(`da7adb9`, 마이그레이션 0010).
+- **9/30 도메인 전환**: 네임서버를 기존 제작사 DNS → Cloudflare로 옮기고 `www`를 Worker Custom Domain에, apex는 301 리다이렉트로 연결. 교회 메일(Daum MX 2개)은 그대로 유지하고 Cloudflare Email Routing은 일부러 끔(켜면 MX가 바뀌어 메일이 끊김).
+- 옛 주소(`/Board/Index/21` 등)는 `next.config.mjs` `redirects()`로 새 주소에 영구 연결.
+- 교회발자취를 하드코딩 배열 112개 → D1 테이블 + 관리자 화면으로, 헌금 내역을 주차별 기록으로 확장(`9d30a5c`).
+
+### 5단계 — 실트래픽을 맞고 성능·비용 최적화 (10/1 ~ 10/7)
+
+도메인을 옮기자 주말 Worker 호출이 203건 → 4만 1,699건으로 뛰었고, 여기서 진짜 문제가 드러났습니다.
+아래 "마주한 문제와 해결"에 자세히 적었습니다.
+
+## 마주한 문제와 해결
+
+### 1. 카톡으로 공유된 글 하나에 사이트가 503 (가장 큰 사건)
+
+- **증상**: 10/3(토) 밤 21~22시, 카카오톡으로 공유된 게시글에 방문자가 몰리며 `exceededCpu` 137건 → 일부 방문자에게 오류 화면.
+- **원인 추적**: Cloudflare GraphQL·Observability API로 경로별 집계를 뽑아 보니 137건 중 98건이 페이지가 아니라 **글 속 첨부 이미지**(`/api/uploads/attachments/*.png`)였습니다. 첨부가 `private, no-store`로 나가서 이미지 한 장마다 Next 런타임 부팅 + 세션 조회 + D1 조회가 돌았고, Worker 응답은 CDN 캐시를 타지 않기 때문에 같은 이미지를 수백 번 다시 그렸습니다.
+- **해결**(`4229a46`, `a90fddd`)
+  - 공개 글의 첨부만 `public, max-age=3600`, 회원 전용 첨부는 그대로 `no-store`.
+  - Next 앞에 얇은 진입점 `worker.ts`를 두고 Cache API에 저장.
+  - 비로그인 방문자의 공개 페이지 GET은 엣지에서 60초 캐시. 세션 쿠키가 있거나 RSC 요청이면 무조건 Next로 보내 회원용 화면이 공유 캐시에 섞이지 않게 함.
+  - 캐시 키에 **배포 버전 ID**(`CF_VERSION_METADATA`)를 넣어, 새로 배포하면 옛 HTML이 사라진 JS/CSS 청크를 가리키는 일이 없게 함.
+- **결과**: 수정 배포 후 `exceededCpu` 0건.
+
+### 2. Worker 호출의 61%가 favicon이었다
+
+- 주말 호출 41,623건 중 25,227건이 `/icon.svg`. `app/icon.svg`는 Next 메타데이터 라우트라 `max-age=0`으로 나가서 페이지를 열 때마다 Worker가 돌았습니다.
+- `robots.txt`는 아예 없어서 크롤러가 올 때마다 404 페이지를 SSR(건당 ~200ms CPU).
+- 사진첩·팝업 이미지는 권한 확인이 필요 없는 불변 파일인데도 Next를 통째로 거침(건당 180~340ms CPU).
+- **해결**(`5596349`): 아이콘·robots를 `public/` 정적 자산으로, `gallery/`·`popups/`는 `worker.ts`에서 R2를 바로 스트리밍(`immutable`, 1년 캐시). 경로 조작(`..`, 잘못된 인코딩)은 404로 막음.
+
+### 3. 방문 한 번에 RSC 렌더가 12번
+
+- 헤더·푸터 링크는 모든 페이지에서 항상 화면에 보이므로 Next의 `<Link>` prefetch가 방문마다 백그라운드 렌더를 ~12번 일으켰습니다. 헤더·푸터 링크의 prefetch를 끄는 것만으로 방문자당 CPU가 크게 줄었습니다(`cf68001`).
+
+### 4. 카메라 원본 사진을 그대로 내려보냄
+
+- 업로드된 원본(최대 7.7MB)이 모바일에도 그대로 전송됐습니다. 커스텀 이미지 로더로 Cloudflare Image Transformations(`/cdn-cgi/image/width=…,format=auto`)를 거치게 했습니다(`c6d390d`).
+- 그런데 변환은 **서로 다른 너비 하나하나가 과금 단위**이고 Next 기본값은 사진마다 너비 8종(최대 3840)을 만듭니다. `deviceSizes`를 `[640, 1080, 1920]` 세 단계로 줄였습니다(`de448a0`).
+
+### 5. 기존 회원이 로그인을 못 하는데 원인을 모름
+
+- 로그 집계: 9/30 이후 로그인 성공 4건, `User not found` 실패 21건(기기 기준 약 10명, 1분 안에 2~5회 반복 시도).
+- 기존 회원 계정은 이관 대상이 아니었는데, 화면에는 "이메일 또는 비밀번호가 올바르지 않습니다"만 떠서 다시 가입해야 한다는 걸 알 수 없었습니다. 로그인 화면에 안내 문구 추가(`694bd33`).
+- 교훈: 코드 버그가 아니어도 로그에는 **사용자가 막힌 지점**이 남는다.
+
+### 6. 다른 관리자의 첨부만 업로드 실패
+
+- 브라우저마다 같은 파일의 MIME을 다르게 보냅니다(Windows는 빈 문자열, macOS m4a는 `audio/x-m4a`). 타입만 보고 거절하던 검증을 확장자 폴백으로 바꾸고, 실패 시 일반 오류 페이지 대신 토스트로 이유를 보여주게 했습니다(`ef26afd`).
+
+### 7. 헌금 내역 파서가 이름 한 줄을 제목으로 착각
+
+- "숫자 없는 짧은 줄 = 섹션 제목" 규칙 때문에 `[생일감사헌금]` 아래 이름 한 명만 있는 줄이 빈 섹션이 됨. 대괄호 제목이 있는 문서에서는 대괄호만 섹션으로 인정하도록 수정하고 `lib/offering.test.ts`로 고정(`393951a`).
+
+## 데이터 파이프라인
+
+### 기존 사이트 → 새 사이트 이관 (`scripts/import-legacy.mjs`)
+
+```
+기존 사이트 HTML ──fetch──▶ 파싱(제목·본문·첨부) ──▶ /tmp/*.sql  ──wrangler d1 execute──▶ D1
+                                   │
+                                   └─ 첨부·본문 이미지 다운로드 ──wrangler r2 object put──▶ R2
 ```
 
-최초 배포 후 첫 관리자는 가입한 계정의 `user.role`을 데이터베이스에서 `admin`으로
-변경해야 합니다. 일반 가입자가 역할을 직접 지정할 수는 없습니다.
+- 게시판 ID → 새 카테고리·공개 범위를 표 하나(`boards` Map)로 매핑. 예: 59 → 공지사항/public, 61 → 새가족소개/member, 4820 → 헌금 내역/offering.
+- **멱등성**: 게시글은 `(legacyBoard, legacyId)` 유니크 인덱스, 페이지·앨범은 `legacyId` 유니크 + `ON CONFLICT DO NOTHING`. 몇 번을 다시 돌려도 중복이 생기지 않아 중간에 실패해도 그냥 재실행하면 됩니다.
+- `--local` 플래그로 로컬 D1/R2에 먼저 넣어 확인한 뒤 `--remote`로 운영에 반영. `--board=`, `--pages=`로 범위를 좁혀 시험.
+- 옛 공지는 대부분 포스터 이미지라 첨부 파일과 본문 `<img>`를 모두 R2로 복사하고 `legacyId` 기반 키로 저장.
 
-## 검증 및 배포
+### 외부 데이터 캐시 (YouTube)
 
-```bash
-npm ci
-npm run lint
-npx tsc --noEmit
-npm run cf-build
-npm run cf-preview
-npm run cf-deploy
-```
+- 설교 영상 목록은 YouTube API → 실패 시 RSS 폴백. 결과는 D1 `app_cache`에 JSON으로 저장하고, 오래된 값은 즉시 응답한 뒤 `waitUntil`로 백그라운드 갱신(stale-while-revalidate).
+- 실시간 예배 확인은 5분 캐시(API 2 unit × 하루 최대 ~600 unit). 15분 이내 값은 먼저 보여주고 뒤에서 재확인.
 
-Git 연동 배포를 구성할 때도 Pages 프로젝트가 아닌 Workers 프로젝트를 사용합니다.
-OpenNext 산출물의 Worker 진입점은 `.open-next/worker.js`, 정적 자산 디렉터리는
-`.open-next/assets`이며 자세한 값은 `wrangler.toml`에 정의되어 있습니다.
+### 백업 (`scripts/backup.mjs`)
 
+- D1 전체 SQL 덤프 + **DB가 참조하는 R2 객체만** 내려받기. 키는 덮어쓰지 않으므로 이미 받은 파일은 건너뛰는 증분 백업.
+- DB에는 있는데 R2에 없는 파일이 있으면 목록을 출력하고 종료 코드 1 — 백업이 곧 데이터 정합성 점검.
+- 회원 정보가 들어 있으므로 저장소 밖(`~/church-backups`)에만 저장.
+
+## DB 설계
+
+### 저장소 역할 분리
+
+| 저장소 | 넣은 것 | 이유 |
+|---|---|---|
+| D1 | 회원·역할·게시글·사진첩·주보·헌금·rate limit·YouTube 캐시 | 강한 일관성. 권한 판정과 카운터는 반드시 여기 |
+| KV | Better Auth 세션 보조 저장소 | 읽기가 많고 약간 늦게 반영돼도 되는 것만 |
+| R2 | 업로드 원본 파일 | DB에는 `/api/uploads/<key>` 경로만 저장 |
+
+- **KV를 권한 판정에 쓰지 않음**: KV는 최종 일관성이라 역할을 바꿔도 다른 리전 isolate에 바로 반영되지 않습니다. 역할은 매 요청 D1에서 읽습니다.
+- **rate limit 카운터를 D1에**(0008): Worker isolate마다 메모리가 따로라 메모리 카운터는 무의미하고, KV는 즉시 보이지 않아 무차별 대입을 못 막습니다.
+- **YouTube 캐시를 KV → D1로**(0009): 당시 KV 무료 쓰기 한도(하루 1,000건)에 걸릴 수 있었습니다.
+- 클라이언트 IP는 `cf-connecting-ip`만 신뢰(`x-forwarded-for`는 위조 가능).
+
+### 스키마에서 고민한 점
+
+- **공개 범위는 컬럼 하나**: `visibility`에 `public` / `member` / 그룹명. 그룹은 `user_groups(userId, group)` 복합 PK. 판정 로직은 `canAccess()` 한 함수.
+- **이관 키**: `legacyBoard`, `legacyId`를 남겨 재실행 안전성과 옛 URL 리다이렉트를 동시에 해결.
+- **앨범 전환**: 사진(`gallery`)에 `albumId`를 추가하되 제목·카테고리 사본은 남김 — "전체 수료자"처럼 사진 단위로 보는 화면을 깨지 않기 위해 의도적으로 비정규화.
+- **헌금 내역 링크**: 주차별 기록이 하나의 `accessToken`을 공유. 교인에게 뿌린 링크 하나로 최신 주차를 보고 `?week=`로 지난 주를 봅니다.
+- **교회발자취 날짜는 텍스트**: `"1963. 06. 16"`, `"1970. 01."`처럼 일 단위가 없는 기록이 있어 그대로 저장. 이 형식은 문자열 정렬이 곧 시간순.
+- **인덱스는 실제 쿼리 기준**(0007): `(category, pinned, createdAt)`, `(category, preachedAt)`, `attachments(postId)` 등 목록 화면의 WHERE + ORDER BY 순서대로.
+- **마이그레이션 규칙**: 기존 파일은 절대 수정·삭제하지 않고 새 파일만 추가. 배포 중에는 옛 Worker와 새 스키마가 잠깐 공존하므로 호환되는 변경(컬럼 추가 등)을 우선. 데이터 변경(예: 0013 찬양대 이름 변경)도 마이그레이션으로 남깁니다.
+
+## 배포 속도와 비용
+
+### 배포
+
+- `npm run cf-deploy` 한 줄이 lint → `tsc` → OpenNext 빌드가 **모두 통과해야만** 원격 D1 마이그레이션과 Worker 배포를 실행합니다. 빌드가 깨진 상태로 DB만 바뀌는 일이 없습니다.
+- `wrangler.toml`의 `[secrets] required`에 `BETTER_AUTH_SECRET`, `TURNSTILE_SECRET`, `YOUTUBE_API_KEY`를 지정해, 비밀값이 빠진 채로는 배포 자체가 거부됩니다.
+- PR과 main push마다 GitHub Actions가 같은 `npm run check`를 실행.
+- 문제가 생기면 Cloudflare Deployments에서 직전 버전으로 즉시 롤백. 스키마가 바뀐 배포는 D1 Time Travel(7일)과 함께 판단.
+
+### 성능 (Cloudflare API 실측)
+
+| 시점 | 호출 | 오류 | CPU P50 / P99 |
+|---|---|---|---|
+| 10/3~4 주말 (최적화 전) | 41,699 | 137 (503) | 6.4ms / 555ms |
+| 10/6 수정 배포 후 하루 | 3,849 | 0 | 22.7ms / 858ms |
+
+- 수정 후 P50이 오른 건 나빠진 게 아니라 **분모가 바뀐 것**입니다. 가벼운 favicon 요청(P50 5ms)이 전체의 61% → 17%로 빠지면서 무거운 요청 비중이 커졌습니다. 아이콘을 빼고 보면 14ms → 33ms이고, 나머지 차이는 평일 트래픽이 적어 60초 엣지 캐시가 대부분 미스난 영향입니다.
+- D1 쿼리 지연은 P50 0.19ms / P90 0.37ms로 병목이 아니었습니다. 병목은 늘 **Next 런타임을 부팅하는 비용**이었습니다.
+
+### 비용
+
+- 이전: 외주 제작사 호스팅 + 관리. 현재: **Workers Paid $5/월** 하나에 D1·R2·KV·Turnstile·이미지 변환이 포함 한도 안에 들어갑니다.
+- Paid 플랜은 월 1천만 요청·3천만 CPU ms를 포함하는데, 가장 바빴던 주말 이틀의 CPU 합계가 약 160만 ms였습니다.
+- 처음엔 무료 플랜(요청당 CPU 10ms 한도)으로 시작했다가 실트래픽에서 한도를 넘어 Paid로 전환했습니다. 그 이후의 최적화는 비용보다 **응답 속도**를 위한 것입니다.
+- 이미지 변환은 "고유 변환 수" 과금이라 너비 종류를 줄이는 게 곧 비용 절감이었습니다.
+
+## 배운 점
+
+1. **추측 말고 숫자부터.** "느리다"는 감각 대신 GraphQL·Observability API로 경로별 CPU 합계를 뽑자 범인이 페이지가 아니라 첨부 이미지와 favicon이라는 게 바로 보였습니다. 대시보드 차트를 눈으로 읽은 값(P50 41ms)과 API 실측값(6.4ms)이 크게 달랐던 것도 같은 교훈입니다.
+2. **서버리스에서 비싼 건 쿼리가 아니라 부팅이다.** D1은 0.2ms인데 Next를 한 번 깨우면 수백 ms. 그래서 해결책은 대부분 "Next까지 가지 않게 하기"(정적 자산, 엣지 캐시, R2 직접 응답)였습니다.
+3. **캐시는 무엇을 캐시하지 않을지가 더 중요하다.** 세션 쿠키·RSC·회원 전용 파일을 명시적으로 제외하고, 배포 버전을 캐시 키에 넣는 것까지가 한 세트였습니다.
+4. **저장소는 일관성 요구로 고른다.** 권한·카운터는 D1, 느려도 되는 세션 보조는 KV, 파일은 R2.
+5. **이관 스크립트는 몇 번이고 다시 돌릴 수 있어야 한다.** 유니크 키 + `ON CONFLICT DO NOTHING` + `--local` 리허설 덕분에 실패를 두려워하지 않고 반복할 수 있었습니다.
+6. **사용자 환경은 스펙과 다르다.** 인앱 브라우저의 PDF, OS마다 다른 MIME, 기존 회원의 기대 — 실제 사용자 로그를 보기 전엔 몰랐던 것들입니다.
+7. **배포 파이프라인은 일찍, 단순하게.** 초기에 패키지 매니저·DB 드라이버·배포 대상(Pages vs Workers)이 섞여 며칠을 썼습니다. 플랫폼에 맞는 스택(D1 + Drizzle + OpenNext)으로 정리하고 `check → migrate → deploy` 한 줄로 묶은 뒤로는 배포가 이벤트가 아니게 됐습니다.
+8. **외부 시스템 전환은 되돌릴 수 없는 단계를 따로 센다.** 도메인 전환 때 메일 MX 유지, Email Routing OFF, 도메인 활성 후 `BETTER_AUTH_URL` 변경처럼 순서가 틀리면 바로 장애가 나는 단계를 미리 목록으로 만들어 두고 진행했습니다.
+
+## 남은 과제
+
+- 공개 페이지 엣지 캐시 TTL(60초) 조정 검토 — 길게 하면 평일 캐시 적중률이 오르지만 관리자 수정이 늦게 보임.
+- `posts` 목록 쿼리가 반환 행 대비 읽는 행이 많음(읽은 행 24만 / 반환 3천). 지금은 절대량이 작아 보류.
+- 옛 주소 리다이렉트(avg 350~430ms)를 `worker.ts`로 옮겨 Next 부팅 생략.
 
 ---
 
+## 실행과 배포
 
+### 필수 환경 변수 (Cloudflare Worker Secrets)
 
-## To - do
+- `BETTER_AUTH_SECRET`: 32자 이상 무작위 값
+- `TURNSTILE_SECRET`, `YOUTUBE_API_KEY`
+- 선택: `RESEND_API_KEY`(이메일 인증·비밀번호 재설정), 최초 관리자용 `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_KEY`
 
-1. /Users/chltmddn5843/Documents/GitHub/church/public 이미지 바꾸기
-2.
+공개 값(`BETTER_AUTH_URL`, `TURNSTILE_SITE_KEY` 등)은 `wrangler.toml`의 `[vars]`에 있습니다.
+비밀값은 저장소에 커밋하지 않습니다. 로컬 개발은 `.dev.vars`를 사용합니다.
+
+### 명령
+
+```bash
+npm ci
+npm run dev               # 로컬 개발
+npm run db:migrate:local  # 로컬 D1 마이그레이션
+npm run check             # lint + tsc + Cloudflare 빌드
+npm run cf-preview        # 빌드 결과를 workerd로 로컬 실행
+npm run cf-deploy         # check → 원격 D1 마이그레이션 → 배포 (main 브랜치만)
+npm run backup            # D1 덤프 + R2 파일 백업
+npm run content:import -- --local   # 기존 사이트 콘텐츠 이관(로컬 리허설)
+```
+
+### 구조
+
+```
+worker.ts            Next 앞단 진입점: 엣지 캐시, 공개 이미지 R2 직접 응답
+app/                 App Router 페이지·관리자·Server Actions
+lib/db/schema.ts     Drizzle 스키마 (D1)
+lib/access.ts        공개 범위 판정 canAccess()
+lib/auth.ts          Better Auth + Turnstile + rate limit
+migrations/          D1 마이그레이션 (추가만, 수정 금지)
+scripts/             이관·백업 스크립트
+reports/             주말 운영 리포트
+```
