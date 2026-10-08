@@ -22,8 +22,11 @@ node_modules
 *.tsbuildinfo
 .DS_Store
 
-# Claude Code local tooling (not app source)
-.claude/
+# Claude Code local tooling (not app source); church-report skill is shared so it runs on any PC
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/church-report/
 
 # Raw local assets (originals live outside the repo; optimized copies go in public/images)
 /2608 예배촬영/
