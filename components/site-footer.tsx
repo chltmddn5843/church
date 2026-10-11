@@ -63,7 +63,8 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-sidebar-border pt-6 text-center text-sm opacity-60">
+        <div className="mt-10 space-y-1 border-t border-sidebar-border pt-6 text-center text-sm opacity-60">
+          <p>업체명 : 엠엔비 | 이민재 | 사업자등록번호 : 718-72-00277</p>
           <p>
             {church.pastorTitle} {church.pastor} · © {new Date().getFullYear()} {church.name}. All rights reserved.
           </p>

@@ -29,14 +29,9 @@ description: 원당교회 사이트(Cloudflare Worker "church")의 직전 주말
 ## 수치 조회 팁
 화면 차트보다 API가 정확하다. 대시보드 탭에서 `javascript_tool`로 `fetch('/api/v4/graphql', {headers: {'x-atok': window.bootstrap.atok}})`(`workersInvocationsAdaptive`, `d1AnalyticsAdaptiveGroups`)와 `/api/v4/accounts/<계정>/workers/observability/telemetry/query`(`view: calculations`, groupBy `$metadata.trigger`·`$metadata.message`)를 호출한다. 500은 Next가 페이지를 그려서 GraphQL `errors`에 안 잡히므로 `$workers.event.response.status`로 찾는다. 응답에 쿼리스트링이 섞이면 출력이 막히니 `?…`로 지워서 반환한다.
 
-## 일회성: 2026-10-10~11 주말 리포트에 "무료 플랜 전환 판단" 추가
-사용자 요청(2026-10-08). 리포트에 `## 무료 플랜 전환 판단` 섹션을 넣고 결론(전환 가능 / 유지 권장)과 근거 표를 쓴다. 판단 후 이 섹션은 지운다.
-- 무료 한도: 요청 10만/일, 요청당 CPU 10ms, D1 읽은 행 500만/일, Workers Logs 보존 기간 짧음
-- 확인할 것: 토·일 각 요청 수, CPU 10ms 초과 요청 비율(observability `$workers.cpuTimeMs`), D1 일별 rowsRead, 홈(`/`) CPU
-- 비교 기준 (이전 리포트, 이 PC에 `reports/`가 없을 수 있어 여기 적어 둠):
-  - 10/3~4 주말: 호출 41,699 (토 24,253 / 일 17,446), 10/3 토 21~22시 카톡 공유 몰림 때 10ms 한도로 503 137건, CPU P50 6.4 / P99 554.8ms, D1 읽은 행 2일 118만
-  - 10/7 배포(`5596349`) 후 평일: 하루 4~5천 건, CPU P50 10.1 / P90 393.8 / P99 853.7ms, 홈 `/` avg 250ms (엣지 캐시 TTL 60초, `worker.ts:11`), D1 읽은 행 하루 41만~61만
-- 이 시점 예상: CPU 10ms 한도 때문에 유지 쪽. 주말 수치로 확정한다.
+## 직전 주말 비교 기준
+`reports/`는 gitignore돼 PC 간에 옮겨지지 않으므로 지난 주말 핵심 수치를 여기 적어 두고, 리포트를 만들 때마다 이번 주말 값으로 바꾼다.
+- 10/10~11 주말: 요청 8,994 (토 4,428 / 일 4,566), 5xx 0, CPU P50 17.4 / P99 963.9ms, 홈 `/` avg 416ms(캐시 적중 16.5%), D1 읽은 행 2일 139만, 404 404건(옛 사이트 URL 192). 무료 플랜 전환은 CPU 10ms 한도(요청 61% 초과) 때문에 유지로 결론
 
 ## 보고 형식 (한국어, md 파일)
 `reports/church-report-<토요일 YYYY-MM-DD>.md`로 저장한다(`reports/`는 gitignore됨). 같은 파일이 있으면 덮어쓴다. 터미널에는 요약 두세 줄과 파일 경로만 출력한다.

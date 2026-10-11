@@ -133,7 +133,8 @@ export const departments = [
     time: "주일 오전 11:55~1:20",
     place: "사랑관 2층 드림홀",
     desc: "즐겁게 찬양하고 기도로 깊어지며 말씀과 성경적 세계관으로 성장하는, 제자 되고 제자 삼는 공동체입니다.",
-    image: "/images/next-generation/elementary.jpg",
+    image: "/images/next-generation/elementary-2026.jpg",
+    contain: true,
   },
   {
     id: "middle",
@@ -151,7 +152,7 @@ export const departments = [
     time: "주일 오전 11:00~12:20",
     place: "소망관 2층 다니엘홀",
     desc: "말씀과 기도로 건강한 자기 이해와 하나님의 가치관을 세워, 하나님을 기쁘시게 하는 믿음의 사람으로 성장합니다.",
-    image: "/images/next-generation/high.jpg",
+    image: "/images/next-generation/high-2026.jpg",
   },
   {
     id: "young-adult",
