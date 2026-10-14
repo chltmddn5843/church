@@ -5,18 +5,18 @@ import { ChurchNews } from "@/components/home/church-news"
 import { InfoBlocks } from "@/components/home/info-blocks"
 import { ChurchSchool } from "@/components/home/church-school"
 import { PopupModal } from "@/components/popup-modal"
-import { getActivePopups, getLatestBulletin } from "@/lib/queries"
+import { getActivePopups, getHeroImages, getLatestBulletin } from "@/lib/queries"
 import { SocialFloat } from "@/components/home/social-float"
 import { MessageCards } from "@/components/message-cards"
 
 export default async function HomePage() {
-  const [popups, bulletin] = await Promise.all([getActivePopups(), getLatestBulletin()])
+  const [popups, bulletin, heroImages] = await Promise.all([getActivePopups(), getLatestBulletin(), getHeroImages()])
 
   return (
     <>
       <SocialFloat />
       <PopupModal popups={popups} />
-      <Hero />
+      <Hero images={heroImages} />
       <InfoBlocks bulletin={bulletin} />
       <MessageCards home />
       <section className="bg-white py-20 md:py-28">

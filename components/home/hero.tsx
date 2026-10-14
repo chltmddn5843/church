@@ -3,17 +3,13 @@
 import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react"
+import { heroSlides } from "@/lib/church"
 
-const slides = [
-  { src: "/images/worship-sanctuary-wide.jpg", title: "원당교회", subtitle: "함께 예배하는 기쁨" },
-  { src: "/images/worship-praise.jpg", title: "주일예배", subtitle: "은혜 안에서 하나 되는 예배" },
-  { src: "/images/worship-choir.jpg", title: "찬양대", subtitle: "마음을 다해 드리는 찬양" },
-  { src: "/images/next-generation.jpg", title: "다음세대", subtitle: "믿음의 다음세대를 함께 세워갑니다" },
-] as const
 
 const AUTOPLAY_MS = 5000
 
-export function Hero() {
+export function Hero({ images }: { images: Record<number, string> }) {
+  const slides = heroSlides.map((slide, i) => ({ ...slide, src: images[i] ?? slide.src }))
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(true)
   // Only the current slide and the next one are fetched; the rest load as the show reaches them.
@@ -21,10 +17,10 @@ export function Hero() {
 
   const go = useCallback((target: number) => {
     setIndex(target)
-    setLoaded((seen) => new Set([...seen, target, (target + 1) % slides.length]))
+    setLoaded((seen) => new Set([...seen, target, (target + 1) % heroSlides.length]))
   }, [])
-  const next = useCallback(() => go((index + 1) % slides.length), [go, index])
-  const prev = useCallback(() => go((index - 1 + slides.length) % slides.length), [go, index])
+  const next = useCallback(() => go((index + 1) % heroSlides.length), [go, index])
+  const prev = useCallback(() => go((index - 1 + heroSlides.length) % heroSlides.length), [go, index])
 
   useEffect(() => {
     if (!playing) return
@@ -37,7 +33,7 @@ export function Hero() {
     <section className="relative isolate -mt-16 h-dvh min-h-[480px] w-full overflow-x-clip md:-mt-24">
       {slides.map((slide, i) => loaded.has(i) && (
         <Image
-          key={slide.src}
+          key={slide.title}
           src={slide.src}
           alt=""
           fill
@@ -52,7 +48,7 @@ export function Hero() {
         <div className="relative">
           {slides.map((slide, i) => (
             <div
-              key={slide.src}
+              key={slide.title}
               aria-hidden={i !== index}
               className={`transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "absolute inset-0 opacity-0"}`}
             >
@@ -91,10 +87,10 @@ export function Hero() {
           <ChevronRight className="size-6" />
         </button>
         <span className="text-sm font-semibold tabular-nums text-white drop-shadow-[0_1px_3px_rgb(0_0_0_/_0.5)]" aria-hidden="true">
-          {String(index + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+          {String(index + 1).padStart(2, "0")} / {String(heroSlides.length).padStart(2, "0")}
         </span>
         <span className="sr-only" aria-live="polite">
-          {slides.length}장 중 {index + 1}번째 이미지: {slides[index].title} — {slides[index].subtitle}
+          {heroSlides.length}장 중 {index + 1}번째 이미지: {slides[index].title} — {slides[index].subtitle}
         </span>
       </div>
     </section>

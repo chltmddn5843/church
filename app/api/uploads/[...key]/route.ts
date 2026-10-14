@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic"
 export async function GET(_request: Request, { params }: { params: Promise<{ key: string[] }> }) {
   const { key } = await params
   const objectKey = key.join("/")
-  if (!/^(popups|gallery|attachments)\//.test(objectKey) || key.some((part) => !part || part === "." || part === "..")) {
+  if (!/^(popups|gallery|attachments|hero)\//.test(objectKey) || key.some((part) => !part || part === "." || part === "..")) {
     return new NextResponse("Not found", { status: 404 })
   }
 

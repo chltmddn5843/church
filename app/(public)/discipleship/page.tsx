@@ -17,7 +17,7 @@ const courses = [
     icon: Sprout,
     step: "STEP 1",
     title: "새가족반",
-    period: "4주 과정",
+    period: "5주 과정",
     desc: "교회에 처음 오신 분들을 위한 신앙의 기초와 교회 생활 안내 과정입니다.",
   },
   {
@@ -31,7 +31,7 @@ const courses = [
     icon: Users,
     step: "STEP 3",
     title: "제자반",
-    period: "27주 과정",
+    period: "25주 과정",
     desc: "예수님의 제자로 살아가기 위한 말씀 훈련과 삶의 변화를 배워갑니다.",
   },
   {

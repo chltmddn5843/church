@@ -91,6 +91,13 @@ export const church = {
   ],
 } as const
 
+// 메인 슬라이드 기본 이미지. 관리자 > 메인 이미지 관리에서 슬롯(배열 순서)별로 교체한다.
+export const heroSlides = [
+  { src: "/images/worship-praise.jpg", title: "주일예배", subtitle: "은혜 안에서 하나 되는 예배" },
+  { src: "/images/worship-choir.jpg", title: "찬양대", subtitle: "마음을 다해 드리는 찬양" },
+  { src: "/images/next-generation.jpg", title: "다음세대", subtitle: "믿음의 다음세대를 함께 세워갑니다" },
+] as const
+
 export type NavItem = (typeof church.nav)[number]
 
 export const worshipPlaces = {

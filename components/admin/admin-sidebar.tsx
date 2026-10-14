@@ -7,6 +7,7 @@ import {
   Bell,
   BookOpen,
   FileText,
+  GalleryHorizontal,
   History,
   Home,
   ImageIcon,
@@ -24,6 +25,7 @@ import { authClient } from "@/lib/auth-client"
 const links = [
   { href: "/admin", label: "관리자 메인", icon: LayoutDashboard },
   { href: "/admin/live", label: "예배 영상 관리", icon: Radio },
+  { href: "/admin/hero", label: "메인 이미지 관리", icon: GalleryHorizontal },
   { href: "/admin/popups", label: "팝업 관리", icon: Bell },
   { href: "/admin/sermons", label: "설교 관리", icon: BookOpen },
   { href: "/admin/posts", label: "게시글 관리", icon: Newspaper },

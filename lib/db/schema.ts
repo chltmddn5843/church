@@ -167,6 +167,13 @@ export const liveStream = sqliteTable("live_stream", {
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
+// 메인 슬라이드 교체 이미지. slot = lib/church.ts heroSlides 순서, 행이 없으면 기본 이미지.
+export const heroImages = sqliteTable("hero_images", {
+  slot: integer("slot").primaryKey(),
+  imageUrl: text("imageUrl").notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
+})
+
 // Small JSON cache for the YouTube lists and live check. D1 rather than KV: KV Free allows only 1,000 writes/day.
 export const appCache = sqliteTable("app_cache", {
   key: text("key").primaryKey(),

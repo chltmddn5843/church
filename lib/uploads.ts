@@ -6,7 +6,7 @@ const MAX_FILE_SIZE = 20 * 1024 * 1024
 
 export class UploadError extends Error {}
 
-export async function uploadFile(file: File, folder: "gallery" | "attachments") {
+export async function uploadFile(file: File, folder: "gallery" | "attachments" | "hero") {
   if (!file.size || file.size > MAX_FILE_SIZE) throw new UploadError("파일은 20MB 이하만 업로드할 수 있습니다.")
   const contentType = contentTypeOf(file)
   if (!contentType) throw new UploadError("이미지(JPG·PNG·WEBP·GIF), PDF, MP3, M4A 파일만 업로드할 수 있습니다.")

@@ -1,6 +1,6 @@
 import "server-only"
 import { getDb } from "@/lib/db"
-import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports } from "@/lib/db/schema"
+import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports, heroImages } from "@/lib/db/schema"
 import { and, asc, count, desc, eq, gt, inArray, like, lt, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 
@@ -196,4 +196,14 @@ export async function getActiveOfferingWeeks(token: string) {
 // Newest week first. id, not updatedAt: correcting an old week must not make it "this week".
 export async function getOfferingReports() {
   return getDb().select().from(offeringReports).orderBy(desc(offeringReports.id))
+}
+
+export async function getHeroImages(): Promise<Record<number, string>> {
+  try {
+    const rows = await getDb().select().from(heroImages)
+    return Object.fromEntries(rows.map((row) => [row.slot, row.imageUrl]))
+  } catch (error) {
+    console.error("Failed to load hero images:", error)
+    return {}
+  }
 }

@@ -12,6 +12,7 @@ const messages: Record<string, string> = {
   rejected: "가입을 거절했습니다.",
   group: "회원 자료 권한이 변경되었습니다.",
   popup: "팝업 설정이 저장되었습니다.",
+  hero: "메인 이미지가 변경되었습니다.",
   offering: "헌금 현황이 저장되었습니다.",
   gallery: "앨범이 등록되었습니다.",
   cleared: "직접 지정한 영상을 내렸습니다. 이제 생방송을 자동으로 찾아 표시합니다.",
@@ -20,6 +21,7 @@ const messages: Record<string, string> = {
 
 const errors: Record<string, string> = {
   upload: "첨부파일을 올리지 못해 글이 등록되지 않았습니다. 이미지(JPG·PNG·WEBP·GIF), PDF, MP3, M4A 파일만, 파일당 20MB 이하로 올려 주세요.",
+  hero: "메인 이미지는 JPG·PNG·WEBP 이미지만, 20MB 이하로 올려 주세요.",
   youtube: "YouTube 영상 주소를 확인해 주세요. 예: https://www.youtube.com/live/영상ID 또는 https://youtu.be/영상ID",
 }
 

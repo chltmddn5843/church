@@ -23,6 +23,7 @@ const staff = [
   { name: "오보배", role: "전도사", image: "/images/staff/oh-bobae.jpg" },
   { name: "고강건", role: "전도사", image: "/images/staff/go-ganggeon.png" },
   { name: "이경은", role: "전도사", image: "/images/staff/lee-gyeongeun.jpg" },
+  { name: "박찬양", role: "전도사", image: "/images/staff/park-chanyang.png" },
   { name: "조은경", role: "교육간사", image: "/images/staff/jo-eungyeong.jpg" },
   { name: "김미경", role: "목회행정간사", image: "/images/staff/kim-migyeong.jpg" },
 ]
@@ -31,7 +32,6 @@ const staff = [
 const missionFields = [
   { region: "인도", lon: 73.9, lat: 18.5, lx: 45, ly: 46, people: [{ name: "김진곤 · 김미경", field: "중인도 마하라스트라주 뿌네지역" }] },
   { region: "브라질", lon: -46.6, lat: -23.1, lx: -98, ly: -22, people: [{ name: "차용조 · 안기영", field: "브라질 아찌바이아" }] },
-  { region: "마다가스카르", lon: 47.5, lat: -18.9, lx: 12, ly: -38, people: [{ name: "정남현 · 이은경", field: "아프리카 마다가스카르" }] },
   { region: "태국", lon: 99, lat: 18.8, lx: 82, ly: -24, people: [{ name: "강성춘 · 박성화", field: "태국 쁘라뚜 치앙마이" }] },
   { region: "캄보디아", lon: 104.9, lat: 11.6, lx: 150, ly: -8, people: [{ name: "김정현 · 이효은", field: "기아대책 캄보디아" }] },
   {
