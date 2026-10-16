@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 export function WorshipTimes() {
   return (
     <section id="worship" className="scroll-mt-24 relative isolate overflow-x-clip pb-20 pt-28 md:pb-28 md:pt-40">
-      <Image src="/images/wd-main.jpg" alt="" fill className="object-cover" />
+      <Image src="/images/wd-main.jpg" alt="" fill quality={85} className="object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/50" />
       <div aria-hidden="true" className="absolute -top-0.5 left-1/2 h-9 w-[160%] -translate-x-1/2 rounded-b-[50%_100%] bg-background md:h-[58px] md:w-[130%]" />
 

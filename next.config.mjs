@@ -8,10 +8,12 @@ const nextConfig = {
     loader: "custom",
     loaderFile: "./lib/image-loader.ts",
     // Each distinct width is a separate billable Cloudflare transformation (free plan: 5,000 unique/month).
-    // Next's defaults offer 8 device widths up to 3840 for every photo; 3 buckets capped at 1920 cover
-    // phone/tablet/desktop. Bulletin pages pick their own wider widths in bulletin-viewer.tsx.
-    deviceSizes: [640, 1080, 1920],
+    // Next's defaults offer 8 device widths up to 3840 for every photo; 4 buckets cover phone/tablet/desktop,
+    // with 2560 only reached by full-bleed photos on retina screens. Bulletin pages pick their own wider widths in bulletin-viewer.tsx.
+    deviceSizes: [640, 1080, 1920, 2560],
     imageSizes: [128, 256, 384],
+    // 85 is for the large home-page photos (hero, 비전·사명, 교회학교, 예배안내); everything else stays at 75.
+    qualities: [75, 85],
   },
   experimental: {
     serverActions: {

@@ -38,6 +38,7 @@ export function Hero({ images }: { images: Record<number, string> }) {
           alt=""
           fill
           priority={i === 0}
+          quality={85}
           aria-hidden={i !== index}
           className={`object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
         />

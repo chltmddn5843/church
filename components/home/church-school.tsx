@@ -34,6 +34,7 @@ export function ChurchSchool() {
         alt=""
         fill
         sizes="100vw"
+        quality={85}
         className="-z-10 object-cover animate-in fade-in duration-700 motion-reduce:animate-none"
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/40 to-black/10 lg:bg-gradient-to-r lg:from-black/70 lg:via-black/35 lg:to-black/25" />

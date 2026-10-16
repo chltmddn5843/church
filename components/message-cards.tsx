@@ -41,6 +41,7 @@ export function MessageCards({ home = false }: { home?: boolean }) {
               alt=""
               fill
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              quality={85}
               className="-z-10 object-cover transition-transform duration-700 motion-safe:group-hover:scale-105"
             />
             <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
