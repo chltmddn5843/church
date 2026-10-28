@@ -1,14 +1,17 @@
 // Edge-caches public pages for signed-out visitors so most page views skip SSR + D1 entirely.
 // Signed-in users (session cookie) and client-side navigations (RSC requests) always go to Next,
 // so member-only posts and the logged-in header never land in the shared cache.
-// ponytail: admin edits take up to TTL seconds to show for signed-out visitors (revalidatePath
-// doesn't purge this cache), and post view counts only tick on cache misses.
+// Stale-while-revalidate: a copy older than TTL is still served instantly and re-rendered in the background,
+// because at church traffic levels a plain 60s TTL missed ~85% of home page views (1.6s median render).
+// ponytail: the first signed-out visitor after an admin edit (or after a quiet spell, up to STALE_SECONDS)
+// sees the previous copy (revalidatePath doesn't purge this cache), and post view counts only tick on renders.
 // @ts-expect-error -- .open-next/worker.js only exists after `opennextjs-cloudflare build`
 import nextWorker from "./.open-next/worker.js"
 // @ts-expect-error -- see above; Durable Object classes must be re-exported from the entry
 export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from "./.open-next/worker.js"
 
 const TTL_SECONDS = 60
+const STALE_SECONDS = 86400
 const PUBLIC_PAGE = /^\/(about|worship|discipleship|next-generation|campus|sermons|gallery|community)?(\/|$)/
 
 type Env = CloudflareEnv & { CF_VERSION_METADATA?: { id: string } }
@@ -31,17 +34,22 @@ const worker = {
     const key = new Request(keyUrl.toString())
     const cache = caches.default
 
-    const hit = await cache.match(key)
-    if (hit) return withBrowserNoStore(hit)
-
-    const response: Response = await nextWorker.fetch(request, env, ctx)
-    if (response.status === 200 && !response.headers.has("set-cookie")) {
-      const stored = new Response(response.clone().body, response)
-      stored.headers.set("Cache-Control", `public, s-maxage=${TTL_SECONDS}`)
-      stored.headers.delete("Vary")
-      ctx.waitUntil(cache.put(key, stored))
+    const render = async (): Promise<Response> => {
+      const response: Response = await nextWorker.fetch(request, env, ctx)
+      if (response.status === 200 && !response.headers.has("set-cookie")) {
+        const stored = new Response(response.clone().body, response)
+        stored.headers.set("Cache-Control", `public, s-maxage=${STALE_SECONDS}`)
+        stored.headers.set("X-Cached-At", String(Date.now()))
+        stored.headers.delete("Vary")
+        ctx.waitUntil(cache.put(key, stored))
+      }
+      return response
     }
-    return response
+
+    const hit = await cache.match(key)
+    if (!hit) return render()
+    if (!(Date.now() - Number(hit.headers.get("X-Cached-At")) < TTL_SECONDS * 1000)) ctx.waitUntil(render().then((r) => r.body?.cancel()))
+    return withBrowserNoStore(hit)
   },
 }
 

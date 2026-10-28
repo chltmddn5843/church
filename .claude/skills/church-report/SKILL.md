@@ -31,7 +31,9 @@ description: 원당교회 사이트(Cloudflare Worker "church")의 직전 주말
 
 ## 직전 주말 비교 기준
 `reports/`는 gitignore돼 PC 간에 옮겨지지 않으므로 지난 주말 핵심 수치를 여기 적어 두고, 리포트를 만들 때마다 이번 주말 값으로 바꾼다.
-- 10/10~11 주말: 요청 8,994 (토 4,428 / 일 4,566), 5xx 0, CPU P50 17.4 / P99 963.9ms, 홈 `/` avg 416ms(캐시 적중 16.5%), D1 읽은 행 2일 139만, 404 404건(옛 사이트 URL 192). 무료 플랜 전환은 CPU 10ms 한도(요청 61% 초과) 때문에 유지로 결론
+- 10/24~25 주말: 요청 10,350 (토 4,963 / 일 5,387), 5xx 0, CPU P50 24.4 / P99 909.1ms, 홈 `/` avg wall 1,309ms·CPU median 446ms(캐시 적중 약 15%, 홈 요청 절반이 해외 봇), D1 읽기 22,474쿼리·읽은 행 145만, 404 181건(아이콘·sitemap 101, 옛 URL 약 25). 10/17~18 요청 12,743
+- Observability 로그는 약 7일만 보관된다. 지난 주말 로그 비교는 불가하니 GraphQL 수치로 비교한다
+- Observability API 팁: 일반 요청은 `$workers.event.request.path`가 비어 있으니 `$workers.event.request.url`로 groupBy한다. status 필터는 `type: number`, 백분위 연산자는 `median`/`p90`/`p99`(`p50` 아님)
 
 ## 보고 형식 (한국어, md 파일)
 `reports/church-report-<토요일 YYYY-MM-DD>.md`로 저장한다(`reports/`는 gitignore됨). 같은 파일이 있으면 덮어쓴다. 터미널에는 요약 두세 줄과 파일 경로만 출력한다.
