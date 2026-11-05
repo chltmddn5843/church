@@ -1,26 +1,21 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
+import { getSiteContent } from "@/lib/queries"
+import { applyVisionMessages } from "@/lib/site-content"
 import { cn } from "@/lib/utils"
-
-// Wording supplied by the church (2026-10). Photos are real church events chosen per message (gallery board 62).
-const messages = [
-  { label: "비전", line: "하나님이 영광 받으시고, 예수님이 주인 되시고, 성령님이 이끌어 가는 교회", image: "/images/vision/vision.jpg" },
-  { label: "사명", line: "예수님의 제자가 되어 세상을 변화시키자", image: "/images/vision/serve-neighbors.jpg" },
-  { label: "교회역할", line: "복된 만남을 통해 사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
-  { label: "시대적사명", line: "예배 회복과 다음세대를 세우자", image: "/images/vision/anniversary-worship.jpg" },
-]
 
 // Full-width 비전·사명 panels, shared by the home page and 교회소개.
 // The section title sits on the photos (no separate heading row); photos avoid the hero slides.
-export function MessageCards({ home = false }: { home?: boolean }) {
+export async function MessageCards({ home = false }: { home?: boolean }) {
+  const c = await getSiteContent()
   return (
     <section id={home ? undefined : "vision"} className={cn("relative scroll-mt-24", home && "mt-20 md:mt-28")}>
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-black/60 to-transparent pb-16">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end gap-x-6 gap-y-2 px-4 pt-10 md:pt-12 lg:max-w-[1360px] lg:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">Vision &amp; Mission</p>
-            <h2 className="mt-1 font-serif text-2xl font-bold text-white md:text-3xl">비전과 사명</h2>
+            <h2 className="mt-1 font-serif text-2xl font-bold text-white md:text-3xl">{c["home.vision.title"]}</h2>
           </div>
           {home && (
             <Link
@@ -34,8 +29,8 @@ export function MessageCards({ home = false }: { home?: boolean }) {
       </div>
 
       <ol className="grid gap-px bg-foreground sm:grid-cols-2 lg:grid-cols-4">
-        {messages.map((m) => (
-          <li key={m.label} className="group relative isolate flex min-h-[340px] flex-col overflow-hidden pt-28 text-white sm:min-h-[440px] sm:pt-36 md:min-h-[560px] md:pt-44">
+        {applyVisionMessages(c).map((m, i) => (
+          <li key={i} className="group relative isolate flex min-h-[340px] flex-col overflow-hidden pt-28 text-white sm:min-h-[440px] sm:pt-36 md:min-h-[560px] md:pt-44">
             <Image
               src={m.image}
               alt=""

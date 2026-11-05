@@ -5,18 +5,19 @@ import { ChurchNews } from "@/components/home/church-news"
 import { InfoBlocks } from "@/components/home/info-blocks"
 import { ChurchSchool } from "@/components/home/church-school"
 import { PopupModal } from "@/components/popup-modal"
-import { getActivePopups, getHeroImages, getLatestBulletin } from "@/lib/queries"
+import { getActivePopups, getLatestBulletin, getSiteContent } from "@/lib/queries"
+import { applyDepartments, applyHeroSlides } from "@/lib/site-content"
 import { SocialFloat } from "@/components/home/social-float"
 import { MessageCards } from "@/components/message-cards"
 
 export default async function HomePage() {
-  const [popups, bulletin, heroImages] = await Promise.all([getActivePopups(), getLatestBulletin(), getHeroImages()])
+  const [popups, bulletin, c] = await Promise.all([getActivePopups(), getLatestBulletin(), getSiteContent()])
 
   return (
     <>
       <SocialFloat />
       <PopupModal popups={popups} />
-      <Hero images={heroImages} />
+      <Hero slides={applyHeroSlides(c)} />
       <InfoBlocks bulletin={bulletin} />
       <MessageCards home />
       <section className="bg-white py-20 md:py-28">
@@ -24,7 +25,7 @@ export default async function HomePage() {
           <FeaturedSermons />
         </div>
       </section>
-      <ChurchSchool />
+      <ChurchSchool title={c["home.school.title"]} departments={applyDepartments(c)} />
       <ChurchNews />
       <WorshipTimes />
     </>

@@ -3,31 +3,33 @@ import Image from "next/image"
 import { PageBanner } from "@/components/page-banner"
 import { SectionHeading } from "@/components/section-heading"
 import { Clock, MapPin } from "lucide-react"
-import { departments } from "@/lib/church"
+import { getSiteContent } from "@/lib/queries"
+import { applyDepartments } from "@/lib/site-content"
 
 export const metadata: Metadata = {
   title: "다음세대",
   description: "영유아부터 청년까지, 믿음의 다음세대를 세우는 원당교회 교육부서를 소개합니다.",
 }
 
-export default function NextGenerationPage() {
+export default async function NextGenerationPage() {
+  const c = await getSiteContent()
   return (
     <>
       <PageBanner
         title="다음세대"
-        subtitle="믿음의 다음세대를 함께 세워갑니다"
-        image="/images/next-generation.jpg"
+        subtitle={c["next.banner.subtitle"]}
+        image={c["next.banner.image"]}
       />
 
       <section className="py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
           <SectionHeading
             eyebrow="Next Generation"
-            title="교육부서 안내"
-            description="연령별 맞춤 신앙 교육으로 자라나는 다음세대"
+            title={c["next.heading.title"]}
+            description={c["next.heading.description"]}
           />
           <div className="mt-10 space-y-16 md:space-y-24">
-            {departments.map((d, i) => (
+            {applyDepartments(c).map((d, i) => (
               <div
                 key={d.id}
                 id={d.id}

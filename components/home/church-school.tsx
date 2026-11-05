@@ -4,11 +4,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState, type KeyboardEvent } from "react"
 import { ChevronRight, Clock, MapPin } from "lucide-react"
-import { departments } from "@/lib/church"
+import type { departments as defaultDepartments } from "@/lib/church"
 import { cn } from "@/lib/utils"
 
 // Full-bleed showcase: one department fills the section, tabs switch it (only the shown photo is loaded).
-export function ChurchSchool() {
+export function ChurchSchool({ title, departments }: { title: string; departments: typeof defaultDepartments }) {
   const [active, setActive] = useState(0)
   const tabs = useRef<(HTMLButtonElement | null)[]>([])
   const d = departments[active]
@@ -43,7 +43,7 @@ export function ChurchSchool() {
         <div className="flex flex-wrap items-end gap-x-6 gap-y-2 lg:col-start-1 lg:row-start-1">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">Next Generation</p>
-            <h2 className="mt-1 font-serif text-2xl font-bold md:text-3xl">교회학교</h2>
+            <h2 className="mt-1 font-serif text-2xl font-bold md:text-3xl">{title}</h2>
           </div>
           <Link
             href="/next-generation"

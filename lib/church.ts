@@ -91,7 +91,7 @@ export const church = {
   ],
 } as const
 
-// 메인 슬라이드 기본 이미지. 관리자 > 메인 이미지 관리에서 슬롯(배열 순서)별로 교체한다.
+// 아래 기본값들은 관리자 > 홈페이지 내용 관리에서 덮어쓸 수 있다 (lib/site-content.ts).
 export const heroSlides = [
   { src: "/images/worship-praise.jpg", title: "주일예배", subtitle: "은혜 안에서 하나 되는 예배" },
   { src: "/images/worship-choir.jpg", title: "찬양대", subtitle: "마음을 다해 드리는 찬양" },
@@ -100,9 +100,31 @@ export const heroSlides = [
 
 export type NavItem = (typeof church.nav)[number]
 
+// Wording supplied by the church (2026-10). Photos are real church events chosen per message (gallery board 62).
+export const visionMessages = [
+  { label: "비전", line: "하나님이 영광 받으시고, 예수님이 주인 되시고, 성령님이 이끌어 가는 교회", image: "/images/vision/vision.jpg" },
+  { label: "사명", line: "예수님의 제자가 되어 세상을 변화시키자", image: "/images/vision/serve-neighbors.jpg" },
+  { label: "교회역할", line: "복된 만남을 통해 사랑하며 섬기는 행복한 교회", image: "/images/vision/fellowship.jpg" },
+  { label: "시대적사명", line: "예배 회복과 다음세대를 세우자", image: "/images/vision/anniversary-worship.jpg" },
+]
+
+export const trainingCourses = [
+  { step: "STEP 1", title: "새가족반", period: "5주 과정", desc: "교회에 처음 오신 분들을 위한 신앙의 기초와 교회 생활 안내 과정입니다." },
+  { step: "STEP 2", title: "양육반", period: "10주 과정", desc: "성경의 흐름과 핵심 진리를 체계적으로 배우며 신앙의 뿌리를 세웁니다." },
+  { step: "STEP 3", title: "제자반", period: "25주 과정", desc: "예수님의 제자로 살아가기 위한 말씀 훈련과 삶의 변화를 배워갑니다." },
+  { step: "STEP 4", title: "사역반", period: "26주 과정", desc: "훈련된 제자를 사역자로 세우는 리더십과 봉사 실천 과정입니다." },
+]
+
 export const worshipPlaces = {
   mainSanctuary: "믿음관(FAITH) 1층 비전홀 (예배당)",
 } as const
+
+// 메인 페이지 시간표에도 나오는 주일예배 3개는 관리자에서 시간을 고칠 수 있다.
+export const sundayWorship = [
+  { name: "주일예배 1부", day: "주일 오전", time: "08:00 ~ 09:10", place: worshipPlaces.mainSanctuary },
+  { name: "주일예배 2부", day: "주일 오전", time: "10:00 ~ 11:10", place: worshipPlaces.mainSanctuary },
+  { name: "주일예배 3부", day: "주일 오후", time: "12:00 ~ 01:10", place: worshipPlaces.mainSanctuary },
+]
 
 // Education departments, shared by the 다음세대 page and the home 교회학교 strip.
 export const departments = [

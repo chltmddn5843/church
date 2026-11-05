@@ -167,10 +167,10 @@ export const liveStream = sqliteTable("live_stream", {
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 
-// 메인 슬라이드 교체 이미지. slot = lib/church.ts heroSlides 순서, 행이 없으면 기본 이미지.
-export const heroImages = sqliteTable("hero_images", {
-  slot: integer("slot").primaryKey(),
-  imageUrl: text("imageUrl").notNull(),
+// 관리자가 고친 글·사진. key = lib/site-content.ts 항목, 행이 없으면 코드의 기본값을 쓴다.
+export const siteContent = sqliteTable("site_content", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
 })
 

@@ -1,11 +1,10 @@
 import { Clock, MapPin } from "lucide-react"
 import { worshipPlaces } from "@/lib/church"
+import { getSiteContent } from "@/lib/queries"
+import { applySundayWorship } from "@/lib/site-content"
 import { cn } from "@/lib/utils"
 
-const mainWorship = [
-  { name: "주일예배 1부", day: "주일 오전", time: "08:00 ~ 09:10", place: worshipPlaces.mainSanctuary },
-  { name: "주일예배 2부", day: "주일 오전", time: "10:00 ~ 11:10", place: worshipPlaces.mainSanctuary },
-  { name: "주일예배 3부", day: "주일 오후", time: "12:00 ~ 01:10", place: worshipPlaces.mainSanctuary },
+const otherWorship = [
   { name: "주일셀모임", day: "주일 오후", time: "02:30 ~ 04:30", place: "각 장소" },
   { name: "금요예배", day: "금요일 오후", time: "09:00 ~ 11:00", place: worshipPlaces.mainSanctuary },
   { name: "새벽예배", day: "월~금 오전", time: "05:00 ~ 05:30", place: worshipPlaces.mainSanctuary },
@@ -99,14 +98,15 @@ function SummaryStrip({ rows, variant = "light" }: { rows: { name: string; day: 
   )
 }
 
-export function WorshipSchedule({ sections = "all", variant = "light" }: { sections?: "summary" | "all"; variant?: "light" | "dark" }) {
+export async function WorshipSchedule({ sections = "all", variant = "light" }: { sections?: "summary" | "all"; variant?: "light" | "dark" }) {
+  const sunday = applySundayWorship(await getSiteContent())
   if (sections === "summary") {
-    return <SummaryStrip rows={mainWorship.filter((row) => row.name.startsWith("주일예배"))} variant={variant} />
+    return <SummaryStrip rows={sunday} variant={variant} />
   }
 
   return (
     <div className="space-y-10">
-      <ScheduleTable caption="예배 시간표" firstColumn="예배" rows={mainWorship} />
+      <ScheduleTable caption="예배 시간표" firstColumn="예배" rows={[...sunday, ...otherWorship]} />
       <div>
         <h2 className="mb-4 text-lg font-bold text-foreground md:text-xl">교육부 · 다음세대</h2>
         <ScheduleTable caption="다음세대 예배 시간표" firstColumn="부서" rows={nextGenWorship} />

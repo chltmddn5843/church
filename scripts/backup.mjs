@@ -21,7 +21,7 @@ wrangler("d1", "export", "church-db", "--remote", "--output", dbFile)
 console.log(`DB → ${dbFile} (${((await stat(dbFile)).size / 1024).toFixed(0)}KB)`)
 
 // 2. Files. Keys are random or per-legacy-id and never overwritten, so a key already on disk is skipped.
-const query = ["attachments.url", "gallery.imageUrl", "popups.imageUrl", "content_pages.imageUrl"]
+const query = ["attachments.url", "gallery.imageUrl", "popups.imageUrl", "content_pages.imageUrl", "site_content.value"]
   .map(column => { const [table, field] = column.split("."); return `SELECT ${field} AS u FROM ${table} WHERE ${field} LIKE '/api/uploads/%'` })
   .join(" UNION ")
 const raw = wrangler("d1", "execute", "church-db", "--remote", "--json", "--command", query)

@@ -1,8 +1,10 @@
 import "server-only"
 import { getDb } from "@/lib/db"
-import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports, heroImages } from "@/lib/db/schema"
+import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports, siteContent } from "@/lib/db/schema"
 import { and, asc, count, desc, eq, gt, inArray, like, lt, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
+import { mergeContent } from "@/lib/site-content"
+import { cache } from "react"
 
 export async function getSermons(category?: string, limit?: number, offset?: number) {
   const db = getDb()
@@ -198,12 +200,12 @@ export async function getOfferingReports() {
   return getDb().select().from(offeringReports).orderBy(desc(offeringReports.id))
 }
 
-export async function getHeroImages(): Promise<Record<number, string>> {
+// cache(): one D1 read per render, however many sections ask.
+export const getSiteContent = cache(async () => {
   try {
-    const rows = await getDb().select().from(heroImages)
-    return Object.fromEntries(rows.map((row) => [row.slot, row.imageUrl]))
+    return mergeContent(await getDb().select().from(siteContent))
   } catch (error) {
-    console.error("Failed to load hero images:", error)
-    return {}
+    console.error("Failed to load site content:", error)
+    return mergeContent([])
   }
-}
+})

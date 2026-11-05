@@ -3,18 +3,20 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { WorshipSchedule } from "@/components/worship-schedule"
 import { Button } from "@/components/ui/button"
+import { getSiteContent } from "@/lib/queries"
 
-export function WorshipTimes() {
+export async function WorshipTimes() {
+  const c = await getSiteContent()
   return (
     <section id="worship" className="scroll-mt-24 relative isolate overflow-x-clip pb-20 pt-28 md:pb-28 md:pt-40">
-      <Image src="/images/wd-main.jpg" alt="" fill quality={85} className="object-cover" />
+      <Image src={c["home.worship.image"]} alt="" fill quality={85} className="object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/50" />
       <div aria-hidden="true" className="absolute -top-0.5 left-1/2 h-9 w-[160%] -translate-x-1/2 rounded-b-[50%_100%] bg-background md:h-[58px] md:w-[130%]" />
 
       <div className="scroll-reveal relative mx-auto max-w-6xl px-4 lg:max-w-[1360px] lg:px-6">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-light">Worship</p>
-          <h2 className="mt-1 font-serif text-2xl font-bold text-white md:text-3xl">주일예배 시간</h2>
+          <h2 className="mt-1 font-serif text-2xl font-bold text-white md:text-3xl">{c["home.worship.title"]}</h2>
         </div>
         <div className="mt-8">
           <WorshipSchedule sections="summary" variant="dark" />

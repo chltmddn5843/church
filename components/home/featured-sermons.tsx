@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
-import { getSermons } from "@/lib/queries"
+import { getSermons, getSiteContent } from "@/lib/queries"
 import { SermonCard } from "@/components/sermon-card"
 import { getLiveBroadcast, getYoutubeSermons } from "@/lib/youtube"
 import { getDb } from "@/lib/db"
@@ -16,11 +16,12 @@ const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month:
 const startTime = (d: Date) => d.toLocaleString("ko-KR", { timeZone: "Asia/Seoul", weekday: "short", hour: "numeric", minute: "2-digit" })
 
 export async function FeaturedSermons() {
-  const [sundayVideos, otherVideos, sermons, live] = await Promise.all([
+  const [sundayVideos, otherVideos, sermons, live, c] = await Promise.all([
     getYoutubeSermons("주일예배"),
     Promise.all(OTHER_CATEGORIES.map((category) => getYoutubeSermons(category))),
     getSermons(undefined, 1),
     getDb().select().from(liveStream).limit(1).get().then(getLiveBroadcast),
+    getSiteContent(),
   ])
   const latest = sundayVideos[0]
   // At most 2 per category so one busy playlist (e.g. 3부 찬양 uploads) doesn't fill the list.
@@ -36,7 +37,7 @@ export async function FeaturedSermons() {
       <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Message</p>
-          <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">말씀 다시보기</h2>
+          <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">{c["home.sermons.title"]}</h2>
         </div>
         <Link
           href="/sermons"
