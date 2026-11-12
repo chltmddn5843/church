@@ -4,7 +4,8 @@ import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button"
 import { SubmitButton } from "@/components/admin/submit-button"
 import { Button } from "@/components/ui/button"
 import { Pagination } from "@/components/pagination"
-import { getGalleryAlbumCount, getGalleryAlbums } from "@/lib/queries"
+import { BoardPasswordPanel } from "@/components/admin/board-password-panel"
+import { ALBUM_LOCK, getBoardLocks, getGalleryAlbumCount, getGalleryAlbums } from "@/lib/queries"
 import cloudflareLoader from "@/lib/image-loader"
 
 const categories = ["교회", "전체 수료자", "새가족반", "양육반", "제자반", "사역반"]
@@ -21,7 +22,7 @@ export default async function AdminGalleryPage({
   const total = await getGalleryAlbumCount(category)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const page = Math.min(totalPages, Math.max(1, Number(pageParam) || 1))
-  const items = await getGalleryAlbums(PAGE_SIZE, (page - 1) * PAGE_SIZE, category)
+  const [items, locks] = await Promise.all([getGalleryAlbums(PAGE_SIZE, (page - 1) * PAGE_SIZE, category), getBoardLocks()])
 
   function hrefFor(p: number) {
     const params = new URLSearchParams()
@@ -38,6 +39,13 @@ export default async function AdminGalleryPage({
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">갤러리 관리</h1>
         <p className="mt-2 text-sm text-muted-foreground">행사별로 사진을 묶어 앨범으로 등록하고 정리합니다.</p>
       </div>
+
+      <BoardPasswordPanel
+        adminPage="/admin/gallery"
+        boards={categories.map((c) => ({ key: ALBUM_LOCK + c, label: c }))}
+        locks={locks}
+        note="잠근 분류의 앨범은 관리자 외 모두 비밀번호를 입력해야 사진을 볼 수 있습니다. 메인·갤러리·제자훈련 목록에는 제목만 보이고 표지는 가려집니다."
+      />
 
       <form action={createGalleryAlbum} className="mt-8 grid gap-4 border border-border bg-white p-6 shadow-sm md:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium">

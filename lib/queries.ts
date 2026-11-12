@@ -1,10 +1,39 @@
 import "server-only"
 import { getDb } from "@/lib/db"
-import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports, siteContent } from "@/lib/db/schema"
+import { sermons, posts, gallery, galleryAlbums, popups, attachments, offeringReports, siteContent, boardPasswords } from "@/lib/db/schema"
 import { and, asc, count, desc, eq, gt, inArray, like, lt, ne, sql } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
 import { mergeContent } from "@/lib/site-content"
 import { cache } from "react"
+import { cookies } from "next/headers"
+import { BOARD_COOKIE, boardToken, readTokens } from "@/lib/board-password"
+import { runtimeEnv } from "@/lib/runtime-env"
+
+/** category → stored hash, for every board with a read password. */
+export const getBoardLocks = cache(async () => {
+  const rows = await getDb().select({ category: boardPasswords.category, hash: boardPasswords.hash }).from(boardPasswords)
+  return new Map(rows.map((row) => [row.category, row.hash]))
+})
+
+/** Boards whose content this viewer may not read yet: password set, not admin, no valid unlock cookie. */
+export const getLockedBoards = cache(async () => {
+  const locks = await getBoardLocks()
+  if (!locks.size || (await getViewerAccess()).role === "admin") return new Set<string>()
+  const granted = readTokens((await cookies()).get(BOARD_COOKIE)?.value)
+  const secret = runtimeEnv("BETTER_AUTH_SECRET") ?? ""
+  const locked = new Set<string>()
+  for (const [category, hash] of locks) if (!secret || !granted.has(await boardToken(secret, category, hash))) locked.add(category)
+  return locked
+})
+
+// Gallery album categories share the lock table; the prefix keeps 앨범 "새가족반" apart from the 게시판 "새가족반".
+export const ALBUM_LOCK = "앨범:"
+
+// Titles stay listed; body text is blanked so excerpts and the 봉사 섬김이 form link don't leak.
+async function hideLocked<T extends { category: string; content: string }>(rows: T[]) {
+  const locked = await getLockedBoards()
+  return rows.map((row) => (locked.has(row.category) ? { ...row, content: "", locked: true } : { ...row, locked: false }))
+}
 
 export async function getSermons(category?: string, limit?: number, offset?: number) {
   const db = getDb()
@@ -46,7 +75,7 @@ export async function getPosts(category?: string, limit?: number, offset?: numbe
   const q = db.select().from(posts).where(where).orderBy(desc(posts.pinned), desc(posts.createdAt))
   if (limit) q.limit(limit)
   if (offset) q.offset(offset)
-  return q
+  return hideLocked(await q)
 }
 
 export async function getPostsCount(category?: string, search?: PostSearch) {
@@ -58,13 +87,18 @@ export async function getPostsCount(category?: string, search?: PostSearch) {
 
 export async function getPostThumbnails(postIds: number[]) {
   if (!postIds.length) return new Map<number, string>()
-  const rows = await getDb()
-    .select({ postId: attachments.postId, url: attachments.url, contentType: attachments.contentType })
-    .from(attachments)
-    .where(inArray(attachments.postId, postIds))
+  const [rows, locks] = await Promise.all([
+    getDb()
+      .select({ postId: attachments.postId, url: attachments.url, contentType: attachments.contentType, category: posts.category })
+      .from(attachments)
+      .innerJoin(posts, eq(attachments.postId, posts.id))
+      .where(inArray(attachments.postId, postIds)),
+    getBoardLocks(),
+  ])
   const thumbnails = new Map<number, string>()
   for (const row of rows) {
-    if (row.contentType.startsWith("image/") && !thumbnails.has(row.postId)) thumbnails.set(row.postId, row.url)
+    // Password boards never get thumbnails: they go through /cdn-cgi/image, which can't carry the unlock cookie.
+    if (row.contentType.startsWith("image/") && !locks.has(row.category) && !thumbnails.has(row.postId)) thumbnails.set(row.postId, row.url)
   }
   return thumbnails
 }
@@ -72,13 +106,14 @@ export async function getPostThumbnails(postIds: number[]) {
 export async function getLatestBulletin() {
   const [post] = await getPosts("주보", 1)
   if (!post) return null
+  if (post.locked) return { id: post.id, title: post.title, createdAt: post.createdAt, pdf: null, images: [], locked: true }
   const files = await getDb()
     .select({ url: attachments.url, name: attachments.name, contentType: attachments.contentType })
     .from(attachments)
     .where(eq(attachments.postId, post.id))
   const pdf = files.find((f) => f.contentType === "application/pdf") ?? null
   const images = pdf ? [] : files.filter((f) => f.contentType.startsWith("image/"))
-  return { id: post.id, title: post.title, createdAt: post.createdAt, pdf, images }
+  return { id: post.id, title: post.title, createdAt: post.createdAt, pdf, images, locked: false }
 }
 
 export async function getPost(id: number) {
@@ -86,7 +121,10 @@ export async function getPost(id: number) {
   const db = getDb()
   const post = await db.select().from(posts).where(eq(posts.id, id)).limit(1).get()
   if (!post || !canAccess(post.visibility, await getViewerAccess())) return null
-  return { ...post, attachments: await db.select().from(attachments).where(eq(attachments.postId, post.id)) }
+  const [shown] = await hideLocked([post])
+  // protectedBoard: has a password at all, so its files must skip /cdn-cgi/image even once unlocked.
+  const protectedBoard = (await getBoardLocks()).has(post.category)
+  return { ...shown, protectedBoard, attachments: shown.locked ? [] : await db.select().from(attachments).where(eq(attachments.postId, post.id)) }
 }
 
 export async function incrementPostView(id: number) {
@@ -130,7 +168,9 @@ export async function getGalleryAlbums(limit?: number, offset?: number, category
   const q = getDb().select(albumFields).from(galleryAlbums).where(category ? eq(galleryAlbums.category, category) : undefined).orderBy(desc(galleryAlbums.createdAt), desc(galleryAlbums.id))
   if (limit) q.limit(limit)
   if (offset) q.offset(offset)
-  return q
+  const [rows, locked] = await Promise.all([q, getLockedBoards()])
+  // Locked albums keep their title but never send a photo URL: the files themselves are public to anyone holding the (UUID) URL.
+  return rows.map((row) => (locked.has(ALBUM_LOCK + row.category) ? { ...row, coverUrl: null, locked: true } : { ...row, locked: false }))
 }
 
 export async function getGalleryAlbumCount(category?: string) {
@@ -148,7 +188,8 @@ export async function getGalleryAlbum(id: number) {
     db.select({ id: galleryAlbums.id, title: galleryAlbums.title }).from(galleryAlbums).where(lt(galleryAlbums.createdAt, album.createdAt)).orderBy(desc(galleryAlbums.createdAt)).limit(1).get(),
     db.select({ id: galleryAlbums.id, title: galleryAlbums.title }).from(galleryAlbums).where(gt(galleryAlbums.createdAt, album.createdAt)).orderBy(asc(galleryAlbums.createdAt)).limit(1).get(),
   ])
-  return { ...album, photos, prev, next }
+  if ((await getLockedBoards()).has(ALBUM_LOCK + album.category)) return { ...album, description: null, photos: [], prev, next, locked: true }
+  return { ...album, photos, prev, next, locked: false }
 }
 
 export async function getLegacyGalleryAlbum(legacyId: number) {

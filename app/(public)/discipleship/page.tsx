@@ -4,6 +4,7 @@ import Link from "next/link"
 import { BookOpen, GraduationCap, Sprout, Users } from "lucide-react"
 import { PageBanner } from "@/components/page-banner"
 import { SectionHeading } from "@/components/section-heading"
+import { LockedCover } from "@/components/home/album-carousel"
 import { getGalleryAlbums, getPostThumbnails, getPosts, getSiteContent } from "@/lib/queries"
 import { applyCourses } from "@/lib/site-content"
 import { getSessionUser } from "@/lib/session"
@@ -21,8 +22,8 @@ export default async function DiscipleshipPage() {
   const thumbnails = await getPostThumbnails(newFamily.map((post) => post.id))
   // 새가족반 posts and 전체 수료자 albums share one newest-first list.
   const graduates = [
-    ...newFamily.map((post) => ({ key: `post-${post.id}`, href: `/community/${post.id}`, title: post.title, cover: thumbnails.get(post.id), createdAt: post.createdAt })),
-    ...albums.map((album) => ({ key: `album-${album.id}`, href: `/gallery/${album.id}`, title: album.title, cover: album.coverUrl, createdAt: album.createdAt })),
+    ...newFamily.map((post) => ({ key: `post-${post.id}`, href: `/community/${post.id}`, title: post.title, cover: thumbnails.get(post.id), locked: post.locked, createdAt: post.createdAt })),
+    ...albums.map((album) => ({ key: `album-${album.id}`, href: `/gallery/${album.id}`, title: album.title, cover: album.coverUrl, locked: album.locked, createdAt: album.createdAt })),
   ].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
 
   return (
@@ -98,6 +99,7 @@ export default async function DiscipleshipPage() {
                 <li key={item.key}>
                   <Link href={item.href} className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
+                      {item.locked && <LockedCover />}
                       {item.cover && (
                         // eslint-disable-next-line @next/next/no-img-element -- R2 file of unknown size, images are unoptimized anyway
                         <img src={item.cover} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />

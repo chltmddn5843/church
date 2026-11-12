@@ -17,11 +17,13 @@ const messages: Record<string, string> = {
   gallery: "앨범이 등록되었습니다.",
   cleared: "직접 지정한 영상을 내렸습니다. 이제 생방송을 자동으로 찾아 표시합니다.",
   live: "직접 지정한 영상이 메인 페이지 '말씀 다시보기' 자리에 표시됩니다.",
+  "board-password": "게시판 비밀번호 설정이 저장되었습니다.",
 }
 
 const errors: Record<string, string> = {
   upload: "첨부파일을 올리지 못해 글이 등록되지 않았습니다. 이미지(JPG·PNG·WEBP·GIF), PDF, MP3, M4A 파일만, 파일당 20MB 이하로 올려 주세요.",
   content: "사진은 JPG·PNG·WEBP 이미지만, 20MB 이하로 올려 주세요.",
+  "board-password": "게시판 비밀번호는 4~100자로 입력해 주세요.",
   youtube: "YouTube 영상 주소를 확인해 주세요. 예: https://www.youtube.com/live/영상ID 또는 https://youtu.be/영상ID",
 }
 

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { getAdjacentPosts, getPost, incrementPostView } from "@/lib/queries"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, ChevronDown, ChevronUp, Download, List, User } from "lucide-react"
+import { BoardUnlockForm } from "@/components/board-unlock-form"
 import { after } from "next/server"
 import { BulletinViewer } from "@/components/bulletin-viewer"
 import { cn } from "@/lib/utils"
@@ -22,13 +23,15 @@ export async function generateMetadata({
 
 export default async function PostDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ unlock?: string }>
 }) {
-  const { id } = await params
+  const [{ id }, { unlock }] = await Promise.all([params, searchParams])
   const post = await getPost(Number(id))
   if (!post) notFound()
-  after(() => incrementPostView(post.id))
+  if (!post.locked) after(() => incrementPostView(post.id))
   const { prev, next } = await getAdjacentPosts(post.id, post.category, post.createdAt)
 
   const isBulletin = post.category === "주보"
@@ -69,17 +72,18 @@ export default async function PostDetailPage({
           <span>조회 {post.views.toLocaleString("ko-KR")}</span>
         </div>
 
+        {post.locked && <BoardUnlockForm lockKey={post.category} returnTo={`/community/${post.id}`} label={`${post.category} 게시판 비밀번호`} error={unlock} />}
         {post.content && <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{post.content}</div>}
         {inlineImages.length > 0 && (
           <div className="mt-8 space-y-6">
             {inlineImages.map((file) => (
               // eslint-disable-next-line @next/next/no-img-element -- R2 files of unknown size; resized by Cloudflare
-              <img key={file.id} src={cloudflareLoader({ src: file.url, width: 1600 })} alt={file.name.replace(/\.[^.]+$/, "")} loading="lazy" className="mx-auto h-auto w-full max-w-3xl border border-border" />
+              <img key={file.id} src={post.protectedBoard ? file.url : cloudflareLoader({ src: file.url, width: 1600 })} alt={file.name.replace(/\.[^.]+$/, "")} loading="lazy" className="mx-auto h-auto w-full max-w-3xl border border-border" />
             ))}
           </div>
         )}
         {(bulletinPdf || bulletinImages.length > 0) && (
-          <BulletinViewer title={post.title} pdf={bulletinPdf ?? null} images={bulletinImages} className="mt-8 h-[80vh] border border-border shadow-sm" />
+          <BulletinViewer title={post.title} pdf={bulletinPdf ?? null} images={bulletinImages} unoptimized={post.protectedBoard} className="mt-8 h-[80vh] border border-border shadow-sm" />
         )}
         {otherAttachments.length > 0 && <div className="mt-10 space-y-2 border-t pt-6"><h2 className="font-semibold">첨부파일</h2>{otherAttachments.map(file => <a key={file.id} href={file.url} download className="flex items-center gap-2 border p-3 text-sm hover:bg-secondary"><Download className="size-4"/>{file.name} <span className="ml-auto text-muted-foreground">{Math.ceil(file.size / 1024)}KB</span></a>)}</div>}
 

@@ -24,12 +24,15 @@ export function BulletinViewer({
   title,
   pdf,
   images,
+  unoptimized = false,
   className,
   children,
 }: {
   title: string
   pdf: BulletinFile | null
   images: BulletinFile[]
+  /** Serve originals: password-board files need the viewer's cookie, which /cdn-cgi/image doesn't pass on. */
+  unoptimized?: boolean
   className?: string
   /** Extra toolbar actions (e.g. a dialog close button). */
   children?: ReactNode
@@ -185,8 +188,8 @@ export function BulletinViewer({
                 <img
                   key={image.url}
                   data-page
-                  src={cloudflareLoader({ src: image.url, width: 2048 })}
-                  srcSet={[1080, 2048, 3072].map((w) => `${cloudflareLoader({ src: image.url, width: w })} ${w}w`).join(", ")}
+                  src={unoptimized ? image.url : cloudflareLoader({ src: image.url, width: 2048 })}
+                  srcSet={unoptimized ? undefined : [1080, 2048, 3072].map((w) => `${cloudflareLoader({ src: image.url, width: w })} ${w}w`).join(", ")}
                   sizes={`${Math.round(baseWidth * renderZoom) || 1080}px`}
                   alt={`${title} ${i + 1}페이지`}
                   draggable={false}

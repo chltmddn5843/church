@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ImageIcon } from "lucide-react"
 import { getGalleryAlbumCount, getGalleryAlbums } from "@/lib/queries"
+import { LockedCover } from "@/components/home/album-carousel"
 import { PageBanner } from "@/components/page-banner"
 import { Pagination } from "@/components/pagination"
 import { Button } from "@/components/ui/button"
@@ -49,6 +50,7 @@ export default async function GalleryPage({
                 <li key={album.id}>
                   <Link href={`/gallery/${album.id}`} className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
+                      {album.locked && <LockedCover />}
                       {album.coverUrl && (
                         <Image
                           src={album.coverUrl}

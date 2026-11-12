@@ -1,10 +1,11 @@
 import { FileText, Pin, Save } from "lucide-react"
 import { createPost, deletePost, updatePost } from "@/app/actions/posts"
+import { BoardPasswordPanel } from "@/components/admin/board-password-panel"
 import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button"
 import { SubmitButton } from "@/components/admin/submit-button"
 import { Pagination } from "@/components/pagination"
 import { accessOptions } from "@/lib/access"
-import { getPosts, getPostsCount } from "@/lib/queries"
+import { getBoardLocks, getPosts, getPostsCount } from "@/lib/queries"
 
 const categories = ["교회소식", "공지사항", "새가족소개", "새가족반", "주보", "가정예배순서지", "봉사 섬김이", "자료실"]
 const PAGE_SIZE = 20
@@ -22,9 +23,10 @@ export default async function AdminPostsPage({
   const { page: pageParam, category: categoryParam } = await searchParams
   const category = categoryParam && categories.includes(categoryParam) ? categoryParam : undefined
   const page = Math.max(1, Number(pageParam) || 1)
-  const [items, total] = await Promise.all([
+  const [items, total, locks] = await Promise.all([
     getPosts(category, PAGE_SIZE, (page - 1) * PAGE_SIZE),
     getPostsCount(category),
+    getBoardLocks(),
   ])
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   function hrefFor(p: number) {
@@ -75,6 +77,13 @@ export default async function AdminPostsPage({
           </SubmitButton>
         </div>
       </form>
+
+      <BoardPasswordPanel
+        adminPage="/admin/posts"
+        boards={categories.map((c) => ({ key: c, label: c }))}
+        locks={locks}
+        note="설정한 게시판은 관리자 외 모두 비밀번호를 입력해야 글 내용·첨부를 볼 수 있습니다. 제목은 목록에 보입니다."
+      />
 
       <section className="mt-10">
         <div className="mb-4 flex items-end justify-between">

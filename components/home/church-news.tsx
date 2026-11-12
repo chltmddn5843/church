@@ -62,7 +62,7 @@ export async function ChurchNews() {
 
         <div>
           <AlbumCarousel
-            items={albums.flatMap((a) => (a.coverUrl ? [{ id: a.id, title: a.title, imageUrl: a.coverUrl, date: ymd(a.createdAt).replaceAll("-", ".") }] : []))}
+            items={albums.flatMap((a) => (a.coverUrl || a.locked ? [{ id: a.id, title: a.title, imageUrl: a.coverUrl, date: ymd(a.createdAt).replaceAll("-", ".") }] : []))}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Album</p>
             <h2 className="mt-1 font-serif text-2xl font-bold text-foreground md:text-3xl">{c["home.album.title"]}</h2>

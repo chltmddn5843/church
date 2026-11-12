@@ -70,6 +70,7 @@ export default async function CommunityPage({
             views: 0,
             createdAt: new Date(),
             num: null as number | null,
+            locked: false,
           },
           ...numberedPosts,
         ]
@@ -325,7 +326,7 @@ export default async function CommunityPage({
 
                         <h3 className="mt-1.5 truncate text-lg font-semibold text-foreground">{post.title}</h3>
                         {!href && (
-                          <p className="mt-1 truncate text-sm text-muted-foreground">{excerpt(post.content)}</p>
+                          <p className="mt-1 truncate text-sm text-muted-foreground">{(post.locked ? "비밀번호가 필요한 글입니다." : excerpt(post.content))}</p>
                         )}
 
                         <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground sm:hidden">

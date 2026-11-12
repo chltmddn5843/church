@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db"
 import { attachments, posts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { canAccess, getViewerAccess } from "@/lib/access"
+import { getBoardLocks, getLockedBoards } from "@/lib/queries"
 
 export const dynamic = "force-dynamic"
 
@@ -16,11 +17,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ key
 
   let cacheControl = "public, max-age=31536000, immutable"
   if (objectKey.startsWith("attachments/")) {
-    const file = await getDb().select({ visibility: posts.visibility }).from(attachments).innerJoin(posts, eq(attachments.postId, posts.id)).where(eq(attachments.url, `/api/uploads/${objectKey}`)).get()
+    const file = await getDb().select({ visibility: posts.visibility, category: posts.category }).from(attachments).innerJoin(posts, eq(attachments.postId, posts.id)).where(eq(attachments.url, `/api/uploads/${objectKey}`)).get()
     if (!file || (file.visibility !== "public" && !canAccess(file.visibility, await getViewerAccess()))) return new NextResponse("Not found", { status: 404 })
-    // Public-post files are shared-cacheable (worker.ts edge cache, /cdn-cgi/image); member-only ones never are.
-    // ponytail: a post switched to member-only stays readable from caches for up to a day.
-    cacheControl = file.visibility === "public" ? "public, max-age=86400" : "private, no-store"
+    if ((await getLockedBoards()).has(file.category)) return new NextResponse("Not found", { status: 404 })
+    // Public-post files are shared-cacheable (worker.ts edge cache, /cdn-cgi/image); member-only and password-board ones never are.
+    // ponytail: a post switched to member-only, or a board given a password, stays readable from caches for up to a day.
+    cacheControl = file.visibility === "public" && !(await getBoardLocks()).has(file.category) ? "public, max-age=86400" : "private, no-store"
   }
 
   const { env } = getCloudflareContext()

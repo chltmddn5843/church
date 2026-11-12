@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, Calendar, ChevronDown, ChevronUp, ImageIcon, List } from "lucide-react"
-import { getGalleryAlbum } from "@/lib/queries"
+import { ALBUM_LOCK, getGalleryAlbum } from "@/lib/queries"
+import { BoardUnlockForm } from "@/components/board-unlock-form"
 import { Button } from "@/components/ui/button"
 import cloudflareLoader from "@/lib/image-loader"
 
@@ -12,8 +13,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return { title: album.title, openGraph: album.photos[0] ? { images: [cloudflareLoader({ src: album.photos[0].imageUrl, width: 1080 })] } : undefined }
 }
 
-export default async function GalleryAlbumPage({ params }: { params: Promise<{ id: string }> }) {
-  const album = await getGalleryAlbum(Number((await params).id))
+export default async function GalleryAlbumPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ unlock?: string }> }) {
+  const [{ id }, { unlock }] = await Promise.all([params, searchParams])
+  const album = await getGalleryAlbum(Number(id))
   if (!album) notFound()
   const { prev, next } = album
 
@@ -35,12 +37,15 @@ export default async function GalleryAlbumPage({ params }: { params: Promise<{ i
             <Calendar className="h-4 w-4" />
             {new Date(album.createdAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
           </span>
-          <span className="flex items-center gap-1.5">
-            <ImageIcon className="h-4 w-4" />
-            사진 {album.photos.length}장
-          </span>
+          {!album.locked && (
+            <span className="flex items-center gap-1.5">
+              <ImageIcon className="h-4 w-4" />
+              사진 {album.photos.length}장
+            </span>
+          )}
         </div>
 
+        {album.locked && <BoardUnlockForm lockKey={ALBUM_LOCK + album.category} returnTo={`/gallery/${album.id}`} label="비공개 앨범 비밀번호" error={unlock} />}
         {album.description && <div className="mt-8 whitespace-pre-line leading-relaxed text-foreground">{album.description}</div>}
         <div className="mt-8 space-y-4">
           {album.photos.map((photo, i) => (

@@ -1,5 +1,5 @@
 // Edge-caches public pages for signed-out visitors so most page views skip SSR + D1 entirely.
-// Signed-in users (session cookie) and client-side navigations (RSC requests) always go to Next,
+// Signed-in users (session cookie), visitors who unlocked a password board, and client-side navigations (RSC requests) always go to Next,
 // so member-only posts and the logged-in header never land in the shared cache.
 // Stale-while-revalidate: a copy older than TTL is still served instantly and re-rendered in the background,
 // because at church traffic levels a plain 60s TTL missed ~85% of home page views (1.6s median render).
@@ -25,7 +25,8 @@ const worker = {
       PUBLIC_PAGE.test(url.pathname) &&
       !url.searchParams.has("_rsc") &&
       !request.headers.has("rsc") &&
-      !(request.headers.get("cookie") ?? "").includes("session_token")
+      // board_access: unlocked password-board content must never land in the shared copy.
+      !/session_token|board_access/.test(request.headers.get("cookie") ?? "")
     if (!cacheable) return nextWorker.fetch(request, env, ctx)
 
     // Keyed by deploy so cached HTML never points at a previous build's CSS/JS chunks.

@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db"
 import { user, userGroups } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { headers } from "next/headers"
+import { cache } from "react"
 
 export const accessOptions = [
   ["public", "전체 공개"],
@@ -11,7 +12,7 @@ export const accessOptions = [
   ["offering", "헌금 내역 그룹"],
 ] as const
 
-export async function getViewerAccess() {
+export const getViewerAccess = cache(async () => {
   const session = await getAuth().api.getSession({ headers: await headers() })
   if (!session?.user) return { role: "guest", groups: [] as string[] }
 
@@ -24,7 +25,7 @@ export async function getViewerAccess() {
     .where(eq(userGroups.userId, session.user.id))
 
   return { role: current.role, groups: groups.map(({ group }) => group) }
-}
+})
 
 export function canAccess(visibility: string, viewer: Awaited<ReturnType<typeof getViewerAccess>>) {
   return (

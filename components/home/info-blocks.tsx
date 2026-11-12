@@ -12,6 +12,7 @@ type Bulletin = {
   title: string
   pdf: { url: string; name: string } | null
   images: { url: string; name: string }[]
+  locked: boolean
 } | null
 
 const links = [
@@ -78,7 +79,13 @@ export function InfoBlocks({ bulletin }: { bulletin: Bulletin }) {
                 주보
               </DialogTitle>
             </DialogHeader>
-            <p className="py-6 text-center text-sm text-muted-foreground">등록된 주보가 아직 없어요.</p>
+            {bulletin?.locked ? (
+              <Link href={`/community/${bulletin.id}`} onClick={() => setOpen(false)} className="py-6 text-center text-sm font-medium text-primary hover:underline">
+                {bulletin.title} — 비밀번호를 입력하고 보기 →
+              </Link>
+            ) : (
+              <p className="py-6 text-center text-sm text-muted-foreground">등록된 주보가 아직 없어요.</p>
+            )}
             <Link href="/community?category=주보" onClick={() => setOpen(false)} className="text-center text-sm font-medium text-primary hover:underline">
               지난 주보 전체 보기 →
             </Link>

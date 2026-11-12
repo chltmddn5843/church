@@ -3,9 +3,10 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef, useState, type ReactNode } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Lock } from "lucide-react"
 
-type Photo = { id: number; title: string; imageUrl: string; date: string }
+// imageUrl null = password-locked album: shown blinded, no photo URL ever reaches the page.
+type Photo = { id: number; title: string; imageUrl: string | null; date: string }
 
 const arrow =
   "flex size-11 items-center justify-center border border-border text-foreground transition-colors hover:bg-secondary disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -60,13 +61,17 @@ export function AlbumCarousel({ items, children }: { items: Photo[]; children: R
             <li key={p.id} className="w-[72%] shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] md:w-[calc((100%-2.5rem)/3)]">
               <Link href={`/gallery/${p.id}`} className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
-                  <Image
-                    src={p.imageUrl}
-                    alt=""
-                    fill
-                    sizes="(min-width: 1024px) 260px, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 72vw"
-                    className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
-                  />
+                  {p.imageUrl ? (
+                    <Image
+                      src={p.imageUrl}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 260px, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 72vw"
+                      className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
+                    />
+                  ) : (
+                    <LockedCover />
+                  )}
                 </span>
                 <span className="mt-3 block truncate font-semibold text-foreground transition-colors group-hover:text-primary">{p.title}</span>
                 <span className="mt-0.5 block text-sm tabular-nums text-muted-foreground">{p.date}</span>
@@ -78,5 +83,14 @@ export function AlbumCarousel({ items, children }: { items: Photo[]; children: R
         <p className="mt-8 border-y border-border py-10 text-center text-sm text-muted-foreground">등록된 사진이 없습니다.</p>
       )}
     </div>
+  )
+}
+
+export function LockedCover() {
+  return (
+    <span className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-sm text-muted-foreground">
+      <Lock aria-hidden className="size-6" />
+      비공개 앨범
+    </span>
   )
 }

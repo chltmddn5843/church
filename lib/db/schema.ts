@@ -186,3 +186,10 @@ export const historyEvents = sqliteTable("history_events", {
   date: text("date").notNull(),
   event: text("event").notNull(),
 }, (table) => [index("history_events_date_idx").on(table.date)])
+
+// 게시판(category)별 열람 비밀번호. 행이 있으면 관리자 외 방문자는 비밀번호를 입력해야 본문·첨부를 본다.
+export const boardPasswords = sqliteTable("board_passwords", {
+  category: text("category").primaryKey(),
+  hash: text("hash").notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().default(now),
+})
