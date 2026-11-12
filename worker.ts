@@ -3,8 +3,10 @@
 // so member-only posts and the logged-in header never land in the shared cache.
 // Stale-while-revalidate: a copy older than TTL is still served instantly and re-rendered in the background,
 // because at church traffic levels a plain 60s TTL missed ~85% of home page views (1.6s median render).
-// ponytail: the first signed-out visitor after an admin edit (or after a quiet spell, up to STALE_SECONDS)
-// sees the previous copy (revalidatePath doesn't purge this cache), and post view counts only tick on renders.
+// revalidatePath doesn't purge this cache, so any signed-in POST (every admin edit is a server action) bumps a
+// generation in KV that is part of the key: edits show up for everyone within KV's ~60s edge read cache.
+// ponytail: after a quiet spell (up to STALE_SECONDS) the first visitor still sees the previous copy, and post
+// view counts only tick on renders.
 // @ts-expect-error -- .open-next/worker.js only exists after `opennextjs-cloudflare build`
 import nextWorker from "./.open-next/worker.js"
 // @ts-expect-error -- see above; Durable Object classes must be re-exported from the entry
@@ -12,6 +14,7 @@ export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from "./.open-nex
 
 const TTL_SECONDS = 60
 const STALE_SECONDS = 86400
+const GEN_KEY = "page-cache-gen"
 const PUBLIC_PAGE = /^\/(about|worship|discipleship|next-generation|campus|sermons|gallery|community)?(\/|$)/
 
 type Env = CloudflareEnv & { CF_VERSION_METADATA?: { id: string } }
@@ -19,6 +22,11 @@ type Env = CloudflareEnv & { CF_VERSION_METADATA?: { id: string } }
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url)
+    if (request.method === "POST" && /session_token/.test(request.headers.get("cookie") ?? "")) {
+      const response: Response = await nextWorker.fetch(request, env, ctx)
+      ctx.waitUntil(env.AUTH_KV.put(GEN_KEY, String(Date.now())))
+      return response
+    }
     if (request.method === "GET" && url.pathname.startsWith("/api/uploads/")) return cachedUpload(request, env, ctx)
     const cacheable =
       request.method === "GET" &&
@@ -32,6 +40,7 @@ const worker = {
     // Keyed by deploy so cached HTML never points at a previous build's CSS/JS chunks.
     const keyUrl = new URL(url)
     keyUrl.searchParams.set("__v", env.CF_VERSION_METADATA?.id ?? "dev")
+    keyUrl.searchParams.set("__g", (await env.AUTH_KV.get(GEN_KEY)) ?? "0")
     const key = new Request(keyUrl.toString())
     const cache = caches.default
 
